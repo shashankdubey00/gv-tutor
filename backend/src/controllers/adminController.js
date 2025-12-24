@@ -1,0 +1,377 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import TutorRequest from "../models/TutorRequest.js";
+import TutorProfile from "../models/TutorProfile.js";
+
+/* ---------------- ADMIN LOGIN ---------------- */
+export const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password required",
+      });
+    }
+
+    // Normalize email
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Find user and check if admin
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user || user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials or not an admin",
+      });
+    }
+
+    // Check if admin has password (manually created admins should have password)
+    if (!user.passwordHash) {
+      return res.status(401).json({
+        success: false,
+        message: "Admin account not properly configured",
+      });
+    }
+
+    // Verify password
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Admin login successful",
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Admin login error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- GET ALL PARENT APPLICATIONS ---------------- */
+export const getAllParentApplications = async (req, res) => {
+  try {
+    const requests = await TutorRequest.find()
+      .sort({ createdAt: -1 })
+      .populate("assignedTutor", "email")
+      .populate({
+        path: "appliedTutors.tutorId",
+        select: "email",
+      });
+
+    // Populate tutor profiles separately
+    const requestsWithProfiles = await Promise.all(
+      requests.map(async (request) => {
+        const requestObj = request.toObject();
+        if (requestObj.appliedTutors && requestObj.appliedTutors.length > 0) {
+          requestObj.appliedTutors = await Promise.all(
+            requestObj.appliedTutors.map(async (applied) => {
+              const tutorProfile = await TutorProfile.findOne({ userId: applied.tutorId?._id || applied.tutorId });
+              return {
+                ...applied,
+                tutorProfile: tutorProfile || null,
+              };
+            })
+          );
+        }
+        return requestObj;
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      requests: requestsWithProfiles,
+      count: requestsWithProfiles.length,
+    });
+  } catch (error) {
+    console.error("Get parent applications error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- GET ALL TUTOR APPLICATIONS (Tutor Profiles) ---------------- */
+export const getAllTutorApplications = async (req, res) => {
+  try {
+    const profiles = await TutorProfile.find()
+      .populate("userId", "email role isTutorProfileComplete")
+      .sort({ createdAt: -1 });
+
+    // Get applied posts for each tutor
+    const profilesWithAppliedPosts = await Promise.all(
+      profiles.map(async (profile) => {
+        const profileObj = profile.toObject();
+        // Find all requests where this tutor has applied
+        const appliedRequests = await TutorRequest.find({
+          "appliedTutors.tutorId": profile.userId._id,
+        })
+          .select("parentName studentGrade subjects status createdAt")
+          .sort({ createdAt: -1 });
+        
+        profileObj.appliedPosts = appliedRequests || [];
+        return profileObj;
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      profiles: profilesWithAppliedPosts,
+      count: profilesWithAppliedPosts.length,
+    });
+  } catch (error) {
+    console.error("Get tutor applications error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- GET ALL TUTOR MEMBERS ---------------- */
+export const getAllTutorMembers = async (req, res) => {
+  try {
+    const tutors = await User.find({ role: "tutor" })
+      .select("-passwordHash")
+      .sort({ createdAt: -1 });
+
+    const tutorsWithProfiles = await Promise.all(
+      tutors.map(async (tutor) => {
+        const profile = await TutorProfile.findOne({ userId: tutor._id });
+        return {
+          ...tutor.toObject(),
+          profile: profile || null,
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      tutors: tutorsWithProfiles,
+      count: tutorsWithProfiles.length,
+    });
+  } catch (error) {
+    console.error("Get tutor members error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- UPDATE TUTOR REQUEST STATUS ---------------- */
+export const updateTutorRequestStatus = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status, adminNotes } = req.body;
+
+    if (!["pending", "approved", "rejected", "filled", "posted"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    const request = await TutorRequest.findByIdAndUpdate(
+      requestId,
+      {
+        status,
+        adminNotes: adminNotes || "",
+      },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request status updated",
+      request,
+    });
+  } catch (error) {
+    console.error("Update request status error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- UPDATE FIELD VISIBILITY ---------------- */
+export const updateFieldVisibility = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { fieldVisibility } = req.body;
+
+    if (!fieldVisibility || typeof fieldVisibility !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Field visibility object required",
+      });
+    }
+
+    const request = await TutorRequest.findById(requestId);
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    // Update field visibility
+    request.fieldVisibility = {
+      ...request.fieldVisibility,
+      ...fieldVisibility,
+    };
+
+    await request.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Field visibility updated",
+      request,
+    });
+  } catch (error) {
+    console.error("Update field visibility error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- UPDATE TUTOR REQUEST FIELDS ---------------- */
+export const updateTutorRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const {
+      parentName,
+      parentEmail,
+      parentPhone,
+      studentGrade,
+      subjects,
+      preferredLocation,
+      preferredTiming,
+      frequency,
+      budget,
+      preferredTutorGender,
+      additionalRequirements,
+      fieldVisibility,
+    } = req.body;
+
+    const request = await TutorRequest.findById(requestId);
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    // Update fields if provided
+    if (parentName !== undefined) request.parentName = parentName;
+    if (parentEmail !== undefined) request.parentEmail = parentEmail;
+    if (parentPhone !== undefined) request.parentPhone = parentPhone;
+    if (studentGrade !== undefined) request.studentGrade = studentGrade;
+    if (subjects !== undefined) request.subjects = Array.isArray(subjects) ? subjects : [subjects];
+    if (preferredLocation !== undefined) request.preferredLocation = preferredLocation;
+    if (preferredTiming !== undefined) request.preferredTiming = preferredTiming;
+    if (frequency !== undefined) request.frequency = frequency;
+    if (budget !== undefined) request.budget = budget;
+    if (preferredTutorGender !== undefined) request.preferredTutorGender = preferredTutorGender;
+    if (additionalRequirements !== undefined) request.additionalRequirements = additionalRequirements;
+    if (fieldVisibility !== undefined) {
+      request.fieldVisibility = {
+        ...request.fieldVisibility,
+        ...fieldVisibility,
+      };
+    }
+
+    await request.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Request updated successfully",
+      request,
+    });
+  } catch (error) {
+    console.error("Update request error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- POST TUTOR REQUEST (Make it visible to tutors) ---------------- */
+export const postTutorRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+
+    const request = await TutorRequest.findByIdAndUpdate(
+      requestId,
+      { status: "posted" },
+      { new: true }
+    );
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request posted successfully. It will now be visible to tutors.",
+      request,
+    });
+  } catch (error) {
+    console.error("Post request error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+
+
+

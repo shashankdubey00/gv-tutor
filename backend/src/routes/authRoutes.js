@@ -1,0 +1,163 @@
+import express from "express";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+import { signup, login } from "../controllers/authController.js";
+import { rateLimiter } from "../middleware/rateLimiter.js";
+import { protect } from "../middleware/authMiddleware.js";
+import User from "../models/User.js";
+import UserProfile from "../models/UserProfile.js";
+
+const router = express.Router();
+
+// Rate limiting for auth routes (30 requests per 15 minutes per IP - more lenient for normal usage)
+const authRateLimit = rateLimiter(30, 15 * 60 * 1000);
+
+router.post("/signup", authRateLimit, signup);
+router.post("/login", authRateLimit, login);
+
+// Verify authentication endpoint
+router.get("/verify", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-passwordHash");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        isTutorProfileComplete: user.isTutorProfileComplete,
+        authProviders: user.authProviders,
+      },
+    });
+  } catch (error) {
+    console.error("Verify auth error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+// Redirect to Google
+router.get(
+  "/google",
+  (req, res, next) => {
+    // Get role from query parameter and pass via state
+    const role = req.query.role || "user";
+    const state = Buffer.from(JSON.stringify({ role })).toString("base64");
+    
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      state: state, // Pass role via state parameter
+    })(req, res, next);
+  }
+);
+
+// Logout endpoint
+router.post("/logout", (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0, // Expire immediately
+    path: "/",
+  });
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+});
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: process.env.CLIENT_URL + "/login?error=google_auth_failed",
+  }),
+  async (req, res) => {
+    try {
+      // Verify user exists after Google authentication
+      if (!req.user) {
+        console.error("Google OAuth: No user found after authentication");
+        return res.redirect(process.env.CLIENT_URL + "/login?error=no_user");
+      }
+
+      // Extract role from state parameter
+      let roleFromState = "user";
+      try {
+        if (req.query.state) {
+          const decoded = JSON.parse(Buffer.from(req.query.state, "base64").toString());
+          roleFromState = decoded.role || "user";
+        }
+      } catch (err) {
+        console.error("Error decoding OAuth state:", err);
+      }
+
+      // Double-check user exists in database
+      let user = await User.findById(req.user._id);
+      
+      if (!user) {
+        console.error("Google OAuth: User not found in database");
+        return res.redirect(process.env.CLIENT_URL + "/login?error=user_not_found");
+      }
+
+      // Ensure user has UserProfile
+      let userProfile = await UserProfile.findOne({ userId: user._id });
+      if (!userProfile) {
+        const nameFromEmail = user.email.split("@")[0];
+        userProfile = await UserProfile.create({
+          userId: user._id,
+          fullName: nameFromEmail,
+          phone: "",
+          address: "",
+        });
+        console.log("✅ Created UserProfile for Google OAuth user");
+      }
+
+      // Update user role if it was passed via state and user is new or role is user
+      if (roleFromState === "tutor" && user.role === "user") {
+        user.role = "tutor";
+        await user.save();
+      }
+
+      console.log("Google OAuth: Successfully authenticated user:", user.email, "Role:", user.role);
+
+      // Create JWT token
+      const token = jwt.sign(
+        { userId: user._id.toString(), role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      // Set cookie with proper domain
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production", // true in production with HTTPS
+        maxAge: 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+
+      // Redirect based on role and profile completion
+      if (user.role === "tutor" && !user.isTutorProfileComplete) {
+        res.redirect(process.env.CLIENT_URL + "/complete-profile?auth=success&provider=google");
+      } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+        res.redirect(process.env.CLIENT_URL + "/apply-tutor?auth=success&provider=google");
+      } else {
+        res.redirect(process.env.CLIENT_URL + "/?auth=success&provider=google");
+      }
+    } catch (error) {
+      console.error("Google OAuth callback error:", error);
+      res.redirect(process.env.CLIENT_URL + "/login?error=server_error");
+    }
+  }
+);
+
+
+export default router;
