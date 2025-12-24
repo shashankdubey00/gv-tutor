@@ -10,11 +10,13 @@ node scripts/createAdmin.js [email] [password]
 ```
 
 **Example:**
+
 ```bash
 node scripts/createAdmin.js admin@gvtutor.com Admin@123
 ```
 
 If you don't provide email and password, it will use defaults:
+
 - Email: `admin@gvtutor.com`
 - Password: `Admin@123`
 
@@ -40,7 +42,3 @@ The admin dashboard allows you to:
 - Admin accounts are manually created (not through signup)
 - Admin login is rate-limited (5 attempts per 15 minutes)
 - All admin routes require authentication and admin role verification
-
-
-
-

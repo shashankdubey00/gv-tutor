@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getPostedTutorRequests } from "../services/tutorService";
+import { getPostedTutorRequests, applyToTutorRequest } from "../services/tutorService";
 import { verifyAuth, logoutUser } from "../services/authService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { setRedirecting, isRedirecting, shouldRedirect, clearRedirecting } from "../utils/redirectGuard";
@@ -13,16 +13,31 @@ export default function ApplyAsTutor() {
   const [error, setError] = useState("");
   const [requests, setRequests] = useState([]);
   const [isRedirectingState, setIsRedirectingState] = useState(false);
+  const [applyingTo, setApplyingTo] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [displayCount, setDisplayCount] = useState(10);
 
   // Check authentication and profile completion
   useEffect(() => {
     let isMounted = true;
-    let timeoutId;
+    let timeoutId = null;
     
     // Clear any previous redirect flags after a delay
     setTimeout(() => {
       clearRedirecting();
     }, 1000);
+    
+    // Set timeout first to prevent race conditions
+    timeoutId = setTimeout(() => {
+      if (isMounted && checking) {
+        console.error("⏱️ Timeout: Initial check took too long");
+        setError("Request is taking longer than expected. Please check your connection and ensure the backend server is running.");
+        setLoading(false);
+        setChecking(false);
+      }
+    }, 35000); // 35 seconds timeout to allow API timeout (30s) to complete first
     
     async function checkAuth() {
       // Prevent redirect loops
@@ -34,6 +49,12 @@ export default function ApplyAsTutor() {
         console.log("🔍 Checking authentication...");
         const authData = await verifyAuth();
         console.log("✅ Auth check complete:", authData);
+        
+        // Clear timeout since auth check completed
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         
         // Only tutors can access this page
         if (!authData.success || authData.user.role !== "tutor") {
@@ -94,9 +115,16 @@ export default function ApplyAsTutor() {
             console.log(`✅ Tutor requests loaded in ${requestDuration}ms:`, data);
             if (data.success && isMounted) {
               setRequests(data.requests || []);
+              setError(""); // Clear any previous errors
+              setSuccessMessage(""); // Clear success messages
             }
           } catch (err) {
             console.error("❌ Error loading tutor requests:", err);
+            // Clear timeout since we got an error response
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
             if (err.message.includes("complete your profile") || err.message.includes("Please complete your profile")) {
               if (isMounted && shouldRedirect(location.pathname, "/complete-profile")) {
                 setIsRedirectingState(true);
@@ -112,6 +140,11 @@ export default function ApplyAsTutor() {
         }
       } catch (err) {
         console.error("❌ Auth error:", err);
+        // Clear timeout since we got an error
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         if (isMounted) {
           setError(err.message || "Authentication failed. Please try logging in again.");
           if (shouldRedirect(location.pathname, "/login")) {
@@ -127,19 +160,14 @@ export default function ApplyAsTutor() {
           console.log("✅ Setting loading to false");
           setLoading(false);
           setChecking(false);
+          // Clear timeout in finally block as well
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
         }
       }
     }
-    
-    // Add timeout to prevent infinite loading (15 seconds for initial check)
-    timeoutId = setTimeout(() => {
-      if (isMounted && checking) {
-        console.error("⏱️ Timeout: Initial check took too long");
-        setError("Request is taking longer than expected. Please check your connection and ensure the backend server is running.");
-        setLoading(false);
-        setChecking(false);
-      }
-    }, 15000); // 15 seconds timeout for initial check
     
     checkAuth();
     
@@ -149,26 +177,102 @@ export default function ApplyAsTutor() {
     };
   }, [navigate, location.pathname]);
 
+  const handleViewDetails = (request) => {
+    setSelectedRequest(request);
+    setShowModal(true);
+  };
+
+  const handleApply = async (requestId) => {
+    if (applyingTo) return; // Prevent multiple clicks
+    
+    if (!requestId) {
+      setError("Invalid request ID. Please try again.");
+      return;
+    }
+    
+    setApplyingTo(requestId);
+    setError("");
+    setSuccessMessage("");
+    
+    try {
+      console.log("📝 Applying to request:", requestId);
+      const result = await applyToTutorRequest(requestId);
+      console.log("✅ Apply result:", result);
+      
+      if (result.success) {
+        setSuccessMessage("Application submitted successfully!");
+        // Update the request to show it's been applied
+        setRequests(requests.map(req => 
+          req._id === requestId 
+            ? { ...req, hasApplied: true }
+            : req
+        ));
+        // Update selected request if modal is open
+        if (selectedRequest && selectedRequest._id === requestId) {
+          setSelectedRequest({ ...selectedRequest, hasApplied: true });
+        }
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(""), 3000);
+        // Close modal after successful application
+        setShowModal(false);
+      } else {
+        setError(result.message || "Failed to submit application. Please try again.");
+      }
+    } catch (err) {
+      console.error("❌ Apply error:", err);
+      setError(err.message || "Failed to submit application. Please check your connection and try again.");
+    } finally {
+      setApplyingTo(null);
+    }
+  };
+
+  const handleSeeMore = () => {
+    setDisplayCount(prev => prev + 10);
+  };
+
+  const displayedRequests = requests
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, displayCount);
+  
+  const hasMore = requests.length > displayCount;
+
   if (checking || isRedirectingState) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="min-h-screen bg-black pt-28 px-4 pb-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-8 sm:p-10 text-white rounded-xl mb-6">
-          <h2 className="text-3xl font-bold text-center mb-2">
-            Available Tutor Positions
-          </h2>
-          <p className="text-center text-white/80">
-            Browse and apply for tutor positions that match your expertise
-          </p>
+    <div className="min-h-screen bg-[#05070a] pt-20 px-4 pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-4 text-white rounded-lg flex-1">
+            <h2 className="text-2xl font-bold mb-1">
+              Available Tutor Positions
+            </h2>
+            <p className="text-white/80 text-sm">
+              Browse and apply for tutor positions that match your expertise
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setDisplayCount(10);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition-all shadow-lg text-sm whitespace-nowrap"
+          >
+            Recent Posts
+          </button>
         </div>
 
+        {successMessage && (
+          <div className="bg-green-500/20 border-2 border-green-500 text-green-300 p-4 rounded-xl mb-6 text-center">
+            <p className="font-semibold">{successMessage}</p>
+          </div>
+        )}
+
         {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-lg mb-6 flex items-center justify-between">
-            <div>
-              <p className="mb-2">{error}</p>
+          <div className="bg-red-500/20 border-2 border-red-500 text-red-300 p-6 rounded-xl mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex-1">
+              <p className="mb-2 font-semibold text-lg">{error}</p>
               <p className="text-sm text-red-200/70">
                 Make sure your backend server is running on port 5000 (or your configured PORT).
               </p>
@@ -180,7 +284,7 @@ export default function ApplyAsTutor() {
                 setLoading(true);
                 window.location.reload();
               }}
-              className="ml-4 px-4 py-2 bg-red-500/30 hover:bg-red-500/40 rounded text-sm font-semibold transition"
+              className="px-6 py-2.5 bg-red-500/30 hover:bg-red-500/40 rounded-lg text-sm font-semibold transition-all shadow-lg"
             >
               Retry
             </button>
@@ -192,15 +296,15 @@ export default function ApplyAsTutor() {
             <LoadingSpinner />
           </div>
         ) : error ? (
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-8 text-center text-white rounded-xl">
-            <p className="text-xl mb-4 text-red-400">Unable to load tutor positions</p>
-            <p className="text-white/70 mb-6">
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-10 text-center text-white rounded-xl">
+            <p className="text-2xl mb-4 text-red-400 font-bold">Unable to load tutor positions</p>
+            <p className="text-white/70 mb-8 text-lg">
               Please check your connection and ensure the backend server is running.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 rounded-lg font-semibold text-white transition"
+                className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 rounded-xl font-semibold text-white transition-all shadow-lg hover:shadow-xl"
               >
                 Refresh Page
               </button>
@@ -213,137 +317,243 @@ export default function ApplyAsTutor() {
                     navigate("/login");
                   }
                 }}
-                className="px-6 py-3 bg-gray-800 hover:bg-gray-700 border border-cyan-500/30 rounded-lg font-semibold text-white transition"
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-white transition-all shadow-lg"
               >
                 Logout
               </button>
             </div>
           </div>
         ) : requests.length === 0 ? (
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-8 text-center text-white rounded-xl">
-            <p className="text-xl mb-4">No tutor positions available at the moment.</p>
-            <p className="text-white/70">
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-10 text-center text-white rounded-xl">
+            <p className="text-2xl mb-4 font-bold">No tutor positions available at the moment.</p>
+            <p className="text-white/70 text-lg">
               Check back later or contact admin for more information.
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-4 flex justify-end">
-              <button
-                onClick={async () => {
-                  try {
-                    await logoutUser();
-                    navigate("/login");
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                    // Clear cookie manually if API fails
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                    navigate("/login");
-                  }
-                }}
-                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-cyan-500/30 rounded-lg font-semibold text-white transition"
-              >
-                Logout
-              </button>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+              {displayedRequests.map((request) => (
+                <div
+                  key={request._id}
+                  className={`bg-white text-gray-900 p-3 rounded-lg shadow-md border ${
+                    request.hasApplied 
+                      ? "border-green-300 bg-green-50/30" 
+                      : "border-gray-200"
+                  } hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer`}
+                  onClick={() => handleViewDetails(request)}
+                >
+                  <div className="mb-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-sm font-bold text-gray-900">
+                        Grade {request.studentGrade || "N/A"}
+                      </h3>
+                      {request.hasApplied && (
+                        <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full text-[10px] font-semibold">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 mb-2">
+                    {request.subjects && (
+                      <div>
+                        <p className="text-gray-600 text-[10px] font-semibold mb-0.5">Subjects:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {Array.isArray(request.subjects) ? (
+                            request.subjects.slice(0, 2).map((subject, idx) => (
+                              <span
+                                key={idx}
+                                className="bg-blue-100 text-blue-700 border border-blue-300 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                              >
+                                {subject.length > 8 ? subject.substring(0, 8) + '...' : subject}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="bg-blue-100 text-blue-700 border border-blue-300 px-1.5 py-0.5 rounded text-[10px] font-medium">
+                              {request.subjects.length > 8 ? request.subjects.substring(0, 8) + '...' : request.subjects}
+                            </span>
+                          )}
+                          {Array.isArray(request.subjects) && request.subjects.length > 2 && (
+                            <span className="text-[10px] text-gray-500">+{request.subjects.length - 2}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {request.preferredLocation && (
+                      <div>
+                        <p className="text-gray-600 text-[10px] font-semibold mb-0.5">Location:</p>
+                        <p className="text-gray-900 font-medium text-xs truncate">{request.preferredLocation}</p>
+                      </div>
+                    )}
+
+                    {request.budget && (
+                      <div>
+                        <p className="text-gray-600 text-[10px] font-semibold mb-0.5">Budget:</p>
+                        <p className="text-gray-900 font-bold text-sm text-blue-600">{request.budget}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-2 mt-2">
+                    <p className="text-gray-500 text-[10px] mb-2 text-center">
+                      {new Date(request.createdAt).toLocaleDateString()}
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDetails(request);
+                      }}
+                      disabled={request.hasApplied || applyingTo === request._id}
+                      className={`w-full py-1.5 rounded text-xs font-semibold text-white shadow-sm transition-all ${
+                        request.hasApplied
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600"
+                      }`}
+                    >
+                      {request.hasApplied ? "Applied" : "View & Apply"}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {requests
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map((request) => (
-              <div
-                key={request._id}
-                className="bg-white text-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300"
-              >
+
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={handleSeeMore}
+                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition-all shadow-lg"
+                >
+                  See More ({requests.length - displayCount} remaining)
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Detail Modal */}
+        {showModal && selectedRequest && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between rounded-t-xl">
+                <h3 className="text-2xl font-bold text-gray-900">Position Details</h3>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Grade: {request.studentGrade}
-                  </h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Grade: {selectedRequest.studentGrade || "N/A"}
+                    </h3>
+                    {selectedRequest.hasApplied && (
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                        Applied
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="space-y-3 mb-4">
-                  {request.subjects && (
+                <div className="space-y-4 mb-6">
+                  {selectedRequest.subjects && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold mb-1">Subjects:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {Array.isArray(request.subjects) ? (
-                          request.subjects.map((subject, idx) => (
+                      <p className="text-gray-600 text-sm font-semibold mb-2">Subjects:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.isArray(selectedRequest.subjects) ? (
+                          selectedRequest.subjects.map((subject, idx) => (
                             <span
                               key={idx}
-                              className="bg-cyan-100 text-cyan-700 border border-cyan-300 px-2 py-1 rounded text-xs font-medium"
+                              className="bg-blue-100 text-blue-700 border border-blue-300 px-3 py-1 rounded-full text-sm font-medium"
                             >
                               {subject}
                             </span>
                           ))
                         ) : (
-                          <span className="bg-cyan-100 text-cyan-700 border border-cyan-300 px-2 py-1 rounded text-xs font-medium">
-                            {request.subjects}
+                          <span className="bg-blue-100 text-blue-700 border border-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                            {selectedRequest.subjects}
                           </span>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {request.preferredLocation && (
+                  {selectedRequest.preferredLocation && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Location:</p>
-                      <p className="text-gray-900">{request.preferredLocation}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Location:</p>
+                      <p className="text-gray-900 font-medium">{selectedRequest.preferredLocation}</p>
                     </div>
                   )}
 
-                  {request.preferredTiming && (
+                  {selectedRequest.preferredTiming && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Timing:</p>
-                      <p className="text-gray-900">{request.preferredTiming}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Timing:</p>
+                      <p className="text-gray-900 font-medium">{selectedRequest.preferredTiming}</p>
                     </div>
                   )}
 
-                  {request.frequency && (
+                  {selectedRequest.frequency && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Frequency:</p>
-                      <p className="text-gray-900 capitalize">{request.frequency}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Frequency:</p>
+                      <p className="text-gray-900 font-medium capitalize">{selectedRequest.frequency}</p>
                     </div>
                   )}
 
-                  {request.budget && (
+                  {selectedRequest.budget && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Budget:</p>
-                      <p className="text-gray-900 font-bold text-lg">{request.budget}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Budget:</p>
+                      <p className="text-gray-900 font-bold text-2xl text-blue-600">{selectedRequest.budget}</p>
                     </div>
                   )}
 
-                  {request.preferredTutorGender && (
+                  {selectedRequest.preferredTutorGender && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Tutor Gender:</p>
-                      <p className="text-gray-900 capitalize">{request.preferredTutorGender}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Tutor Gender:</p>
+                      <p className="text-gray-900 font-medium capitalize">{selectedRequest.preferredTutorGender}</p>
                     </div>
                   )}
 
-                  {request.additionalRequirements && (
+                  {selectedRequest.additionalRequirements && (
                     <div>
-                      <p className="text-gray-700 text-sm font-semibold">Additional Requirements:</p>
-                      <p className="text-gray-600 text-sm">{request.additionalRequirements}</p>
+                      <p className="text-gray-600 text-sm font-semibold mb-1">Additional Requirements:</p>
+                      <p className="text-gray-600 text-sm leading-relaxed">{selectedRequest.additionalRequirements}</p>
                     </div>
                   )}
+
+                  <div>
+                    <p className="text-gray-600 text-sm font-semibold mb-1">Posted:</p>
+                    <p className="text-gray-500 text-sm">{new Date(selectedRequest.createdAt).toLocaleDateString()}</p>
+                  </div>
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
-                  <p className="text-gray-500 text-xs mb-3">
-                    Posted: {new Date(request.createdAt).toLocaleDateString()}
-                  </p>
                   <button
-                    onClick={() => {
-                      // TODO: Implement apply functionality
-                      alert("Apply functionality will be implemented next!");
-                    }}
-                    className="w-full py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 transition font-semibold text-white shadow-lg hover:shadow-xl"
+                    onClick={() => handleApply(selectedRequest._id)}
+                    disabled={selectedRequest.hasApplied || applyingTo === selectedRequest._id}
+                    className={`w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
+                      selectedRequest.hasApplied
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : applyingTo === selectedRequest._id
+                        ? "bg-blue-400 cursor-wait"
+                        : "bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 hover:shadow-xl"
+                    }`}
                   >
-                    Apply Now
+                    {applyingTo === selectedRequest._id
+                      ? "Applying..."
+                      : selectedRequest.hasApplied
+                      ? "Already Applied"
+                      : "Apply Now"}
                   </button>
                 </div>
               </div>
-            ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

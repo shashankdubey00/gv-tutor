@@ -50,6 +50,7 @@ export default function AdminDashboard() {
 
   async function loadData() {
     try {
+      setLoading(true);
       const [parentData, tutorData, membersData] = await Promise.all([
         apiRequest("/api/admin/parent-applications", { method: "GET" }),
         apiRequest("/api/admin/tutor-applications", { method: "GET" }),
@@ -209,7 +210,7 @@ export default function AdminDashboard() {
           </Link>
 
           {/* Center Navigation */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <button
               onClick={() => setActiveTab("dashboard")}
               className={`px-4 py-2 rounded-lg font-medium transition ${
@@ -239,6 +240,17 @@ export default function AdminDashboard() {
               }`}
             >
               Tutor
+            </button>
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className="px-4 py-2 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              title="Refresh data"
+            >
+              <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
             </button>
           </div>
 
@@ -330,14 +342,16 @@ export default function AdminDashboard() {
                               </p>
                               {request.appliedTutors && request.appliedTutors.length > 0 && (
                                 <div className="mt-2 pt-2 border-t border-gray-200">
-                                  <p className="text-xs font-semibold text-gray-600 mb-1">
-                                    Applied Tutors ({request.appliedTutors.length}):
+                                  <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
+                                    <span>👥</span>
+                                    Applied Tutors ({request.appliedTutors.length}) - Click to see details
                                   </p>
                                   <div className="flex flex-wrap gap-1">
                                     {request.appliedTutors.slice(0, 3).map((applied, idx) => (
                                       <span
                                         key={idx}
-                                        className="text-xs px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full"
+                                        className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full border border-purple-300"
+                                        title={`${applied.tutorProfile?.fullName || applied.tutorId?.email || "Tutor"}${applied.tutorProfile?.phone ? ` - ${applied.tutorProfile.phone}` : ''}`}
                                       >
                                         {applied.tutorProfile?.fullName || applied.tutorId?.email || "Tutor"}
                                       </span>
@@ -582,14 +596,16 @@ export default function AdminDashboard() {
                           </p>
                           {request.appliedTutors && request.appliedTutors.length > 0 && (
                             <div className="mb-2 pt-2 border-t border-gray-200">
-                              <p className="text-xs font-semibold text-gray-600 mb-1">
-                                Applied Tutors ({request.appliedTutors.length}):
+                              <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
+                                <span>👥</span>
+                                Applied Tutors ({request.appliedTutors.length}) - Click card to see all details
                               </p>
                               <div className="flex flex-wrap gap-1">
                                 {request.appliedTutors.slice(0, 3).map((applied, idx) => (
                                   <span
                                     key={idx}
-                                    className="text-xs px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full"
+                                    className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full border border-purple-300"
+                                    title={`${applied.tutorProfile?.fullName || applied.tutorId?.email || "Tutor"}${applied.tutorProfile?.phone ? ` - ${applied.tutorProfile.phone}` : ''}`}
                                   >
                                     {applied.tutorProfile?.fullName || applied.tutorId?.email || "Tutor"}
                                   </span>
@@ -648,7 +664,20 @@ export default function AdminDashboard() {
 
         {activeTab === "tutor" && (
           <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-8">
-            <h2 className="text-3xl font-bold mb-8">Tutor Applications & Members</h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold">Tutor Applications & Members</h2>
+              <button
+                onClick={loadData}
+                disabled={loading}
+                className="px-4 py-2 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                title="Refresh tutor applications"
+              >
+                <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Refresh
+              </button>
+            </div>
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
@@ -1152,6 +1181,77 @@ export default function AdminDashboard() {
                   className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               </div>
+
+              {/* Applied Tutors Section */}
+              {selectedRequest.appliedTutors && selectedRequest.appliedTutors.length > 0 && (
+                <div className="border-t border-cyan-500/30 pt-4">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span>👥</span>
+                    Applied Tutors ({selectedRequest.appliedTutors.length})
+                  </h3>
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {selectedRequest.appliedTutors.map((applied, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <p className="font-semibold text-white text-sm mb-1">
+                              {applied.tutorProfile?.fullName || applied.tutorId?.email || "Tutor"}
+                            </p>
+                            {applied.tutorProfile?.phone && (
+                              <p className="text-xs text-white/70 mb-1">
+                                📞 {applied.tutorProfile.phone}
+                              </p>
+                            )}
+                            {applied.tutorId?.email && (
+                              <p className="text-xs text-white/70 mb-1">
+                                ✉️ {applied.tutorId.email}
+                              </p>
+                            )}
+                            {applied.tutorProfile?.subjects && applied.tutorProfile.subjects.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {applied.tutorProfile.subjects.slice(0, 3).map((subject, sIdx) => (
+                                  <span
+                                    key={sIdx}
+                                    className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded"
+                                  >
+                                    {subject}
+                                  </span>
+                                ))}
+                                {applied.tutorProfile.subjects.length > 3 && (
+                                  <span className="text-xs text-white/50">
+                                    +{applied.tutorProfile.subjects.length - 3} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span
+                              className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                                applied.status === "accepted"
+                                  ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                                  : applied.status === "rejected"
+                                  ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                                  : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                              }`}
+                            >
+                              {applied.status?.charAt(0).toUpperCase() + applied.status?.slice(1) || "Pending"}
+                            </span>
+                            {applied.appliedAt && (
+                              <p className="text-xs text-white/50 mt-1">
+                                Applied: {new Date(applied.appliedAt).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Field Visibility Controls */}
               <div className="border-t border-cyan-500/30 pt-4">

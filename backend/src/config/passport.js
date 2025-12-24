@@ -26,21 +26,34 @@ passport.use(
         let role = "user"; // Default role
 
         if (!user) {
+          // New user - create account with Google
           user = await User.create({
             email,
             googleId: profile.id,
             authProviders: ["google"],
             role: "user", // Default to "user" - will be updated in callback if state provides role
           });
+          console.log(`✅ New user created via Google OAuth: ${email}`);
         } else {
-          // Update existing user to include Google auth if not already present
+          // Existing user - link Google account
+          // Check if user already has password (signed up with email/password)
+          const hasLocalAuth = user.authProviders.includes("local") && user.passwordHash;
+          
           if (!user.authProviders.includes("google")) {
             user.authProviders.push("google");
+            console.log(`✅ Linking Google account to existing user: ${email}`);
           }
+          
           if (!user.googleId) {
             user.googleId = profile.id;
           }
+          
           await user.save();
+          
+          // Log account linking
+          if (hasLocalAuth) {
+            console.log(`✅ Account linked: User ${email} can now login with both email/password and Google`);
+          }
         }
 
         done(null, user);

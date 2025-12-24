@@ -17,11 +17,8 @@ export default function Navbar() {
   useEffect(() => {
     async function checkUser() {
       try {
-        console.log("🔍 Navbar: Checking authentication...");
         const authData = await verifyAuth();
-        console.log("✅ Navbar: Auth data:", authData);
         if (authData.success) {
-          console.log("👤 Navbar: User logged in:", authData.user.email, "Role:", authData.user.role);
           setUser(authData.user);
           // If tutor, get profile
           if (authData.user.role === "tutor") {
@@ -31,17 +28,19 @@ export default function Navbar() {
                 setProfile(profileData.profile);
               }
             } catch (err) {
-              // Profile might not exist yet
-              console.log("ℹ️ Navbar: No tutor profile yet");
+              // Profile might not exist yet - silent fail
             }
           }
         } else {
-          console.log("❌ Navbar: Auth failed or not logged in");
           setUser(null);
           setProfile(null);
         }
       } catch (err) {
-        console.error("❌ Navbar: Auth check error:", err);
+        // Silently handle "Not authenticated" errors (expected when not logged in)
+        // Only log unexpected errors
+        if (!err.message || !err.message.includes("Not authenticated")) {
+          console.error("Navbar: Unexpected auth error:", err);
+        }
         setUser(null);
         setProfile(null);
       } finally {
@@ -126,6 +125,15 @@ export default function Navbar() {
                   <div className="px-4 py-2 text-xs text-white/50 border-b border-white/10">
                     Administrator
                   </div>
+                  {/* Show "Change Password" for admin if they have a password */}
+                  {user.hasPassword && (
+                    <Link
+                      to="/change-password"
+                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                    >
+                      Change Password
+                    </Link>
+                  )}
                   <button
                     onClick={async () => {
                       try {
@@ -194,6 +202,26 @@ export default function Navbar() {
                       className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
                     >
                       View Profile
+                    </Link>
+                  )}
+                  {/* Show "Set Password" for Google-only users (check if no password) */}
+                  {user.authProviders && 
+                   user.authProviders.includes("google") && 
+                   !user.hasPassword && (
+                    <Link
+                      to="/set-password"
+                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                    >
+                      Set Password
+                    </Link>
+                  )}
+                  {/* Show "Change Password" for users who have a password */}
+                  {user.hasPassword && (
+                    <Link
+                      to="/change-password"
+                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                    >
+                      Change Password
                     </Link>
                   )}
                   <button

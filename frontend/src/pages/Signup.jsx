@@ -18,10 +18,47 @@ export default function Signup() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  // Enhanced email validation
+  const validateEmail = (email) => {
+    if (!email) {
+      setEmailError("");
+      return false;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    
+    // Check for common typos
+    if (email.includes('..')) {
+      setEmailError("Email cannot contain consecutive dots");
+      return false;
+    }
+    
+    const [localPart] = email.split('@');
+    if (localPart.startsWith('.') || localPart.endsWith('.') || 
+        localPart.startsWith('-') || localPart.endsWith('-')) {
+      setEmailError("Email format is invalid");
+      return false;
+    }
+    
+    setEmailError("");
+    return true;
+  };
 
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Validate email in real-time
+    if (name === "email") {
+      validateEmail(value);
+    }
   }
 
   function handleGoogleLogin() {
@@ -33,6 +70,20 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setEmailError("");
+
+    // Validate email before submission
+    if (!validateEmail(formData.email)) {
+      setLoading(false);
+      return;
+    }
+
+    // Validate password
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      setLoading(false);
+      return;
+    }
 
     try {
       await signupUser(formData);
@@ -40,7 +91,12 @@ export default function Signup() {
       // Login page will then redirect to complete-profile if tutor
       navigate("/login");
     } catch (err) {
-      setError(err.message);
+      // Check if error is about existing user
+      if (err.message.includes("already exists") || err.message.includes("User already exists")) {
+        setError("An account with this email already exists. Please login or use 'Login with Google' if you signed up with Google.");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -59,31 +115,38 @@ export default function Signup() {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
 
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 rounded-lg
+                bg-white/90 text-black
+                focus:outline-none focus:ring-2 ${
+                  emailError ? "focus:ring-red-400 border-2 border-red-400" : "focus:ring-green-400"
+                }`}
+            />
+            {emailError && (
+              <p className="text-xs mt-1 text-red-400">{emailError}</p>
+            )}
+          </div>
+
+          <div>
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
+            type="password"
+            name="password"
+              placeholder="Password (minimum 8 characters)"
+            value={formData.password}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg
               bg-white/90 text-black
               focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-
-          <div>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password (min 8 chars, uppercase, lowercase, number)"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg
-                bg-white/90 text-black
-                focus:outline-none focus:ring-2 focus:ring-green-400"
-            />
-            {formData.password && (
+            {formData.password && formData.password.length < 8 && (
               <p className="text-xs mt-1 text-white/70">
-                Password must be at least 8 characters with uppercase, lowercase, and number
+                Password must be at least 8 characters
               </p>
             )}
           </div>

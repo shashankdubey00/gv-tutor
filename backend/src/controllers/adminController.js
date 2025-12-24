@@ -98,10 +98,14 @@ export const getAllParentApplications = async (req, res) => {
         if (requestObj.appliedTutors && requestObj.appliedTutors.length > 0) {
           requestObj.appliedTutors = await Promise.all(
             requestObj.appliedTutors.map(async (applied) => {
-              const tutorProfile = await TutorProfile.findOne({ userId: applied.tutorId?._id || applied.tutorId });
+              // Handle both populated and non-populated tutorId
+              const tutorId = applied.tutorId?._id || applied.tutorId || applied.tutorId?.toString();
+              const tutorProfile = tutorId ? await TutorProfile.findOne({ userId: tutorId }) : null;
+              
               return {
                 ...applied,
-                tutorProfile: tutorProfile || null,
+                tutorProfile: tutorProfile ? tutorProfile.toObject() : null,
+                tutorId: applied.tutorId || null, // Keep the original tutorId reference
               };
             })
           );

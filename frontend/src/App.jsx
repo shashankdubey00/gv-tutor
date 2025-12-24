@@ -6,6 +6,10 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP";
+import SetPassword from "./pages/SetPassword";
+import ChangePassword from "./pages/ChangePassword";
 import FindTutor from "./pages/FindTutor";
 import CompleteProfile from "./pages/CompleteProfile";
 import ApplyAsTutor from "./pages/ApplyAsTutor";
@@ -99,14 +103,18 @@ function AppContent() {
               <Navbar />
               <Routes>
                 {/* Public pages - no authentication required */}
-                <Route path="/" element={<Hero />} />
+        <Route path="/" element={<Hero />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/contact" element={<Contact />} />
                 
                 {/* Auth pages */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/set-password" element={<SetPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
                 
                 {/* Protected pages */}
                 <Route path="/find-tutor" element={<FindTutor />} />

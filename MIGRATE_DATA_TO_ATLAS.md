@@ -3,6 +3,7 @@
 ## 🔍 **The Problem**
 
 You have data in:
+
 - ✅ **Local MongoDB** (localhost:27017) - Shows data in Compass
 - ❌ **MongoDB Atlas** (cloud) - Empty
 
@@ -18,6 +19,7 @@ These are **two separate databases**. You need to migrate your data from local t
 
 1. **Open MongoDB Compass**
 2. **Connect to Local MongoDB:**
+
    - Connection string: `mongodb://127.0.0.1:27017`
    - Click "Connect"
 
@@ -32,6 +34,7 @@ These are **two separate databases**. You need to migrate your data from local t
 #### **Step 2: Import to MongoDB Atlas**
 
 1. **In MongoDB Compass, connect to Atlas:**
+
    - Click "New Connection"
    - Paste your Atlas connection string:
      ```
@@ -80,6 +83,7 @@ mongorestore --uri="mongodb+srv://dubeyshashank444_db_user:9mKt21cFZLGmuclr@clus
 ### **Option 3: Using MongoDB Atlas Web Interface**
 
 1. **Go to Atlas Dashboard:**
+
    - https://cloud.mongodb.com/
    - Click "Database" → "Browse Collections"
 
@@ -93,6 +97,7 @@ mongorestore --uri="mongodb+srv://dubeyshashank444_db_user:9mKt21cFZLGmuclr@clus
 ## ✅ **After Migration: Verify**
 
 1. **Check Atlas Dashboard:**
+
    - Go to "Browse Collections"
    - You should see your data in `users`, `tutorprofiles`, `tutorrequests`
 
@@ -113,6 +118,7 @@ MONGO_URI=mongodb+srv://dubeyshashank444_db_user:9mKt21cFZLGmuclr@cluster0.qttke
 ```
 
 **NOT:**
+
 ```env
 MONGO_URI=mongodb://127.0.0.1:27017/gv_tutor  ❌ (This is local)
 ```
@@ -142,10 +148,10 @@ MONGO_URI=mongodb://127.0.0.1:27017/gv_tutor  ❌ (This is local)
 ## 🚀 **After Migration**
 
 Once data is in Atlas:
+
 - ✅ Your app will use cloud database
 - ✅ Data accessible from anywhere
 - ✅ Automatic backups
 - ✅ No need for local MongoDB running
 
 You can keep local MongoDB for development, but your production app will use Atlas.
-

@@ -7,6 +7,7 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 1: Create MongoDB Atlas Account**
 
 1. **Go to MongoDB Atlas**
+
    - Visit: https://www.mongodb.com/cloud/atlas/register
    - Click "Try Free" or "Sign Up"
 
@@ -20,11 +21,13 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 2: Create a Free Cluster**
 
 1. **After Login:**
+
    - Click "Build a Database"
    - Choose "M0 FREE" (Free tier - perfect for development)
    - Click "Create"
 
 2. **Choose Cloud Provider & Region:**
+
    - **AWS** (recommended) or Google Cloud or Azure
    - **Region**: Choose closest to you (e.g., `Mumbai (ap-south-1)` for India)
    - Click "Create Cluster"
@@ -38,6 +41,7 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 3: Create Database User**
 
 1. **In the Atlas Dashboard:**
+
    - You'll see a security popup
    - **Username**: Enter `gvtutor-admin` (or any username)
    - **Password**: Click "Autogenerate Secure Password" OR create your own
@@ -55,10 +59,12 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 4: Configure Network Access (Whitelist IP)**
 
 1. **In the Security Section:**
+
    - Click "Network Access" (left sidebar)
    - Click "Add IP Address"
 
 2. **For Development:**
+
    - Click "Allow Access from Anywhere" (0.0.0.0/0)
    - ⚠️ **Note**: This is OK for development, but for production, use specific IPs
    - Click "Confirm"
@@ -72,23 +78,29 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 5: Get Connection String**
 
 1. **In Atlas Dashboard:**
+
    - Click "Database" (left sidebar)
    - Click "Connect" button on your cluster
 
 2. **Choose Connection Method:**
+
    - Select "Drivers" (for Node.js)
 
 3. **Get Connection String:**
+
    - Select "Node.js" and version "5.5 or later"
    - Copy the connection string (looks like this):
+
    ```
    mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
    ```
 
 4. **Replace Placeholders:**
+
    - Replace `<username>` with your database username (e.g., `gvtutor-admin`)
    - Replace `<password>` with your database password
    - Add your database name at the end:
+
    ```
    mongodb+srv://gvtutor-admin:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/gv_tutor?retryWrites=true&w=majority
    ```
@@ -103,11 +115,13 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 6: Update Your Backend .env File**
 
 1. **Open your `.env` file:**
+
    ```
    backend/.env
    ```
 
 2. **Replace the MONGO_URI:**
+
    ```env
    # OLD (Local MongoDB)
    # MONGO_URI=mongodb://127.0.0.1:27017/gv_tutor
@@ -126,6 +140,7 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 ## 📋 **Step 7: Test the Connection**
 
 1. **Start your backend server:**
+
    ```bash
    cd backend
    npm run dev
@@ -145,6 +160,7 @@ Complete guide to migrate from local MongoDB to MongoDB Atlas (cloud database).
 If your password has special characters (`@`, `#`, `%`, etc.), you need to URL-encode them:
 
 **Special Characters → URL Encoded:**
+
 - `@` → `%40`
 - `#` → `%23`
 - `%` → `%25`
@@ -155,6 +171,7 @@ If your password has special characters (`@`, `#`, `%`, etc.), you need to URL-e
 - `?` → `%3F`
 
 **Example:**
+
 ```
 Password: MyP@ss#123
 Encoded:  MyP%40ss%23123
@@ -164,6 +181,7 @@ mongodb+srv://gvtutor-admin:MyP%40ss%23123@cluster0.xxxxx.mongodb.net/gv_tutor?r
 ```
 
 **Or use this online tool:**
+
 - https://www.urlencoder.org/
 - Paste your password → Copy encoded version
 
@@ -172,6 +190,7 @@ mongodb+srv://gvtutor-admin:MyP%40ss%23123@cluster0.xxxxx.mongodb.net/gv_tutor?r
 ## 📋 **Step 9: Verify It's Working**
 
 1. **Check Atlas Dashboard:**
+
    - Go to "Database" → "Browse Collections"
    - You should see your collections (users, tutorProfiles, etc.)
 
@@ -189,12 +208,15 @@ If you have data in your local MongoDB and want to migrate it:
 ### **Option 1: Using MongoDB Compass (GUI Tool)**
 
 1. **Download MongoDB Compass:**
+
    - https://www.mongodb.com/try/download/compass
 
 2. **Connect to Local MongoDB:**
+
    - Connection string: `mongodb://127.0.0.1:27017/gv_tutor`
 
 3. **Export Collections:**
+
    - Right-click each collection → Export Collection → JSON
    - Save files
 
@@ -217,10 +239,12 @@ mongorestore --uri="mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/g
 ## 🔒 **Security Best Practices**
 
 ### **For Development:**
+
 - ✅ Using `0.0.0.0/0` (allow all IPs) is OK
 - ✅ Free tier is perfect for learning
 
 ### **For Production:**
+
 - ❌ **NEVER** use `0.0.0.0/0` (allow all IPs)
 - ✅ Add specific IP addresses only
 - ✅ Use strong database passwords
@@ -233,21 +257,25 @@ mongorestore --uri="mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/g
 ## 🐛 **Troubleshooting**
 
 ### **Error: "Authentication failed"**
+
 - ✅ Check username and password are correct
 - ✅ Make sure password is URL-encoded if it has special characters
 - ✅ Verify database user exists in Atlas
 
 ### **Error: "IP not whitelisted"**
+
 - ✅ Go to Network Access in Atlas
 - ✅ Add your current IP address
 - ✅ Or temporarily allow `0.0.0.0/0` for testing
 
 ### **Error: "Connection timeout"**
+
 - ✅ Check your internet connection
 - ✅ Verify cluster is running (not paused)
 - ✅ Check firewall settings
 
 ### **Error: "Invalid connection string"**
+
 - ✅ Make sure connection string starts with `mongodb+srv://`
 - ✅ Verify no extra spaces in the connection string
 - ✅ Check all placeholders are replaced
@@ -278,11 +306,13 @@ mongorestore --uri="mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/g
 ## 📝 **Quick Reference**
 
 **Your Connection String Template:**
+
 ```
 mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/DATABASE_NAME?retryWrites=true&w=majority
 ```
 
 **Example:**
+
 ```
 mongodb+srv://gvtutor-admin:MySecurePass123@cluster0.abc123.mongodb.net/gv_tutor?retryWrites=true&w=majority
 ```
@@ -300,8 +330,8 @@ mongodb+srv://gvtutor-admin:MySecurePass123@cluster0.abc123.mongodb.net/gv_tutor
 **🎉 Congratulations!** You're now using MongoDB Atlas (cloud database)!
 
 Your database is now:
+
 - ✅ Accessible from anywhere
 - ✅ Automatically backed up
 - ✅ Scalable (can upgrade when needed)
 - ✅ Production-ready
-

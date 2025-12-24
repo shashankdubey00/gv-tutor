@@ -13,6 +13,30 @@ export default function Login() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  // Enhanced email validation
+  const validateEmail = (email) => {
+    if (!email) {
+      setEmailError("");
+      return false;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    
+    if (email.includes('..')) {
+      setEmailError("Email cannot contain consecutive dots");
+      return false;
+    }
+    
+    setEmailError("");
+    return true;
+  };
 
   // Check for OAuth errors in URL
   useEffect(() => {
@@ -34,6 +58,11 @@ export default function Login() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+    
+    // Validate email in real-time
+    if (name === "email") {
+      validateEmail(value);
+    }
   }
 
   function handleGoogleLogin() {
@@ -46,6 +75,13 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setEmailError("");
+
+    // Validate email before submission
+    if (!validateEmail(formData.email)) {
+      setLoading(false);
+      return;
+    }
 
     try {
       console.log("🔐 Attempting login for:", formData.email);
@@ -111,16 +147,23 @@ export default function Login() {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg
-              bg-white/90 text-black
-              focus:outline-none focus:ring-2 focus:ring-green-400"
-          />
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 rounded-lg
+                bg-white/90 text-black
+                focus:outline-none focus:ring-2 ${
+                  emailError ? "focus:ring-red-400 border-2 border-red-400" : "focus:ring-green-400"
+                }`}
+            />
+            {emailError && (
+              <p className="text-xs mt-1 text-red-400">{emailError}</p>
+            )}
+          </div>
 
           <input
             type="password"

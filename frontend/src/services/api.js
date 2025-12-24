@@ -45,7 +45,13 @@ export async function apiRequest(endpoint, options = {}) {
     }
 
     if (!response.ok) {
-      console.error(`❌ API Error: ${endpoint} - ${data?.message || response.statusText}`);
+      // Don't log 401 errors for /auth/verify (expected when not logged in)
+      const isAuthVerify = endpoint.includes('/auth/verify');
+      const isUnauthorized = response.status === 401;
+      
+      if (!(isAuthVerify && isUnauthorized)) {
+        console.error(`❌ API Error: ${endpoint} - ${data?.message || response.statusText}`);
+      }
       throw new Error(data?.message || "Something went wrong");
     }
 
@@ -53,7 +59,14 @@ export async function apiRequest(endpoint, options = {}) {
   } catch (error) {
     clearTimeout(timeoutId);
     const duration = Date.now() - startTime;
-    console.error(`❌ API Request Failed: ${endpoint} (${duration}ms)`, error);
+    
+    // Don't log expected 401 errors for auth verification
+    const isAuthVerify = endpoint.includes('/auth/verify');
+    const isUnauthorized = error.message && error.message.includes('Not authenticated');
+    
+    if (!(isAuthVerify && isUnauthorized)) {
+      console.error(`❌ API Request Failed: ${endpoint} (${duration}ms)`, error);
+    }
     
     if (error.name === 'AbortError') {
       throw new Error("Request timed out. Please check your connection and try again.");

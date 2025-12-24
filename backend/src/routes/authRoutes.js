@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import { signup, login } from "../controllers/authController.js";
+import { signup, login, forgotPassword, verifyOTP, resetPassword, setPassword, changePassword } from "../controllers/authController.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
 import { protect } from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
@@ -14,17 +14,27 @@ const authRateLimit = rateLimiter(30, 15 * 60 * 1000);
 
 router.post("/signup", authRateLimit, signup);
 router.post("/login", authRateLimit, login);
+router.post("/forgot-password", authRateLimit, forgotPassword);
+router.post("/verify-otp", authRateLimit, verifyOTP); // Verify OTP
+router.post("/reset-password", authRateLimit, resetPassword); // Reset password with OTP
+router.post("/set-password", authRateLimit, protect, setPassword); // Protected - user must be logged in
+router.post("/change-password", authRateLimit, protect, changePassword); // Protected - change password (requires current password)
 
 // Verify authentication endpoint
 router.get("/verify", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-passwordHash");
-    if (!user) {
+    // First get user with passwordHash to check if password exists
+    const userWithPassword = await User.findById(req.user.userId).select("passwordHash");
+    if (!userWithPassword) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
+    
+    // Then get user without passwordHash for response
+    const user = await User.findById(req.user.userId).select("-passwordHash");
+    
     return res.status(200).json({
       success: true,
       user: {
@@ -33,6 +43,7 @@ router.get("/verify", protect, async (req, res) => {
         role: user.role,
         isTutorProfileComplete: user.isTutorProfileComplete,
         authProviders: user.authProviders,
+        hasPassword: !!userWithPassword.passwordHash, // Check from userWithPassword
       },
     });
   } catch (error) {
@@ -52,8 +63,8 @@ router.get(
     const role = req.query.role || "user";
     const state = Buffer.from(JSON.stringify({ role })).toString("base64");
     
-    passport.authenticate("google", {
-      scope: ["profile", "email"],
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
       state: state, // Pass role via state parameter
     })(req, res, next);
   }
@@ -129,20 +140,20 @@ router.get(
       console.log("Google OAuth: Successfully authenticated user:", user.email, "Role:", user.role);
 
       // Create JWT token
-      const token = jwt.sign(
+    const token = jwt.sign(
         { userId: user._id.toString(), role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
       // Set cookie with proper domain
-      res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "lax",
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
         secure: process.env.NODE_ENV === "production", // true in production with HTTPS
-        maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
         path: "/",
-      });
+    });
 
       // Redirect based on role and profile completion
       if (user.role === "tutor" && !user.isTutorProfileComplete) {

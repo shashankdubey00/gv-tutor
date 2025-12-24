@@ -38,6 +38,15 @@ export function getTutorProfile() {
   });
 }
 
+/**
+ * APPLY TO TUTOR REQUEST (Tutor applies to a posted request)
+ */
+export function applyToTutorRequest(requestId) {
+  return apiRequest(`/api/tutor-requests/${requestId}/apply`, {
+    method: "POST",
+  });
+}
+
 
 
 
