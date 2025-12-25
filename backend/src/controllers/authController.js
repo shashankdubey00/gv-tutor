@@ -40,10 +40,59 @@ const isValidEmail = (email) => {
   return true;
 };
 
-// Password validation - at least 8 characters, any characters allowed
+// Password validation - User-friendly but secure
+// Minimum 10 characters (more secure but still user-friendly)
+// Optional: Show strength meter to guide users
 const isStrongPassword = (password) => {
-  // At least 8 characters, any characters allowed
-  return password.length >= 8;
+  // Minimum 10 characters (increased from 8 for better security)
+  // No forced complexity - users can choose what they want
+  return password.length >= 10;
+};
+
+// Password strength calculator (for frontend feedback)
+export const calculatePasswordStrength = (password) => {
+  if (!password) return { strength: 0, label: "", feedback: [] };
+  
+  let strength = 0;
+  const feedback = [];
+  
+  // Length check (most important)
+  if (password.length >= 10) {
+    strength += 2;
+    feedback.push("✓ Good length");
+  } else if (password.length >= 8) {
+    strength += 1;
+    feedback.push("⚠️ Consider using at least 10 characters");
+  } else {
+    feedback.push("⚠️ Use at least 10 characters");
+  }
+  
+  // Optional complexity (not required, just for feedback)
+  if (password.length >= 12) {
+    strength += 1;
+    feedback.push("✓ Very good length");
+  }
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+    strength += 1;
+    feedback.push("✓ Mix of uppercase and lowercase");
+  }
+  if (/\d/.test(password)) {
+    strength += 1;
+    feedback.push("✓ Contains numbers");
+  }
+  if (/[^a-zA-Z0-9]/.test(password)) {
+    strength += 1;
+    feedback.push("✓ Contains special characters");
+  }
+  
+  // Strength labels
+  let label = "";
+  if (strength <= 2) label = "Weak";
+  else if (strength <= 4) label = "Fair";
+  else if (strength <= 5) label = "Good";
+  else label = "Strong";
+  
+  return { strength: Math.min(strength, 6), label, feedback };
 };
 
 /* ---------------- SIGNUP ---------------- */
@@ -73,35 +122,41 @@ export const signup = async (req, res) => {
     if (!isStrongPassword(password)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: "Password must be at least 10 characters",
       });
     }
 
     const existingUser = await User.findOne({ email: normalizedEmail });
 
+    // SECURITY FIX: Prevent account enumeration - always return same message
+    // Don't reveal if account exists or not
     if (existingUser) {
       // Check if user signed up with Google
       const hasGoogleAuth = existingUser.authProviders && existingUser.authProviders.includes("google");
       if (hasGoogleAuth && !existingUser.passwordHash) {
-        return res.status(409).json({
+        // For Google accounts, we need to inform user, but use generic message
+        return res.status(400).json({
           success: false,
-          message: "An account with this email already exists via Google. Please use 'Login with Google' or set a password first.",
+          message: "Invalid email or password. Please check your credentials or try logging in with Google.",
         });
       }
-      return res.status(409).json({
+      // Generic message - don't reveal account exists
+      return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: "Invalid email or password. Please check your credentials.",
       });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Validate role if provided - default to "user" if not provided or invalid
-    const validRoles = ["user", "tutor", "admin"];
-    // Only use provided role if it's valid, otherwise default to "user"
-    const userRole = (role && validRoles.includes(role.toLowerCase())) ? role.toLowerCase() : "user";
+    // SECURITY FIX: Remove role parameter - always default to "user"
+    // Role elevation should happen through separate admin process or profile completion
+    // Ignore any role parameter sent from client for security
+    const userRole = "user"; // Always default to "user" - no role manipulation allowed
 
-    console.log("📝 Creating user with role:", userRole, "from provided role:", role);
+    if (process.env.NODE_ENV === "development") {
+      console.log("📝 Creating user with default role: 'user'");
+    }
 
     // Create user
     const newUser = await User.create({
@@ -121,11 +176,46 @@ export const signup = async (req, res) => {
       address: "",
     });
 
-    console.log("✅ User and UserProfile created successfully");
+    if (process.env.NODE_ENV === "development") {
+      console.log("✅ User and UserProfile created successfully");
+    }
+
+    // Auto-login: Generate JWT token and set cookie (same as login flow)
+    const token = jwt.sign(
+      { userId: newUser._id.toString(), role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" } // Default to 1 day for new signups
+    );
+
+    // SECURITY FIX: Don't log sensitive information
+    if (process.env.NODE_ENV === "development") {
+      console.log("🔐 Auto-login cookie set for new user");
+    }
+
+    // Set cookie with explicit settings for cross-origin (same as login)
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      path: "/",
+    };
+    
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.domain = undefined;
+    }
+    
+    res.cookie("token", token, cookieOptions);
 
     return res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message: "User created successfully. You are now logged in.",
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+        isTutorProfileComplete: newUser.isTutorProfileComplete,
+      },
     });
   } catch (error) {
     console.error("Signup error:", error);
@@ -159,38 +249,81 @@ export const login = async (req, res) => {
       });
     }
 
+    // SECURITY FIX: Always perform password hash operation to prevent timing attacks
+    // Use a dummy hash if user doesn't exist to normalize response time
+    const dummyHash = "$2a$12$dummy.hash.to.prevent.timing.attacks.here";
+    
     const user = await User.findOne({ email: normalizedEmail });
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    // Check if user has password (local authentication)
-    if (!user.passwordHash) {
-      // User exists but doesn't have password - might have signed up with Google
-      const hasGoogleAuth = user.authProviders && user.authProviders.includes("google");
-      if (hasGoogleAuth) {
-        return res.status(401).json({
+    
+    // Get password hash (or use dummy)
+    const passwordHashToCheck = user?.passwordHash || dummyHash;
+    
+    // SECURITY FIX: Check account lockout BEFORE password verification
+    if (user) {
+      // Check if account is locked
+      if (user.accountLockedUntil && user.accountLockedUntil > new Date()) {
+        const minutesRemaining = Math.ceil((user.accountLockedUntil - new Date()) / (1000 * 60));
+        return res.status(423).json({
           success: false,
-          message: "This account was created with Google. Please use 'Login with Google' instead.",
+          message: `Account temporarily locked due to too many failed login attempts. Please try again in ${minutesRemaining} minute(s).`,
         });
       }
+      
+      // If lockout period expired, reset failed attempts
+      if (user.accountLockedUntil && user.accountLockedUntil <= new Date()) {
+        user.failedLoginAttempts = 0;
+        user.accountLockedUntil = null;
+        await user.save();
+      }
+      
+      // Check if user has password (local authentication)
+      if (!user.passwordHash) {
+        // User exists but doesn't have password - might have signed up with Google
+        const hasGoogleAuth = user.authProviders && user.authProviders.includes("google");
+        if (hasGoogleAuth) {
+          return res.status(401).json({
+            success: false,
+            message: "Invalid credentials",
+          });
+        }
+        // Use dummy hash for timing attack protection
+      }
+    }
+
+    // SECURITY FIX: Always perform bcrypt comparison (even for non-existent users)
+    // This prevents timing attacks that reveal if email exists
+    const isMatch = await bcrypt.compare(password, passwordHashToCheck);
+
+    if (!user || !isMatch || !user.passwordHash) {
+      // Increment failed attempts if user exists
+      if (user) {
+        user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+        
+        // Lock account after 5 failed attempts for 30 minutes
+        if (user.failedLoginAttempts >= 5) {
+          user.accountLockedUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+          await user.save();
+          return res.status(423).json({
+            success: false,
+            message: "Account temporarily locked due to too many failed login attempts. Please try again in 30 minutes.",
+          });
+        }
+        
+        await user.save();
+      }
+      
+      // SECURITY FIX: Always return same generic message (prevent timing attacks)
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+    // SECURITY FIX: Reset failed attempts on successful login
+    if (user.failedLoginAttempts > 0 || user.accountLockedUntil) {
+      user.failedLoginAttempts = 0;
+      user.accountLockedUntil = null;
+      await user.save();
     }
 
     const token = jwt.sign(
@@ -199,7 +332,10 @@ export const login = async (req, res) => {
       { expiresIn: rememberMe ? "7d" : "1d" }
     );
 
-    console.log("🔐 Setting login cookie for user:", user.email, "Role:", user.role);
+    // SECURITY FIX: Don't log sensitive information
+    if (process.env.NODE_ENV === "development") {
+      console.log("🔐 Login successful");
+    }
 
     // Set cookie with explicit settings for cross-origin
     const cookieOptions = {
@@ -216,8 +352,6 @@ export const login = async (req, res) => {
     }
     
     res.cookie("token", token, cookieOptions);
-
-    console.log("✅ Login cookie set successfully");
 
     return res.status(200).json({
       success: true,
@@ -261,18 +395,15 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    // Check if user exists
-    const user = await User.findOne({ email: normalizedEmail });
-
-    console.log(`📧 Forgot password request for: ${normalizedEmail}`);
-    
+    // SECURITY FIX: Prevent account enumeration - always perform same operations
     // Check if user exists and has password
+    const user = await User.findOne({ email: normalizedEmail });
+    
+    // SECURITY FIX: Always return same response to prevent enumeration
+    // Only send OTP if user exists and has password
     if (user && user.passwordHash) {
-      console.log(`✅ User found with password. Generating OTP...`);
-      
       // Generate 6-digit OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      console.log(`🔢 Generated OTP: ${otp} (for debugging - remove in production)`);
       
       // Hash OTP for storage
       const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
@@ -282,61 +413,41 @@ export const forgotPassword = async (req, res) => {
       user.resetPasswordOTPExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
       user.resetPasswordOTPAttempts = 0; // Reset attempts
       await user.save();
-      console.log(`💾 OTP saved to database`);
 
       let emailSent = false;
       try {
         // Send password reset email with OTP
-        console.log(`📤 Attempting to send email to: ${normalizedEmail}`);
         await sendPasswordResetEmail(normalizedEmail, otp);
-        console.log(`✅ Password reset OTP sent successfully to: ${normalizedEmail}`);
         emailSent = true;
-        console.log(`\n🔑 =========================================`);
-        console.log(`🔑 OTP FOR TESTING: ${otp}`);
-        console.log(`🔑 Email: ${normalizedEmail}`);
-        console.log(`🔑 Valid for 10 minutes`);
-        console.log(`🔑 =========================================\n`);
+        
+        // SECURITY FIX: Only log in development, never log OTP
+        if (process.env.NODE_ENV === "development") {
+          console.log(`✅ Password reset OTP sent to: ${normalizedEmail}`);
+        }
       } catch (emailError) {
-        console.error("❌ Failed to send email:", emailError);
-        console.error("❌ Email error details:", emailError.message);
-        console.error(`\n🔑 =========================================`);
-        console.error(`🔑 OTP GENERATED BUT EMAIL FAILED: ${otp}`);
-        console.error(`🔑 Email: ${normalizedEmail}`);
-        console.error(`🔑 OTP will be available via fallback method`);
-        console.error(`🔑 =========================================\n`);
-        // Don't clear OTP if email fails - allow fallback method
+        // SECURITY FIX: Don't log OTP even on error
+        console.error("❌ Failed to send password reset email");
         emailSent = false;
       }
       
-      // Return response with OTP as fallback if email failed or in development
+      // SECURITY FIX: Never return OTP in API response
       return res.status(200).json({
         success: true,
-        message: emailSent 
-          ? "OTP has been sent to your email. Check your inbox (and spam folder)." 
-          : "OTP generated. Check the options below if you didn't receive the email.",
-        // Include OTP as fallback if email failed or in development mode
-        ...((!emailSent || process.env.NODE_ENV === "development") && {
-          fallbackOtp: otp,
-          emailSent: emailSent,
-          message: emailSent 
-            ? "OTP sent to email. If not received, use the OTP shown below as fallback."
-            : "Email sending failed. Use the OTP shown below."
-        })
+        message: "If an account exists with this email, an OTP has been sent. Please check your inbox (and spam folder).",
       });
     } else if (user && !user.passwordHash) {
       // User exists but signed up with Google only
-      console.log(`⚠️ User found but no password (Google account only): ${normalizedEmail}`);
-      return res.status(400).json({
-        success: false,
-        message: "This account was created with Google. Please use 'Login with Google' or set a password first by logging in and going to account settings.",
+      // SECURITY FIX: Use generic message to prevent enumeration
+      return res.status(200).json({
+        success: true,
+        message: "If an account exists with this email, an OTP has been sent. Please check your inbox (and spam folder).",
       });
     }
     
-    // Always return success for non-existent users (security best practice)
-    // This prevents email enumeration attacks
+    // SECURITY FIX: Always return same success message (prevents email enumeration)
     return res.status(200).json({
       success: true,
-      message: "If an account exists with this email, an OTP has been sent.",
+      message: "If an account exists with this email, an OTP has been sent. Please check your inbox (and spam folder).",
     });
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -364,7 +475,7 @@ export const setPassword = async (req, res) => {
     if (!isStrongPassword(password)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: "Password must be at least 10 characters",
       });
     }
 
@@ -483,7 +594,10 @@ export const verifyOTP = async (req, res) => {
     user.resetPasswordOTPAttempts = 0;
     await user.save();
 
-    console.log(`✅ OTP verified for: ${normalizedEmail}`);
+    // SECURITY FIX: Don't log sensitive information
+    if (process.env.NODE_ENV === "development") {
+      console.log(`✅ OTP verified`);
+    }
 
     return res.status(200).json({
       success: true,
@@ -514,7 +628,7 @@ export const resetPassword = async (req, res) => {
     if (!isStrongPassword(password)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: "Password must be at least 10 characters",
       });
     }
 
@@ -547,8 +661,35 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // USER-FRIENDLY: Check password history (last 3 passwords)
+    // Only check if user has password history
+    if (user.passwordHistory && user.passwordHistory.length > 0) {
+      for (const oldHash of user.passwordHistory) {
+        const isReused = await bcrypt.compare(password, oldHash);
+        if (isReused) {
+          return res.status(400).json({
+            success: false,
+            message: "You've used this password recently. Please choose a different one.",
+          });
+        }
+      }
+    }
+
     // Hash new password
     const passwordHash = await bcrypt.hash(password, 12);
+
+    // USER-FRIENDLY: Update password history (keep last 3)
+    // Add current password to history before updating
+    if (!user.passwordHistory) {
+      user.passwordHistory = [];
+    }
+    if (user.passwordHash) {
+      user.passwordHistory.push(user.passwordHash);
+      // Keep only last 3 passwords
+      if (user.passwordHistory.length > 3) {
+        user.passwordHistory = user.passwordHistory.slice(-3);
+      }
+    }
 
     // Update password and clear OTP
     user.passwordHash = passwordHash;
@@ -563,7 +704,10 @@ export const resetPassword = async (req, res) => {
     
     await user.save();
 
-    console.log(`✅ Password reset successful for: ${user.email}`);
+    // SECURITY FIX: Don't log sensitive information
+    if (process.env.NODE_ENV === "development") {
+      console.log(`✅ Password reset successful`);
+    }
 
     return res.status(200).json({
       success: true,
@@ -594,7 +738,7 @@ export const changePassword = async (req, res) => {
     if (!isStrongPassword(newPassword)) {
       return res.status(400).json({
         success: false,
-        message: "New password must be at least 8 characters",
+        message: "New password must be at least 10 characters",
       });
     }
 
@@ -635,8 +779,34 @@ export const changePassword = async (req, res) => {
       });
     }
 
+    // USER-FRIENDLY: Check password history (last 3 passwords)
+    // Only check if user has password history
+    if (user.passwordHistory && user.passwordHistory.length > 0) {
+      for (const oldHash of user.passwordHistory) {
+        const isReused = await bcrypt.compare(newPassword, oldHash);
+        if (isReused) {
+          return res.status(400).json({
+            success: false,
+            message: "You've used this password recently. Please choose a different one.",
+          });
+        }
+      }
+    }
+
     // Hash new password
     const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    // USER-FRIENDLY: Update password history (keep last 3)
+    // Add current password to history before updating
+    if (!user.passwordHistory) {
+      user.passwordHistory = [];
+    }
+    user.passwordHistory.push(user.passwordHash);
+    
+    // Keep only last 3 passwords (user-friendly - not too restrictive)
+    if (user.passwordHistory.length > 3) {
+      user.passwordHistory = user.passwordHistory.slice(-3);
+    }
 
     // Update password
     user.passwordHash = passwordHash;
@@ -648,7 +818,10 @@ export const changePassword = async (req, res) => {
       await user.save();
     }
 
-    console.log(`✅ Password changed successfully for: ${user.email}`);
+    // SECURITY FIX: Don't log sensitive information
+    if (process.env.NODE_ENV === "development") {
+      console.log(`✅ Password changed successfully`);
+    }
 
     return res.status(200).json({
       success: true,

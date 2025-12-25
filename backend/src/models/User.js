@@ -55,6 +55,23 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    
+    // Account Lockout Protection
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    accountLockedUntil: {
+      type: Date,
+      default: null,
+    },
+    
+    // Password History (store last 3 password hashes)
+    passwordHistory: {
+      type: [String],
+      default: [],
+      maxlength: 3, // Only keep last 3 passwords
+    },
   },
   {
     timestamps: true,

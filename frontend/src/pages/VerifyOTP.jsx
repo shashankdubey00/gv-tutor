@@ -1,6 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { verifyOTP, resetPassword } from "../services/authService";
+import PasswordStrength from "../components/PasswordStrength";
 
 export default function VerifyOTP() {
   const navigate = useNavigate();
@@ -97,8 +98,8 @@ export default function VerifyOTP() {
     setLoading(true);
     setError("");
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+    if (password.length < 10) {
+      setError("Password must be at least 10 characters");
       setLoading(false);
       return;
     }
@@ -224,7 +225,7 @@ export default function VerifyOTP() {
               <input
                 type="password"
                 name="password"
-                placeholder="New Password (minimum 8 characters)"
+                placeholder="New Password (minimum 10 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -232,11 +233,13 @@ export default function VerifyOTP() {
                   bg-white/90 text-black
                   focus:outline-none focus:ring-2 focus:ring-green-400"
               />
-              {password && password.length < 8 && (
+              {password && password.length < 10 && (
                 <p className="text-xs mt-1 text-white/70">
-                  Password must be at least 8 characters
+                  Password must be at least 10 characters
                 </p>
               )}
+              {/* USER-FRIENDLY: Password strength meter */}
+              <PasswordStrength password={password} />
             </div>
 
             <div>

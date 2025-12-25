@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { verifyAuth } from "../services/authService";
 import { setPassword as setPasswordAPI } from "../services/authService";
+import PasswordStrength from "../components/PasswordStrength";
 
 export default function SetPassword() {
   const navigate = useNavigate();
@@ -48,8 +49,8 @@ export default function SetPassword() {
     setSubmitting(true);
     setError("");
 
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
+    if (formData.password.length < 10) {
+      setError("Password must be at least 10 characters");
       setSubmitting(false);
       return;
     }
@@ -109,7 +110,7 @@ export default function SetPassword() {
               <input
                 type="password"
                 name="password"
-                placeholder="New Password (minimum 8 characters)"
+                placeholder="New Password (minimum 10 characters)"
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -117,11 +118,13 @@ export default function SetPassword() {
                   bg-white/90 text-black
                   focus:outline-none focus:ring-2 focus:ring-green-400"
               />
-              {formData.password && formData.password.length < 8 && (
+              {formData.password && formData.password.length < 10 && (
                 <p className="text-xs mt-1 text-white/70">
-                  Password must be at least 8 characters
+                  Password must be at least 10 characters
                 </p>
               )}
+              {/* USER-FRIENDLY: Password strength meter */}
+              <PasswordStrength password={formData.password} />
             </div>
 
             <div>

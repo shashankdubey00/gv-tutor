@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import { signup, login, forgotPassword, verifyOTP, resetPassword, setPassword, changePassword } from "../controllers/authController.js";
+import { signup, login, forgotPassword, verifyOTP, resetPassword, setPassword, changePassword, calculatePasswordStrength } from "../controllers/authController.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
 import { protect } from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
@@ -12,6 +12,24 @@ const router = express.Router();
 // Rate limiting for auth routes (30 requests per 15 minutes per IP - more lenient for normal usage)
 const authRateLimit = rateLimiter(30, 15 * 60 * 1000);
 
+// Password strength checker (user-friendly feedback)
+router.post("/check-password-strength", (req, res) => {
+  try {
+    const { password } = req.body;
+    const strength = calculatePasswordStrength(password);
+    res.json({
+      success: true,
+      ...strength,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error checking password strength",
+    });
+  }
+});
+
+// Auth routes (CSRF removed for better user experience)
 router.post("/signup", authRateLimit, signup);
 router.post("/login", authRateLimit, login);
 router.post("/forgot-password", authRateLimit, forgotPassword);

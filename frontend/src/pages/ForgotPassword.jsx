@@ -8,8 +8,6 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [fallbackOtp, setFallbackOtp] = useState("");
-  const [showOtp, setShowOtp] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,21 +19,13 @@ export default function ForgotPassword() {
 
     try {
       const result = await forgotPassword(email);
-      console.log("✅ Forgot password response:", result);
       if (result.success) {
         setSuccess(true);
-        // Check if fallback OTP is provided (email failed or dev mode)
-        if (result.fallbackOtp) {
-          setFallbackOtp(result.fallbackOtp);
-          setShowOtp(true);
-          console.log("📧 Email may not have been sent. Fallback OTP available.");
-        } else {
-          console.log("✅ OTP sent successfully, redirecting to verification page...");
-        }
-        // Redirect to OTP verification page after 3 seconds (give time to see OTP if shown)
+        // SECURITY FIX: OTP is never returned from backend
+        // Redirect to OTP verification page after 2 seconds
         setTimeout(() => {
           navigate(`/verify-otp?email=${encodeURIComponent(email)}`);
-        }, showOtp ? 5000 : 2000);
+        }, 2000);
       }
     } catch (err) {
       console.error("❌ Forgot password error:", err);
@@ -64,22 +54,9 @@ export default function ForgotPassword() {
           <div className="mt-3 space-y-3">
             <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg">
               <p className="text-green-300 text-sm">
-                {showOtp 
-                  ? "OTP generated! Use the OTP below if you didn't receive the email."
-                  : "OTP sent successfully! Check your email (and spam folder)."
-                }
+                If an account exists with this email, an OTP has been sent. Please check your inbox (and spam folder).
               </p>
             </div>
-            
-            {showOtp && fallbackOtp && (
-              <div className="p-4 bg-yellow-500/20 border border-yellow-500/50 rounded-lg">
-                <p className="text-yellow-300 text-xs mb-2">Fallback OTP (Email may not have been sent):</p>
-                <div className="bg-black/30 p-3 rounded-lg text-center">
-                  <p className="text-3xl font-bold text-white tracking-widest">{fallbackOtp}</p>
-                </div>
-                <p className="text-yellow-300 text-xs mt-2">Copy this OTP and use it on the verification page</p>
-              </div>
-            )}
             
             <div className="p-2 bg-blue-500/20 border border-blue-500/50 rounded-lg">
               <p className="text-blue-300 text-xs">

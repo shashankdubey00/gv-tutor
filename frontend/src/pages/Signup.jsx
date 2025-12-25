@@ -1,6 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import { signupUser } from "../services/authService";
+import { signupUser, verifyAuth } from "../services/authService";
+import PasswordStrength from "../components/PasswordStrength";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   // Enhanced email validation
   const validateEmail = (email) => {
@@ -78,19 +80,57 @@ export default function Signup() {
       return;
     }
 
-    // Validate password
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
+    // Validate password (user-friendly: 10 characters minimum)
+    if (formData.password.length < 10) {
+      setError("Password must be at least 10 characters");
       setLoading(false);
       return;
     }
 
     try {
-      await signupUser(formData);
-      // After signup, redirect to login (user needs to log in first)
-      // Login page will then redirect to complete-profile if tutor
-      navigate("/login");
+      console.log("📝 Attempting signup for:", formData.email);
+      const signupResponse = await signupUser(formData);
+      console.log("✅ Signup API response:", signupResponse);
+      
+      // Wait a bit to ensure cookie is set and browser processes it
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Verify auth to get user role and redirect accordingly (auto-login)
+      console.log("🔍 Verifying authentication after signup...");
+      const authData = await verifyAuth();
+      console.log("✅ Auth verification result:", authData);
+      
+      if (authData.success) {
+        const user = authData.user;
+        console.log("✅ Signup successful, user role:", user.role, "Email:", user.email);
+        
+        // Auto-login: Redirect based on role (same logic as login)
+        if (user.role === "admin") {
+          console.log("➡️ Redirecting admin to dashboard");
+          window.location.href = "/admin/dashboard";
+          return;
+        } else if (user.role === "tutor") {
+          // User is a tutor
+          if (!user.isTutorProfileComplete) {
+            console.log("➡️ Redirecting tutor to complete-profile");
+            window.location.href = "/complete-profile";
+          } else {
+            console.log("➡️ Redirecting tutor to apply-tutor");
+            window.location.href = "/apply-tutor";
+          }
+          return;
+        } else {
+          // Regular user - go to home
+          console.log("➡️ Redirecting user to home");
+          window.location.href = "/";
+          return;
+        }
+      } else {
+        console.error("❌ Auth verification failed after signup:", authData);
+        setError("Signup successful but session verification failed. Please try logging in.");
+      }
     } catch (err) {
+      console.error("❌ Signup error:", err);
       // Check if error is about existing user
       if (err.message.includes("already exists") || err.message.includes("User already exists")) {
         setError("An account with this email already exists. Please login or use 'Login with Google' if you signed up with Google.");
@@ -137,18 +177,23 @@ export default function Signup() {
           <input
             type="password"
             name="password"
-              placeholder="Password (minimum 8 characters)"
+              placeholder="Password (minimum 10 characters)"
             value={formData.password}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg
               bg-white/90 text-black
               focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-            {formData.password && formData.password.length < 8 && (
+            {formData.password && formData.password.length < 10 && (
               <p className="text-xs mt-1 text-white/70">
-                Password must be at least 8 characters
+                Password must be at least 10 characters
               </p>
             )}
+            {/* USER-FRIENDLY: Password strength meter */}
+            <PasswordStrength 
+              password={formData.password} 
+              onStrengthChange={setPasswordStrength}
+            />
           </div>
 
           <button

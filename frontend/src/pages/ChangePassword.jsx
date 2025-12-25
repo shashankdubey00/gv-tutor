@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { changePassword, verifyAuth } from "../services/authService";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PasswordStrength from "../components/PasswordStrength";
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -45,9 +46,9 @@ export default function ChangePassword() {
     setError("");
     setSuccess(false);
 
-    // Validation
-    if (newPassword.length < 8) {
-      setError("New password must be at least 8 characters");
+    // Validation (user-friendly: 10 characters minimum)
+    if (newPassword.length < 10) {
+      setError("New password must be at least 10 characters");
       setSubmitting(false);
       return;
     }
@@ -124,7 +125,7 @@ export default function ChangePassword() {
               <input
                 type="password"
                 name="newPassword"
-                placeholder="New Password (minimum 8 characters)"
+                placeholder="New Password (minimum 10 characters)"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
@@ -132,11 +133,13 @@ export default function ChangePassword() {
                   bg-white/90 text-black
                   focus:outline-none focus:ring-2 focus:ring-green-400"
               />
-              {newPassword && newPassword.length < 8 && (
+              {newPassword && newPassword.length < 10 && (
                 <p className="text-xs mt-1 text-white/70">
-                  Password must be at least 8 characters
+                  Password must be at least 10 characters
                 </p>
               )}
+              {/* USER-FRIENDLY: Password strength meter */}
+              <PasswordStrength password={newPassword} />
             </div>
 
             <div>
@@ -184,4 +187,6 @@ export default function ChangePassword() {
     </div>
   );
 }
+
+
 
