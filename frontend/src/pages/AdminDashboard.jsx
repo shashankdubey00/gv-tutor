@@ -202,18 +202,18 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-cyan-500/30 px-6 py-4">
+      <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="text-white text-2xl font-semibold hover:text-cyan-400 transition cursor-pointer">
+          <Link to="/" className="text-white text-xl sm:text-2xl font-semibold hover:text-cyan-400 transition cursor-pointer">
             GV Tutor
           </Link>
 
-          {/* Center Navigation */}
-          <div className="flex gap-4 items-center">
+          {/* Center Navigation - Desktop */}
+          <div className="hidden md:flex gap-2 lg:gap-4 items-center">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
                 activeTab === "dashboard"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
@@ -223,7 +223,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("parent")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
                 activeTab === "parent"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
@@ -233,7 +233,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("tutor")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
                 activeTab === "tutor"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
@@ -244,51 +244,162 @@ export default function AdminDashboard() {
             <button
               onClick={loadData}
               disabled={loading}
-              className="px-4 py-2 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-3 lg:px-4 py-2 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm lg:text-base"
               title="Refresh data"
             >
               <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              Refresh
+              <span className="hidden lg:inline">Refresh</span>
             </button>
           </div>
 
-          {/* Profile Icon with Dropdown */}
-          <div className="relative group">
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+              title="Refresh"
+            >
+              <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: !prev.mobileMenu }))}
+              className="text-white text-2xl"
+            >
+              {expandedItems.mobileMenu ? "✕" : "☰"}
+            </button>
+          </div>
+
+          {/* Profile Icon with Dropdown - Desktop */}
+          <div className="hidden md:block relative group">
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer">
               {adminUser?.email?.[0]?.toUpperCase() || "A"}
             </div>
-            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-cyan-500/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-cyan-500/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
               <div className="px-4 py-2 text-sm text-white/70 border-b border-cyan-500/30">
                 {adminUser?.email || "Admin"}
               </div>
               <button
+                type="button"
                 onClick={async () => {
                   try {
                     const { logoutUser } = await import("../services/authService");
                     await logoutUser();
-                    window.location.href = "/";
+                    // Small delay to ensure cookie is cleared
+                    await new Promise(resolve => setTimeout(resolve, 100));
                   } catch (err) {
                     console.error("Logout error:", err);
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                    window.location.href = "/";
+                  } finally {
+                    // Clear all possible cookie variations
+                    const domain = window.location.hostname;
+                    const cookies = [
+                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                      `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+                    ];
+                    cookies.forEach(cookie => {
+                      document.cookie = cookie;
+                    });
+                    // Force full page reload with cache bypass
+                    window.location.replace("/?logout=true");
                   }
                 }}
-                className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded-lg"
+                className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded-lg cursor-pointer"
               >
                 Logout
               </button>
             </div>
           </div>
+
+          {/* Profile Icon with Dropdown - Mobile */}
+          <div className="md:hidden relative">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer">
+              {adminUser?.email?.[0]?.toUpperCase() || "A"}
+            </div>
+          </div>
         </div>
+
+        {/* Mobile Menu */}
+        {expandedItems.mobileMenu && (
+          <div className="md:hidden bg-gray-800 border-t border-cyan-500/30 px-4 py-4 space-y-2">
+            <button
+              onClick={() => {
+                setActiveTab("dashboard");
+                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+              }}
+              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
+                activeTab === "dashboard"
+                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                  : "bg-gray-700 text-white/70 hover:text-white"
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("parent");
+                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+              }}
+              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
+                activeTab === "parent"
+                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                  : "bg-gray-700 text-white/70 hover:text-white"
+              }`}
+            >
+              Parent
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("tutor");
+                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+              }}
+              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
+                activeTab === "tutor"
+                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                  : "bg-gray-700 text-white/70 hover:text-white"
+              }`}
+            >
+              Tutor
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const { logoutUser } = await import("../services/authService");
+                  await logoutUser();
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                } catch (err) {
+                  console.error("Logout error:", err);
+                } finally {
+                  const cookies = [
+                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                  ];
+                  cookies.forEach(cookie => {
+                    document.cookie = cookie;
+                  });
+                  window.location.replace("/?logout=true");
+                }
+              }}
+              className="w-full px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white text-left"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
             {activeTab === "dashboard" && (
-          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-8">
-            <h2 className="text-3xl font-bold mb-8">Dashboard</h2>
+          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Dashboard</h2>
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
@@ -302,7 +413,7 @@ export default function AdminDashboard() {
                     onClick={() => toggleExpand("parent", "recent")}
                     className="w-full flex items-center justify-between text-left p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                   >
-                    <span className="text-xl font-semibold text-gray-900">
+                    <span className="text-lg sm:text-xl font-semibold text-gray-900">
                       Recent Parent Applications
                     </span>
                     <span className="text-cyan-600">
@@ -310,7 +421,7 @@ export default function AdminDashboard() {
                     </span>
                   </button>
                   {expandedItems["parent-recent"] && (
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                       {recentParentApps.length > 0 ? (
                         recentParentApps.map((request) => (
                           <div
@@ -411,7 +522,7 @@ export default function AdminDashboard() {
                     </span>
                   </button>
                   {expandedItems["tutor-app-recent"] && (
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                       {recentTutorApps.length > 0 ? (
                         recentTutorApps.map((profile) => {
                           const getInitials = (name) => {
@@ -505,13 +616,13 @@ export default function AdminDashboard() {
                     onClick={() => toggleExpand("members", "recent")}
                     className="w-full flex items-center justify-between text-left p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                   >
-                    <span className="text-xl font-semibold text-gray-900">Tutor Members</span>
+                    <span className="text-lg sm:text-xl font-semibold text-gray-900">Tutor Members</span>
                     <span className="text-cyan-600">
                       {expandedItems["members-recent"] ? "▼" : "▶"}
                     </span>
                   </button>
                   {expandedItems["members-recent"] && (
-                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
                       {recentTutorMembers.length > 0 ? (
                         recentTutorMembers.map((tutor) => {
                           const getInitials = (name) => {
@@ -553,21 +664,21 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "parent" && (
-          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-8">
-            <h2 className="text-3xl font-bold mb-8">All Parent Applications</h2>
+          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">All Parent Applications</h2>
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <LoadingSpinner />
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {pendingParentApps.slice(0, displayedParentApps).map((request) => {
                   return (
                     <div
                       key={request._id}
                       onClick={() => handleCardClick(request)}
-                      className="bg-white text-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                      className="bg-white text-gray-900 p-4 sm:p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
                     >
                       <div className="space-y-3">
                         {/* Request Header */}
@@ -663,9 +774,9 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "tutor" && (
-          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold">Tutor Applications & Members</h2>
+          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold">Tutor Applications & Members</h2>
               <button
                 onClick={loadData}
                 disabled={loading}
@@ -686,8 +797,8 @@ export default function AdminDashboard() {
             ) : (
               <div>
                 {/* Tutor Applications Section */}
-                <h3 className="text-2xl font-bold mb-6 text-gray-800">Tutor Applications</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Tutor Applications</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
                   {tutorApplications.map((profile) => {
                     const getInitials = (name) => {
                       if (!name) return "T";
@@ -709,21 +820,21 @@ export default function AdminDashboard() {
                             appliedPosts: profile.appliedPosts || []
                           });
                         }}
-                        className="bg-white text-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                        className="bg-white text-gray-900 p-4 sm:p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
                       >
-                        <div className="flex items-center gap-4 mb-4">
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                        <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-lg sm:text-xl font-bold shadow-md">
                             {getInitials(profile.fullName)}
                           </div>
                           <div>
-                            <h3 className="font-bold text-gray-900 text-xl mb-1">
+                            <h3 className="font-bold text-gray-900 text-base sm:text-lg lg:text-xl mb-1">
                               {profile.fullName}
                             </h3>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-xs sm:text-sm text-gray-600">
                               {profile.userId?.email}
                             </p>
                             {profile.phone && (
-                              <p className="text-sm text-gray-600">
+                              <p className="text-xs sm:text-sm text-gray-600">
                                 📞 {profile.phone}
                               </p>
                             )}
@@ -760,8 +871,8 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Tutor Members Section - Circular Avatars */}
-                <h3 className="text-2xl font-bold mb-6 text-gray-800">Tutor Members</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Tutor Members</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
                   {tutorMembers.map((tutor) => {
                     const getInitials = (name) => {
                       if (!name) return tutor.email?.[0]?.toUpperCase() || "T";
@@ -780,7 +891,7 @@ export default function AdminDashboard() {
                         }}
                         className="flex flex-col items-center cursor-pointer group"
                       >
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 mb-3">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-lg sm:text-xl lg:text-2xl font-bold shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 mb-2 sm:mb-3">
                           {getInitials(tutor.profile?.fullName)}
                         </div>
                         <p className="text-sm font-semibold text-gray-900 text-center group-hover:text-cyan-600 transition">
@@ -804,13 +915,13 @@ export default function AdminDashboard() {
 
       {/* Modal for Tutor Profile */}
       {selectedTutorProfile && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white text-gray-900 rounded-xl shadow-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold">Tutor Profile</h2>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white text-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 lg:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Tutor Profile</h2>
               <button
                 onClick={() => setSelectedTutorProfile(null)}
-                className="text-gray-600 hover:text-gray-900 text-3xl font-bold"
+                className="text-gray-600 hover:text-gray-900 text-2xl sm:text-3xl font-bold"
               >
                 ×
               </button>
@@ -819,8 +930,8 @@ export default function AdminDashboard() {
             {selectedTutorProfile.profile ? (
               <div className="space-y-6">
                 {/* Profile Header */}
-                <div className="flex items-center gap-6 pb-6 border-b border-gray-200">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-gray-200">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-lg">
                     {(() => {
                       const name = selectedTutorProfile.profile?.fullName;
                       if (!name) return selectedTutorProfile.email?.[0]?.toUpperCase() || "T";
@@ -832,21 +943,21 @@ export default function AdminDashboard() {
                         .slice(0, 2);
                     })()}
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  <div className="text-center sm:text-left">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
                       {selectedTutorProfile.profile.fullName}
                     </h3>
-                    <p className="text-gray-600">{selectedTutorProfile.email}</p>
+                    <p className="text-sm sm:text-base text-gray-600">{selectedTutorProfile.email}</p>
                     {selectedTutorProfile.profile.phone && (
-                      <p className="text-gray-600">📞 {selectedTutorProfile.profile.phone}</p>
+                      <p className="text-sm sm:text-base text-gray-600">📞 {selectedTutorProfile.profile.phone}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Personal Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <h4 className="text-xl font-semibold text-cyan-600 mb-4">Personal Information</h4>
+                    <h4 className="text-lg sm:text-xl font-semibold text-cyan-600 mb-3 sm:mb-4">Personal Information</h4>
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm text-gray-600 mb-1">Full Name</p>
@@ -1016,16 +1127,16 @@ export default function AdminDashboard() {
 
       {/* Modal for Editing Request */}
       {selectedRequest && editFormData && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 rounded-xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-white">Edit Request</h2>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 rounded-xl p-4 sm:p-6 lg:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Edit Request</h2>
               <button
                 onClick={() => {
                   setSelectedRequest(null);
                   setEditFormData(null);
                 }}
-                className="text-white/70 hover:text-white text-2xl"
+                className="text-white/70 hover:text-white text-2xl sm:text-3xl"
               >
                 ×
               </button>
