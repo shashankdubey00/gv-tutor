@@ -29,7 +29,7 @@ const Hero = () => {
     <div className="bg-[#05070a] text-white selection:bg-blue-500/30">
       
       {/* SECTION 1: HERO */}
-      <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-32 md:pt-40">
         {/* Animated Background Glows */}
         <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 -right-20 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px]" />
