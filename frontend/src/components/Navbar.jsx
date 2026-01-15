@@ -4,6 +4,8 @@ import { handleApplyAsTutor } from "../utils/authHelper";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
 
+// Navbar component with logout functionality
+
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
