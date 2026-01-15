@@ -1,4 +1,5 @@
 # 🔐 Complete Authentication Setup Guide
+
 ## Use This Authentication System in Any Project
 
 This guide will help you set up the complete authentication system (Email + Password + Google OAuth) in any new project from scratch.
@@ -74,6 +75,7 @@ backend/
 Copy these files from the current project:
 
 **Required Files:**
+
 1. `backend/src/models/User.js`
 2. `backend/src/models/UserProfile.js`
 3. `backend/src/controllers/authController.js`
@@ -87,6 +89,7 @@ Copy these files from the current project:
 11. `backend/src/index.js`
 
 **Optional Files:**
+
 - `backend/src/utils/emailService.js` (if you need email features)
 
 ---
@@ -136,6 +139,7 @@ frontend/
 Copy these files from the current project:
 
 **Required Files:**
+
 1. `frontend/src/services/api.js`
 2. `frontend/src/services/authService.js`
 3. `frontend/src/components/PasswordStrength.jsx`
@@ -209,7 +213,7 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
       connectTimeoutMS: 10000,
     };
-    
+
     await mongoose.connect(process.env.MONGO_URI, options);
     console.log("✅ MongoDB connected successfully");
   } catch (error) {
@@ -248,13 +252,15 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
-  exposedHeaders: ["Set-Cookie"],
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
 
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -279,11 +285,7 @@ app.listen(process.env.PORT || 5000, () => {
 import dotenv from "dotenv";
 dotenv.config();
 
-const requiredEnvVars = [
-  "MONGO_URI",
-  "JWT_SECRET",
-  "CLIENT_URL",
-];
+const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "CLIENT_URL"];
 
 // Check required variables
 for (const envVar of requiredEnvVars) {
@@ -294,7 +296,10 @@ for (const envVar of requiredEnvVars) {
 }
 
 // Validate JWT_SECRET strength
-if (process.env.NODE_ENV === "production" && process.env.JWT_SECRET.length < 32) {
+if (
+  process.env.NODE_ENV === "production" &&
+  process.env.JWT_SECRET.length < 32
+) {
   console.error("❌ JWT_SECRET must be at least 32 characters in production");
   process.exit(1);
 }
@@ -376,6 +381,7 @@ npm start
 ```
 
 Check:
+
 - ✅ Server starts without errors
 - ✅ MongoDB connects
 - ✅ Health check: `http://localhost:5000/health`
@@ -388,22 +394,26 @@ npm run dev
 ```
 
 Check:
+
 - ✅ Frontend runs on `http://localhost:5173`
 - ✅ Can access login/signup pages
 
 ### Test Authentication Flow
 
 1. **Signup:**
+
    - Go to `/signup`
    - Create account
    - Should auto-login and redirect
 
 2. **Login:**
+
    - Go to `/login`
    - Login with credentials
    - Should redirect to home
 
 3. **Google OAuth:**
+
    - Click "Login with Google"
    - Should redirect to Google
    - After approval, should redirect back and login
@@ -479,7 +489,7 @@ Edit `backend/src/models/User.js`:
 ```javascript
 const userSchema = new mongoose.Schema({
   // ... existing fields ...
-  
+
   // Add your custom fields
   customField: {
     type: String,
@@ -495,6 +505,7 @@ const userSchema = new mongoose.Schema({
 ### Issue: "MongoDB connection failed"
 
 **Solution:**
+
 - Check `MONGO_URI` in `.env`
 - Ensure MongoDB is running
 - Check network/firewall settings
@@ -503,6 +514,7 @@ const userSchema = new mongoose.Schema({
 ### Issue: "JWT_SECRET missing"
 
 **Solution:**
+
 - Add `JWT_SECRET` to `.env`
 - Must be at least 32 characters
 - Generate: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
@@ -510,6 +522,7 @@ const userSchema = new mongoose.Schema({
 ### Issue: "Google OAuth not working"
 
 **Solution:**
+
 - Verify `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`
 - Check redirect URI matches Google Console
 - Ensure Google+ API is enabled
@@ -517,6 +530,7 @@ const userSchema = new mongoose.Schema({
 ### Issue: "CORS errors"
 
 **Solution:**
+
 - Check `CLIENT_URL` in backend `.env` matches frontend URL
 - Verify `credentials: true` in CORS config
 - Check frontend `VITE_BACKEND_URL` matches backend URL
@@ -524,6 +538,7 @@ const userSchema = new mongoose.Schema({
 ### Issue: "CSRF token errors"
 
 **Solution:**
+
 - Ensure CSRF token endpoint is accessible
 - Check cookies are enabled in browser
 - Verify `X-CSRF-Token` header is sent
@@ -539,9 +554,9 @@ import { protect } from "../middleware/authMiddleware.js";
 
 router.get("/protected", protect, (req, res) => {
   // req.user contains { userId, role }
-  res.json({ 
+  res.json({
     message: "Access granted",
-    user: req.user 
+    user: req.user,
   });
 });
 ```
@@ -605,4 +620,3 @@ Your authentication system is now ready to use. All security best practices are 
 ---
 
 **Last Updated:** $(date)
-

@@ -48,6 +48,12 @@ app.use("/api/tutor-requests", tutorRequestRoutes);
 app.use("/api/tutor-profile", tutorProfileRoutes);
 app.use("/api/admin", adminRoutes);
 
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server running");
+// Health check endpoint (required for Render)
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });

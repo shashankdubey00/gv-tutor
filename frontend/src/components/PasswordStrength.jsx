@@ -142,3 +142,12 @@ export default function PasswordStrength({ password, onStrengthChange }) {
   );
 }
 
+
+
+
+
+
+
+
+
+

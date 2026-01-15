@@ -227,3 +227,12 @@ cp backend/src/middleware/csrfMiddleware.js auth-package/backend/middleware/
 
 **The `auth-package` is useful for learning and quick setups, but for production, always use the full implementation with all security features!**
 
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useSearchParams, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { verifyAuth } from "./services/authService";
 
@@ -24,6 +24,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 // Component to handle Google OAuth verification
 function AuthVerifier() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const authParam = searchParams.get("auth");
@@ -39,18 +40,21 @@ function AuthVerifier() {
             
             // Redirect based on role and profile completion
             if (user.role === "tutor" && !user.isTutorProfileComplete) {
-              window.location.href = "/complete-profile";
+              navigate("/complete-profile", { replace: true });
             } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-              window.location.href = "/apply-tutor";
+              navigate("/apply-tutor", { replace: true });
+            } else {
+              // For regular users, stay on home page
+              navigate("/", { replace: true });
             }
-            // For users, stay on home page
           }
         })
         .catch((error) => {
           console.error("❌ Authentication verification failed:", error);
+          navigate("/login", { replace: true });
         });
     }
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   return null;
 }

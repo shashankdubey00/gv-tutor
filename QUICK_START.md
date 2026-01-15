@@ -152,3 +152,12 @@ Visit `http://localhost:5173/signup` and create an account!
 
 Your authentication system is ready. For detailed setup, see `AUTHENTICATION_SETUP_GUIDE.md`
 
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: gv-tutor-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Add your environment variables in Render dashboard:
+      # - MONGO_URI
+      # - JWT_SECRET
+      # - CLIENT_URL (your Vercel frontend URL)
+      # - GOOGLE_CLIENT_ID (optional)
+      # - GOOGLE_CLIENT_SECRET (optional)
+      # - GOOGLE_CALLBACK_URL (your Render backend URL + /auth/google/callback)
+      # - EMAIL_HOST (optional)
+      # - EMAIL_PORT (optional)
+      # - EMAIL_USER (optional)
+      # - EMAIL_PASS (optional)
+      # - EMAIL_FROM (optional)
+

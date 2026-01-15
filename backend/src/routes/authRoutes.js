@@ -173,14 +173,8 @@ router.get(
         path: "/",
     });
 
-      // Redirect based on role and profile completion
-      if (user.role === "tutor" && !user.isTutorProfileComplete) {
-        res.redirect(process.env.CLIENT_URL + "/complete-profile?auth=success&provider=google");
-      } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-        res.redirect(process.env.CLIENT_URL + "/apply-tutor?auth=success&provider=google");
-      } else {
-        res.redirect(process.env.CLIENT_URL + "/?auth=success&provider=google");
-      }
+      // Redirect to home page - frontend will handle routing based on user state
+      res.redirect(process.env.CLIENT_URL + "/?auth=success&provider=google");
     } catch (error) {
       console.error("Google OAuth callback error:", error);
       res.redirect(process.env.CLIENT_URL + "/login?error=server_error");
