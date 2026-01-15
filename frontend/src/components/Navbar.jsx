@@ -307,173 +307,255 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon */}
-        <div
-          className="md:hidden text-white text-3xl cursor-pointer"
+        {/* Hamburger Menu Icon - Right Side */}
+        <button
           onClick={() => setMenuOpen(!menuOpen)}
+          className="text-white text-3xl cursor-pointer hover:text-cyan-400 transition"
+          aria-label="Toggle menu"
         >
           {menuOpen ? "✕" : "☰"}
-        </div>
+        </button>
       </div>
 
-      {/* Mobile Menu Panel */}
+      {/* Stylish Hamburger Menu Panel - Full Screen Overlay */}
       {menuOpen && (
-        <div className="md:hidden bg-black/70 backdrop-blur-xl text-white p-6 space-y-4">
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
-            Home
-          </Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
-            About
-          </Link>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
+          <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
+            {/* Header with Logo and Close */}
+            <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
+              <h2 className="text-white text-2xl font-bold">GV Tutor</h2>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="text-white hover:text-cyan-400 text-3xl font-bold transition"
+              >
+                ✕
+              </button>
+            </div>
 
-          <div>
-            <p
-              className="font-semibold mb-2 cursor-pointer"
-              onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
-            >
-              Home Tutor ▾
-            </p>
-
-            {tutorMenuOpen && (
-              <div className="ml-4 space-y-2">
-                <Link
-                  to="/find-tutor"
-                  onClick={() => {
-                    setTutorMenuOpen(false);
-                    setMenuOpen(false);
-                  }}
-                  className="block hover:text-blue-400"
+            {/* Navigation Links */}
+            <div className="p-6 space-y-3">
+              <Link 
+                to="/" 
+                onClick={() => setMenuOpen(false)} 
+                className="block text-white hover:text-cyan-400 transition py-2"
+              >
+                Home
+              </Link>
+              <Link 
+                to="/about" 
+                onClick={() => setMenuOpen(false)} 
+                className="block text-white hover:text-cyan-400 transition py-2"
+              >
+                About
+              </Link>
+              
+              {/* Home Tutor Dropdown */}
+              <div>
+                <button
+                  onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
+                  className="flex items-center justify-between w-full text-white hover:text-cyan-400 transition py-2"
                 >
-                  Find Tutor
-                </Link>
-                {/* Only show "Apply as Tutor" if user is not logged in OR is a tutor (not admin) */}
-                {(!user || (user.role === "tutor" && user.role !== "admin")) && (
+                  <span>Home Tutor</span>
+                  <span className={tutorMenuOpen ? "transform rotate-180" : ""}>▾</span>
+                </button>
+                {tutorMenuOpen && (
+                  <div className="ml-4 mt-2 space-y-2 border-l border-cyan-500/30 pl-4">
+                    <Link
+                      to="/find-tutor"
+                      onClick={() => {
+                        setTutorMenuOpen(false);
+                        setMenuOpen(false);
+                      }}
+                      className="block text-white/70 hover:text-cyan-400 transition py-1"
+                    >
+                      Find Tutor
+                    </Link>
+                    {(!user || (user.role === "tutor" && user.role !== "admin")) && (
+                      <button
+                        onClick={() => {
+                          setTutorMenuOpen(false);
+                          setMenuOpen(false);
+                          handleApplyAsTutor(navigate);
+                        }}
+                        className="block w-full text-left text-white/70 hover:text-cyan-400 transition py-1"
+                      >
+                        Apply as Tutor
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <Link 
+                to="/library" 
+                onClick={() => setMenuOpen(false)} 
+                className="block text-white hover:text-cyan-400 transition py-2"
+              >
+                Library
+              </Link>
+              <Link 
+                to="/contact" 
+                onClick={() => setMenuOpen(false)} 
+                className="block text-white hover:text-cyan-400 transition py-2"
+              >
+                Contact
+              </Link>
+            </div>
+
+            {/* User Actions Section */}
+            <div className="p-6 space-y-3 border-t border-cyan-500/30">
+              {user && user.role === "admin" ? (
+                <>
+                  <Link
+                    to="/admin/dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg text-white hover:bg-white/20 transition text-center"
+                  >
+                    Admin Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMenuOpen(false);
+                      try {
+                        // Clear user state immediately
+                        setUser(null);
+                        setProfile(null);
+                        // Call logout API
+                        await logoutUser();
+                        // Small delay to ensure cookie is cleared
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                      } catch (err) {
+                        console.error("Logout error:", err);
+                      } finally {
+                        // Clear all possible cookie variations
+                        const domain = window.location.hostname;
+                        const cookies = [
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                          `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+                        ];
+                        cookies.forEach(cookie => {
+                          document.cookie = cookie;
+                        });
+                        // Force full page reload with cache bypass
+                        window.location.replace("/?logout=true");
+                      }
+                    }}
+                    className="block w-full py-3 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition shadow-lg text-center"
+                  >
+                    Logout ({user.email})
+                  </button>
+                </>
+              ) : user && (user.role === "tutor" || user.role === "user") ? (
+                <>
+                  {user.role === "tutor" && user.role !== "admin" && (
+                    <>
+                      <Link
+                        to="/apply-tutor"
+                        onClick={() => setMenuOpen(false)}
+                        className="block w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg text-white hover:bg-white/20 transition text-center mb-3"
+                      >
+                        Apply as Tutor
+                      </Link>
+                      {profile && (
+                        <Link
+                          to="/profile"
+                          onClick={() => setMenuOpen(false)}
+                          className="block w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg text-white hover:bg-white/20 transition text-center mb-3"
+                        >
+                          My Profile
+                        </Link>
+                      )}
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setMenuOpen(false);
+                      try {
+                        // Clear user state immediately
+                        setUser(null);
+                        setProfile(null);
+                        // Call logout API
+                        await logoutUser();
+                        // Small delay to ensure cookie is cleared
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                      } catch (err) {
+                        console.error("Logout error:", err);
+                      } finally {
+                        // Clear all possible cookie variations
+                        const domain = window.location.hostname;
+                        const cookies = [
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                          `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+                        ];
+                        cookies.forEach(cookie => {
+                          document.cookie = cookie;
+                        });
+                        // Force full page reload with cache bypass
+                        window.location.replace("/?logout=true");
+                      }
+                    }}
+                    className="block w-full py-3 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition shadow-lg text-center"
+                  >
+                    Logout ({user.email})
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg text-white hover:bg-white/20 transition text-center"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition text-center"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+
+            {/* Action Cards at Bottom */}
+            {!user && (
+              <div className="p-6 space-y-4 border-t border-cyan-500/30 pt-6">
+                {/* Find Tutor Card */}
+                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-cyan-500/30 rounded-xl p-4">
+                  <h3 className="text-white font-bold text-lg mb-3">Find the right tutor</h3>
+                  <Link
+                    to="/find-tutor"
+                    onClick={() => setMenuOpen(false)}
+                    className="block w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold text-center transition"
+                  >
+                    Find Tutor
+                  </Link>
+                </div>
+
+                {/* Apply as Tutor Card */}
+                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-cyan-500/30 rounded-xl p-4">
+                  <h3 className="text-white font-bold text-lg mb-3">Become a home tutor</h3>
                   <button
                     onClick={() => {
-                      setTutorMenuOpen(false);
                       setMenuOpen(false);
                       handleApplyAsTutor(navigate);
                     }}
-                    className="block w-full text-left hover:text-blue-400"
+                    className="block w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 rounded-lg text-white font-semibold transition"
                   >
                     Apply as Tutor
                   </button>
-                )}
+                </div>
               </div>
             )}
           </div>
-
-          <Link to="/library" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
-            Library
-          </Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
-            Contact
-          </Link>
-
-          {user && user.role === "admin" ? (
-            <>
-              <Link
-                to="/admin/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
-              >
-                Admin Dashboard
-              </Link>
-              <button
-                type="button"
-                onClick={async () => {
-                  setMenuOpen(false);
-                  try {
-                    // Clear user state immediately
-                    setUser(null);
-                    setProfile(null);
-                    // Call logout API
-                    await logoutUser();
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                  } finally {
-                    // Always clear cookies and redirect
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                    if (window.location.protocol === "https:") {
-                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-                    }
-                    // Force full page reload to clear all state
-                    window.location.href = "/";
-                  }
-                }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
-              >
-                Logout ({user.email})
-              </button>
-            </>
-          ) : user && (user.role === "tutor" || user.role === "user") ? (
-            <>
-              {/* Only show "Apply as Tutor" button for tutors, NOT for regular users or admins */}
-              {user.role === "tutor" && user.role !== "admin" && (
-                <>
-                  <Link
-                    to="/apply-tutor"
-                    onClick={() => setMenuOpen(false)}
-                    className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
-                  >
-                    Apply as Tutor
-                  </Link>
-                  {profile && (
-                    <Link
-                      to="/profile"
-                      onClick={() => setMenuOpen(false)}
-                      className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
-                    >
-                      My Profile
-                    </Link>
-                  )}
-                </>
-              )}
-              <button
-                type="button"
-                onClick={async () => {
-                  setMenuOpen(false);
-                  try {
-                    // Clear user state immediately
-                    setUser(null);
-                    setProfile(null);
-                    // Call logout API
-                    await logoutUser();
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                  } finally {
-                    // Always clear cookies and redirect
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                    if (window.location.protocol === "https:") {
-                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-                    }
-                    // Force full page reload to clear all state
-                    window.location.href = "/";
-                  }
-                }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
-              >
-                Logout ({user.email})
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 bg-blue-600 rounded hover:bg-blue-700"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
         </div>
       )}
     </nav>

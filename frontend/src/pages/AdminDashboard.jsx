@@ -295,7 +295,40 @@ export default function AdminDashboard() {
               </div>
 
               {/* Navigation Links */}
-              <div className="p-4 space-y-2">
+              <div className="p-6 space-y-3">
+                <Link 
+                  to="/" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/about" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  About
+                </Link>
+                <Link 
+                  to="/library" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Library
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Contact
+                </Link>
+              </div>
+
+              {/* Dashboard Tabs */}
+              <div className="p-6 space-y-2 border-t border-cyan-500/30 pt-6">
+                <h3 className="text-white/70 text-sm font-semibold mb-3 px-4">Dashboard</h3>
                 <button
                   onClick={() => {
                     setActiveTab("dashboard");
@@ -404,7 +437,40 @@ export default function AdminDashboard() {
               </div>
 
               {/* Navigation Links */}
-              <div className="p-4 space-y-2">
+              <div className="p-6 space-y-3">
+                <Link 
+                  to="/" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, desktopMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Home
+                </Link>
+                <Link 
+                  to="/about" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, desktopMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  About
+                </Link>
+                <Link 
+                  to="/library" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, desktopMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Library
+                </Link>
+                <Link 
+                  to="/contact" 
+                  onClick={() => setExpandedItems(prev => ({ ...prev, desktopMenu: false }))} 
+                  className="block text-white hover:text-cyan-400 transition py-2"
+                >
+                  Contact
+                </Link>
+              </div>
+
+              {/* Dashboard Tabs */}
+              <div className="p-6 space-y-2 border-t border-cyan-500/30 pt-6">
+                <h3 className="text-white/70 text-sm font-semibold mb-3 px-4">Dashboard</h3>
                 <button
                   onClick={() => {
                     setActiveTab("dashboard");
