@@ -241,156 +241,240 @@ export default function AdminDashboard() {
             >
               Tutor
             </button>
-            <button
-              onClick={loadData}
-              disabled={loading}
-              className="px-3 lg:px-4 py-2 rounded-lg font-medium transition bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm lg:text-base"
-              title="Refresh data"
-            >
-              <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span className="hidden lg:inline">Refresh</span>
-            </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
-            <button
-              onClick={loadData}
-              disabled={loading}
-              className="p-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-              title="Refresh"
-            >
-              <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-            <button
-              onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: !prev.mobileMenu }))}
-              className="text-white text-2xl"
-            >
-              {expandedItems.mobileMenu ? "✕" : "☰"}
-            </button>
-          </div>
-
-          {/* Profile Icon with Dropdown - Desktop */}
-          <div className="hidden md:block relative group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer">
-              {adminUser?.email?.[0]?.toUpperCase() || "A"}
-            </div>
-            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-cyan-500/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
-              <div className="px-4 py-2 text-sm text-white/70 border-b border-cyan-500/30">
-                {adminUser?.email || "Admin"}
-              </div>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    const { logoutUser } = await import("../services/authService");
-                    await logoutUser();
-                    // Small delay to ensure cookie is cleared
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                  } finally {
-                    // Clear all possible cookie variations
-                    const domain = window.location.hostname;
-                    const cookies = [
-                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
-                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
-                      "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
-                      `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-                    ];
-                    cookies.forEach(cookie => {
-                      document.cookie = cookie;
-                    });
-                    // Force full page reload with cache bypass
-                    window.location.replace("/?logout=true");
-                  }
-                }}
-                className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded-lg cursor-pointer"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-
-          {/* Profile Icon with Dropdown - Mobile */}
-          <div className="md:hidden relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer">
-              {adminUser?.email?.[0]?.toUpperCase() || "A"}
-            </div>
-          </div>
+          {/* Hamburger Menu Button - Right Side */}
+          <button
+            onClick={() => {
+              const isMobile = window.innerWidth < 768;
+              setExpandedItems(prev => ({ 
+                ...prev, 
+                mobileMenu: isMobile ? !prev.mobileMenu : false,
+                desktopMenu: !isMobile ? !prev.desktopMenu : false
+              }));
+            }}
+            className="text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
+            aria-label="Toggle menu"
+          >
+            {(expandedItems.mobileMenu || expandedItems.desktopMenu) ? "✕" : "☰"}
+          </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Hamburger Menu - Styled like the image (mobile only) */}
         {expandedItems.mobileMenu && (
-          <div className="md:hidden bg-gray-800 border-t border-cyan-500/30 px-4 py-4 space-y-2">
-            <button
-              onClick={() => {
-                setActiveTab("dashboard");
-                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
-              }}
-              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
-                activeTab === "dashboard"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-700 text-white/70 hover:text-white"
-              }`}
-            >
-              Dashboard
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("parent");
-                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
-              }}
-              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
-                activeTab === "parent"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-700 text-white/70 hover:text-white"
-              }`}
-            >
-              Parent
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("tutor");
-                setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
-              }}
-              className={`w-full px-4 py-2 rounded-lg font-medium transition text-left ${
-                activeTab === "tutor"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-700 text-white/70 hover:text-white"
-              }`}
-            >
-              Tutor
-            </button>
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  const { logoutUser } = await import("../services/authService");
-                  await logoutUser();
-                  await new Promise(resolve => setTimeout(resolve, 100));
-                } catch (err) {
-                  console.error("Logout error:", err);
-                } finally {
-                  const cookies = [
-                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
-                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
-                    "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
-                  ];
-                  cookies.forEach(cookie => {
-                    document.cookie = cookie;
-                  });
-                  window.location.replace("/?logout=true");
-                }
-              }}
-              className="w-full px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white text-left"
-            >
-              Logout
-            </button>
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden">
+            <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
+              {/* Close button */}
+              <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
+                <h2 className="text-cyan-400 text-2xl font-bold">GV Tutor</h2>
+                <button
+                  onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))}
+                  className="text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* User Profile Section */}
+              <div className="p-6 border-b border-cyan-500/30">
+                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-cyan-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                      {adminUser?.email?.[0]?.toUpperCase() || "A"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-bold text-lg truncate">
+                        {adminUser?.name || "Admin"}
+                      </h3>
+                      <p className="text-white/70 text-sm truncate">
+                        {adminUser?.email || "admin@example.com"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="p-4 space-y-2">
+                <button
+                  onClick={() => {
+                    setActiveTab("dashboard");
+                    setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "dashboard"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("parent");
+                    setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "parent"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Parent
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("tutor");
+                    setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "tutor"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Tutor
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="p-4 space-y-2 border-t border-cyan-500/30 pt-4">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const { logoutUser } = await import("../services/authService");
+                      await logoutUser();
+                      await new Promise(resolve => setTimeout(resolve, 100));
+                    } catch (err) {
+                      console.error("Logout error:", err);
+                    } finally {
+                      const cookies = [
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                      ];
+                      cookies.forEach(cookie => {
+                        document.cookie = cookie;
+                      });
+                      window.location.replace("/?logout=true");
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-lg font-semibold bg-red-600 hover:bg-red-700 text-white transition shadow-lg"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Menu - Sidebar style (shown on md and above) */}
+        {expandedItems.desktopMenu && (
+          <div className="hidden md:block fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
+            <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
+              {/* Close button */}
+              <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
+                <h2 className="text-cyan-400 text-2xl font-bold">GV Tutor</h2>
+                <button
+                  onClick={() => setExpandedItems(prev => ({ ...prev, desktopMenu: false }))}
+                  className="text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* User Profile Section */}
+              <div className="p-6 border-b border-cyan-500/30">
+                <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-cyan-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                      {adminUser?.email?.[0]?.toUpperCase() || "A"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-white font-bold text-lg truncate">
+                        {adminUser?.name || "Admin"}
+                      </h3>
+                      <p className="text-white/70 text-sm truncate">
+                        {adminUser?.email || "admin@example.com"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="p-4 space-y-2">
+                <button
+                  onClick={() => {
+                    setActiveTab("dashboard");
+                    setExpandedItems(prev => ({ ...prev, desktopMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "dashboard"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("parent");
+                    setExpandedItems(prev => ({ ...prev, desktopMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "parent"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Parent
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("tutor");
+                    setExpandedItems(prev => ({ ...prev, desktopMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
+                    activeTab === "tutor"
+                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  }`}
+                >
+                  Tutor
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="p-4 space-y-2 border-t border-cyan-500/30 pt-4">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const { logoutUser } = await import("../services/authService");
+                      await logoutUser();
+                      await new Promise(resolve => setTimeout(resolve, 100));
+                    } catch (err) {
+                      console.error("Logout error:", err);
+                    } finally {
+                      const cookies = [
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                      ];
+                      cookies.forEach(cookie => {
+                        document.cookie = cookie;
+                      });
+                      window.location.replace("/?logout=true");
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-lg font-semibold bg-red-600 hover:bg-red-700 text-white transition shadow-lg"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </nav>
