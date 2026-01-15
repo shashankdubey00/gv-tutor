@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { handleApplyAsTutor, handleLogout } from "../utils/authHelper";
-import { verifyAuth } from "../services/authService";
+import { handleApplyAsTutor } from "../utils/authHelper";
+import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
 
 export default function Navbar() {
@@ -135,7 +135,18 @@ export default function Navbar() {
                     </Link>
                   )}
                   <button
-                    onClick={() => handleLogout(navigate)}
+                    onClick={async () => {
+                      try {
+                        await logoutUser();
+                        navigate("/");
+                        window.location.reload();
+                      } catch (err) {
+                        console.error("Logout error:", err);
+                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        navigate("/");
+                        window.location.reload();
+                      }
+                    }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg"
                   >
                     Logout
@@ -214,7 +225,18 @@ export default function Navbar() {
                     </Link>
                   )}
                   <button
-                    onClick={() => handleLogout(navigate)}
+                    onClick={async () => {
+                      try {
+                        await logoutUser();
+                        navigate("/");
+                        window.location.reload();
+                      } catch (err) {
+                        console.error("Logout error:", err);
+                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                        navigate("/");
+                        window.location.reload();
+                      }
+                    }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg"
                   >
                     Logout
@@ -313,9 +335,18 @@ export default function Navbar() {
                 Admin Dashboard
               </Link>
               <button
-                onClick={() => {
+                onClick={async () => {
                   setMenuOpen(false);
-                  handleLogout(navigate);
+                  try {
+                    await logoutUser();
+                    navigate("/");
+                    window.location.reload();
+                  } catch (err) {
+                    console.error("Logout error:", err);
+                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    navigate("/");
+                    window.location.reload();
+                  }
                 }}
                 className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition"
               >
@@ -346,9 +377,18 @@ export default function Navbar() {
                 </>
               )}
               <button
-                onClick={() => {
+                onClick={async () => {
                   setMenuOpen(false);
-                  handleLogout(navigate);
+                  try {
+                    await logoutUser();
+                    navigate("/");
+                    window.location.reload();
+                  } catch (err) {
+                    console.error("Logout error:", err);
+                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    navigate("/");
+                    window.location.reload();
+                  }
                 }}
                 className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition"
               >

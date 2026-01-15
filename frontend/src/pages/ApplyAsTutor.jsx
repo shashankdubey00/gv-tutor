@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getPostedTutorRequests, applyToTutorRequest } from "../services/tutorService";
-import { verifyAuth } from "../services/authService";
+import { verifyAuth, logoutUser } from "../services/authService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { setRedirecting, isRedirecting, shouldRedirect, clearRedirecting } from "../utils/redirectGuard";
-import { handleLogout } from "../utils/authHelper";
 
 export default function ApplyAsTutor() {
   const navigate = useNavigate();
@@ -310,7 +309,14 @@ export default function ApplyAsTutor() {
                 Refresh Page
               </button>
               <button
-                onClick={() => handleLogout(navigate)}
+                onClick={async () => {
+                  try {
+                    await logoutUser();
+                    navigate("/login");
+                  } catch (err) {
+                    navigate("/login");
+                  }
+                }}
                 className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-white transition-all shadow-lg"
               >
                 Logout

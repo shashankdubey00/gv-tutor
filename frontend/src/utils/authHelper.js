@@ -1,4 +1,4 @@
-import { verifyAuth, logoutUser } from "../services/authService";
+import { verifyAuth } from "../services/authService";
 
 /**
  * Check if user is authenticated and redirect accordingly
@@ -62,33 +62,6 @@ export async function handleApplyAsTutor(navigate) {
     console.error("❌ handleApplyAsTutor error:", error);
     // Not authenticated, go to login
     navigate("/login");
-  }
-}
-
-/**
- * Centralized logout handler
- * Handles logout with proper error handling and cleanup
- */
-export async function handleLogout(navigate) {
-  try {
-    // Try to call backend logout endpoint
-    await logoutUser();
-    console.log("✅ Logout successful");
-  } catch (err) {
-    console.error("⚠️ Logout API call failed, clearing local cookies:", err);
-    // Fallback: Clear cookie manually if API call fails
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-    // Also try to clear with secure flag for HTTPS
-    if (window.location.protocol === "https:") {
-      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-    }
-  } finally {
-    // Always redirect to home and reload to clear any cached state
-    navigate("/", { replace: true });
-    // Small delay to ensure navigation completes before reload
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   }
 }
 
