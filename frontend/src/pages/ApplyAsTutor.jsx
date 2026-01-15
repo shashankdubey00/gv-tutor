@@ -241,14 +241,14 @@ export default function ApplyAsTutor() {
   }
 
   return (
-    <div className="min-h-screen bg-[#05070a] pt-20 px-4 pb-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-4 text-white rounded-lg flex-1">
-            <h2 className="text-2xl font-bold mb-1">
+    <div className="min-h-screen bg-[#05070a] pt-20 px-4 pb-8 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 p-4 text-white rounded-lg flex-1 min-w-0">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1">
               Available Tutor Positions
             </h2>
-            <p className="text-white/80 text-sm">
+            <p className="text-white/80 text-xs sm:text-sm">
               Browse and apply for tutor positions that match your expertise
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function ApplyAsTutor() {
               setDisplayCount(10);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition-all shadow-lg text-sm whitespace-nowrap"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition-all shadow-lg text-sm whitespace-nowrap flex-shrink-0"
           >
             Recent Posts
           </button>
@@ -332,7 +332,7 @@ export default function ApplyAsTutor() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-4 w-full">
               {displayedRequests.map((request) => (
                 <div
                   key={request._id}
@@ -340,7 +340,7 @@ export default function ApplyAsTutor() {
                     request.hasApplied 
                       ? "border-green-300 bg-green-50/30" 
                       : "border-gray-200"
-                  } hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer`}
+                  } hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer w-full min-w-0 overflow-hidden`}
                   onClick={() => handleViewDetails(request)}
                 >
                   <div className="mb-2">
@@ -385,7 +385,7 @@ export default function ApplyAsTutor() {
                     {request.preferredLocation && (
                       <div>
                         <p className="text-gray-600 text-[10px] font-semibold mb-0.5">Location:</p>
-                        <p className="text-gray-900 font-medium text-xs truncate">{request.preferredLocation}</p>
+                        <p className="text-gray-900 font-medium text-xs break-words">{request.preferredLocation}</p>
                       </div>
                     )}
 

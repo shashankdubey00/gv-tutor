@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Prevent horizontal scrolling globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .hero-bg {
   height: 100vh;
   background:
