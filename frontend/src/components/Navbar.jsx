@@ -140,14 +140,21 @@ export default function Navbar() {
                     type="button"
                     onClick={async () => {
                       try {
+                        // Clear user state immediately
+                        setUser(null);
+                        setProfile(null);
+                        // Call logout API
                         await logoutUser();
-                        navigate("/");
-                        window.location.reload();
                       } catch (err) {
                         console.error("Logout error:", err);
-                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                        navigate("/");
-                        window.location.reload();
+                      } finally {
+                        // Always clear cookies and redirect
+                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                        if (window.location.protocol === "https:") {
+                          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                        }
+                        // Force full page reload to clear all state
+                        window.location.href = "/";
                       }
                     }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
@@ -231,14 +238,21 @@ export default function Navbar() {
                     type="button"
                     onClick={async () => {
                       try {
+                        // Clear user state immediately
+                        setUser(null);
+                        setProfile(null);
+                        // Call logout API
                         await logoutUser();
-                        navigate("/");
-                        window.location.reload();
                       } catch (err) {
                         console.error("Logout error:", err);
-                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                        navigate("/");
-                        window.location.reload();
+                      } finally {
+                        // Always clear cookies and redirect
+                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                        if (window.location.protocol === "https:") {
+                          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                        }
+                        // Force full page reload to clear all state
+                        window.location.href = "/";
                       }
                     }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
@@ -343,14 +357,21 @@ export default function Navbar() {
                 onClick={async () => {
                   setMenuOpen(false);
                   try {
+                    // Clear user state immediately
+                    setUser(null);
+                    setProfile(null);
+                    // Call logout API
                     await logoutUser();
-                    navigate("/");
-                    window.location.reload();
                   } catch (err) {
                     console.error("Logout error:", err);
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                    navigate("/");
-                    window.location.reload();
+                  } finally {
+                    // Always clear cookies and redirect
+                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                    if (window.location.protocol === "https:") {
+                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                    }
+                    // Force full page reload to clear all state
+                    window.location.href = "/";
                   }
                 }}
                 className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
@@ -386,14 +407,21 @@ export default function Navbar() {
                 onClick={async () => {
                   setMenuOpen(false);
                   try {
+                    // Clear user state immediately
+                    setUser(null);
+                    setProfile(null);
+                    // Call logout API
                     await logoutUser();
-                    navigate("/");
-                    window.location.reload();
                   } catch (err) {
                     console.error("Logout error:", err);
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                    navigate("/");
-                    window.location.reload();
+                  } finally {
+                    // Always clear cookies and redirect
+                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                    if (window.location.protocol === "https:") {
+                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                    }
+                    // Force full page reload to clear all state
+                    window.location.href = "/";
                   }
                 }}
                 className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
