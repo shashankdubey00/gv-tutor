@@ -29,7 +29,7 @@ const Hero = () => {
     <div className="bg-[#05070a] text-white selection:bg-blue-500/30">
       
       {/* SECTION 1: HERO */}
-      <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden pt-32 md:pt-40">
+      <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
         {/* Animated Background Glows */}
         <div className="absolute top-0 -left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 -right-20 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px]" />
@@ -40,7 +40,7 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
           className="text-center z-10"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
             Connecting students with the <br/>
             <span className="text-blue-500">best home tutors</span> in your area
           </h1>
