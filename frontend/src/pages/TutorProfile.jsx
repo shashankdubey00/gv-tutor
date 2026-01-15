@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { verifyAuth, logoutUser } from "../services/authService";
+import { verifyAuth } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { handleLogout } from "../utils/authHelper";
 
 export default function TutorProfile() {
   const navigate = useNavigate();
@@ -250,16 +251,7 @@ export default function TutorProfile() {
               View Positions
             </button>
             <button
-              onClick={async () => {
-                try {
-                  await logoutUser();
-                  navigate("/login");
-                } catch (err) {
-                  console.error("Logout error:", err);
-                  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                  navigate("/login");
-                }
-              }}
+              onClick={() => handleLogout(navigate)}
               className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold text-white transition"
             >
               Logout

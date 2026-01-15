@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { verifyAuth } from "../services/authService";
 import { apiRequest } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { handleLogout } from "../utils/authHelper";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -264,17 +265,7 @@ export default function AdminDashboard() {
                 {adminUser?.email || "Admin"}
               </div>
               <button
-                onClick={async () => {
-                  try {
-                    const { logoutUser } = await import("../services/authService");
-                    await logoutUser();
-                    window.location.href = "/";
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                    window.location.href = "/";
-                  }
-                }}
+                onClick={() => handleLogout(navigate)}
                 className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded-lg"
               >
                 Logout
