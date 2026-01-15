@@ -17,6 +17,17 @@ export default function Navbar() {
 
   // Check if user is logged in
   useEffect(() => {
+    // If logout query param is present, clear state immediately and remove param
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("logout") === "true") {
+      setUser(null);
+      setProfile(null);
+      setLoading(false);
+      // Remove logout param from URL without reload
+      window.history.replaceState({}, "", "/");
+      return;
+    }
+    
     async function checkUser() {
       try {
         const authData = await verifyAuth();
@@ -50,7 +61,7 @@ export default function Navbar() {
       }
     }
     checkUser();
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   return (
     <nav className="fixed top-0 left-0 w-full h-20 z-50 backdrop-blur-md bg-white/10 border-b border-white/10">
@@ -145,16 +156,24 @@ export default function Navbar() {
                         setProfile(null);
                         // Call logout API
                         await logoutUser();
+                        // Small delay to ensure cookie is cleared
+                        await new Promise(resolve => setTimeout(resolve, 100));
                       } catch (err) {
                         console.error("Logout error:", err);
                       } finally {
-                        // Always clear cookies and redirect
-                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                        if (window.location.protocol === "https:") {
-                          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-                        }
-                        // Force full page reload to clear all state
-                        window.location.href = "/";
+                        // Clear all possible cookie variations
+                        const domain = window.location.hostname;
+                        const cookies = [
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                          `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+                        ];
+                        cookies.forEach(cookie => {
+                          document.cookie = cookie;
+                        });
+                        // Force full page reload with cache bypass
+                        window.location.replace("/?logout=true");
                       }
                     }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
@@ -243,16 +262,24 @@ export default function Navbar() {
                         setProfile(null);
                         // Call logout API
                         await logoutUser();
+                        // Small delay to ensure cookie is cleared
+                        await new Promise(resolve => setTimeout(resolve, 100));
                       } catch (err) {
                         console.error("Logout error:", err);
                       } finally {
-                        // Always clear cookies and redirect
-                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                        if (window.location.protocol === "https:") {
-                          document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-                        }
-                        // Force full page reload to clear all state
-                        window.location.href = "/";
+                        // Clear all possible cookie variations
+                        const domain = window.location.hostname;
+                        const cookies = [
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                          `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+                        ];
+                        cookies.forEach(cookie => {
+                          document.cookie = cookie;
+                        });
+                        // Force full page reload with cache bypass
+                        window.location.replace("/?logout=true");
                       }
                     }}
                     className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"

@@ -91,22 +91,28 @@ router.get(
 // Logout endpoint
 router.post("/logout", (req, res) => {
   // Clear cookie with all possible configurations to ensure it's deleted
-  res.cookie("token", "", {
+  const cookieOptions = {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     maxAge: 0, // Expire immediately
     path: "/",
     expires: new Date(0), // Set expiration to epoch time
-  });
+  };
   
-  // Also try clearing without httpOnly in case browser needs it
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-  });
+  // Clear cookie multiple ways to ensure it works
+  res.cookie("token", "", cookieOptions);
+  res.clearCookie("token", cookieOptions);
+  
+  // Also try with different SameSite values
+  res.cookie("token", "", { ...cookieOptions, sameSite: "none", secure: true });
+  res.clearCookie("token", { ...cookieOptions, sameSite: "none", secure: true });
+  
+  // Try without secure flag for HTTP
+  if (process.env.NODE_ENV !== "production") {
+    res.cookie("token", "", { ...cookieOptions, secure: false });
+    res.clearCookie("token", { ...cookieOptions, secure: false });
+  }
   
   return res.status(200).json({
     success: true,
