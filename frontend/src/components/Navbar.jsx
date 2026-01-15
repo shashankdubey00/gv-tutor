@@ -318,66 +318,64 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50">
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 h-full overflow-y-auto p-6 space-y-4">
-            <Link to="/" onClick={() => setMenuOpen(false)} className="block text-white hover:text-cyan-400 transition py-2 font-medium">
-              Home
-            </Link>
-            <Link to="/about" onClick={() => setMenuOpen(false)} className="block text-white hover:text-cyan-400 transition py-2 font-medium">
-              About
-            </Link>
+        <div className="md:hidden bg-black/70 backdrop-blur-xl text-white p-6 space-y-4">
+          <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+            Home
+          </Link>
+          <Link to="/about" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+            About
+          </Link>
 
-            <div>
-              <button
-                onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
-                className="flex items-center justify-between w-full text-white hover:text-cyan-400 transition py-2 font-medium"
-              >
-                <span>Home Tutor</span>
-                <span className={tutorMenuOpen ? "transform rotate-180" : ""}>▾</span>
-              </button>
+          <div>
+            <p
+              className="font-semibold mb-2 cursor-pointer"
+              onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
+            >
+              Home Tutor ▾
+            </p>
 
-              {tutorMenuOpen && (
-                <div className="ml-4 space-y-2 mt-2 border-l border-cyan-500/30 pl-4">
-                  <Link
-                    to="/find-tutor"
+            {tutorMenuOpen && (
+              <div className="ml-4 space-y-2">
+                <Link
+                  to="/find-tutor"
+                  onClick={() => {
+                    setTutorMenuOpen(false);
+                    setMenuOpen(false);
+                  }}
+                  className="block hover:text-blue-400"
+                >
+                  Find Tutor
+                </Link>
+                {/* Only show "Apply as Tutor" if user is not logged in OR is a tutor (not admin) */}
+                {(!user || (user.role === "tutor" && user.role !== "admin")) && (
+                  <button
                     onClick={() => {
                       setTutorMenuOpen(false);
                       setMenuOpen(false);
+                      handleApplyAsTutor(navigate);
                     }}
-                    className="block text-white/70 hover:text-cyan-400 transition py-1"
+                    className="block w-full text-left hover:text-blue-400"
                   >
-                    Find Tutor
-                  </Link>
-                  {/* Only show "Apply as Tutor" if user is not logged in OR is a tutor (not admin) */}
-                  {(!user || (user.role === "tutor" && user.role !== "admin")) && (
-                    <button
-                      onClick={() => {
-                        setTutorMenuOpen(false);
-                        setMenuOpen(false);
-                        handleApplyAsTutor(navigate);
-                      }}
-                      className="block w-full text-left text-white/70 hover:text-cyan-400 transition py-1"
-                    >
-                      Apply as Tutor
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+                    Apply as Tutor
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
-            <Link to="/library" onClick={() => setMenuOpen(false)} className="block text-white hover:text-cyan-400 transition py-2 font-medium">
-              Library
-            </Link>
-            <Link to="/contact" onClick={() => setMenuOpen(false)} className="block text-white hover:text-cyan-400 transition py-2 font-medium">
-              Contact
-            </Link>
+          <Link to="/library" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+            Library
+          </Link>
+          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+            Contact
+          </Link>
 
           {user && user.role === "admin" ? (
             <>
               <Link
                 to="/admin/dashboard"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 transition font-medium text-white"
+                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
               >
                 Admin Dashboard
               </Link>
@@ -403,7 +401,7 @@ export default function Navbar() {
                     window.location.href = "/";
                   }
                 }}
-                className="block text-center w-full py-3 px-4 bg-red-600 hover:bg-red-700 rounded-lg transition cursor-pointer font-semibold text-white shadow-lg"
+                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
               >
                 Logout ({user.email})
               </button>
@@ -416,7 +414,7 @@ export default function Navbar() {
                   <Link
                     to="/apply-tutor"
                     onClick={() => setMenuOpen(false)}
-                    className="block text-center w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 transition font-medium text-white mb-3"
+                    className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
                   >
                     Apply as Tutor
                   </Link>
@@ -424,7 +422,7 @@ export default function Navbar() {
                     <Link
                       to="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="block text-center w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 transition font-medium text-white mb-3"
+                      className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
                     >
                       My Profile
                     </Link>
@@ -453,7 +451,7 @@ export default function Navbar() {
                     window.location.href = "/";
                   }
                 }}
-                className="block text-center w-full py-3 px-4 bg-red-600 hover:bg-red-700 rounded-lg transition cursor-pointer font-semibold text-white shadow-lg"
+                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
               >
                 Logout ({user.email})
               </button>
@@ -463,51 +461,19 @@ export default function Navbar() {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-3 px-4 bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 transition font-medium text-white mb-3"
+                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold text-white shadow-lg"
+                className="block text-center w-full py-2 bg-blue-600 rounded hover:bg-blue-700"
               >
                 Sign Up
               </Link>
             </>
           )}
-
-          {/* Action Cards for non-logged-in users */}
-          {!user && (
-            <div className="pt-6 space-y-4 border-t border-white/10 mt-6">
-              <p className="text-white/70 text-sm mb-4">Choose a trusted tutor for your learning needs or start earning as a home tutor today.</p>
-              
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-cyan-500/30 rounded-xl p-4">
-                <h3 className="text-white font-bold text-lg mb-3">Find the right tutor</h3>
-                <Link
-                  to="/find-tutor"
-                  onClick={() => setMenuOpen(false)}
-                  className="block w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold text-center transition"
-                >
-                  Find Tutor
-                </Link>
-              </div>
-
-              <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-pink-500/30 rounded-xl p-4">
-                <h3 className="text-white font-bold text-lg mb-3">Become a home tutor</h3>
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    handleApplyAsTutor(navigate);
-                  }}
-                  className="block w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 rounded-lg text-white font-semibold transition"
-                >
-                  Apply as Tutor
-                </button>
-              </div>
-            </div>
-          )}
-          </div>
         </div>
       )}
     </nav>
