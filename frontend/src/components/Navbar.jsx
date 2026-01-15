@@ -118,7 +118,7 @@ export default function Navbar() {
                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer">
                   {user.email[0].toUpperCase()}
                 </div>
-                <div className="absolute right-0 mt-2 w-40 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
                   <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
                     {user.email}
                   </div>
@@ -135,6 +135,7 @@ export default function Navbar() {
                     </Link>
                   )}
                   <button
+                    type="button"
                     onClick={async () => {
                       try {
                         await logoutUser();
@@ -147,7 +148,7 @@ export default function Navbar() {
                         window.location.reload();
                       }
                     }}
-                    className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg"
+                    className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
                   >
                     Logout
                   </button>
@@ -189,7 +190,7 @@ export default function Navbar() {
                     {user.email[0].toUpperCase()}
                   </div>
                 )}
-                <div className="absolute right-0 mt-2 w-40 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
                   <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
                     {user.email}
                   </div>
@@ -225,6 +226,7 @@ export default function Navbar() {
                     </Link>
                   )}
                   <button
+                    type="button"
                     onClick={async () => {
                       try {
                         await logoutUser();
@@ -237,7 +239,7 @@ export default function Navbar() {
                         window.location.reload();
                       }
                     }}
-                    className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg"
+                    className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
                   >
                     Logout
                   </button>
@@ -335,6 +337,7 @@ export default function Navbar() {
                 Admin Dashboard
               </Link>
               <button
+                type="button"
                 onClick={async () => {
                   setMenuOpen(false);
                   try {
@@ -348,7 +351,7 @@ export default function Navbar() {
                     window.location.reload();
                   }
                 }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition"
+                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
               >
                 Logout ({user.email})
               </button>
@@ -377,6 +380,7 @@ export default function Navbar() {
                 </>
               )}
               <button
+                type="button"
                 onClick={async () => {
                   setMenuOpen(false);
                   try {
@@ -390,7 +394,7 @@ export default function Navbar() {
                     window.location.reload();
                   }
                 }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition"
+                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
               >
                 Logout ({user.email})
               </button>
