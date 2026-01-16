@@ -73,7 +73,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-8 text-white text-lg items-center">
+        <ul className="hidden lg:flex gap-8 text-white text-lg items-center">
           <Link to="/" className="hover:text-blue-400">Home</Link>
           <Link to="/about" className="hover:text-blue-400">About</Link>
 
@@ -116,7 +116,7 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop Buttons / Profile */}
-        <div className="hidden md:flex gap-4 items-center">
+        <div className="hidden lg:flex gap-4 items-center">
           {loading ? (
             <div className="w-8 h-8 rounded-full bg-gray-600 animate-pulse"></div>
           ) : user && user.role === "admin" ? (
@@ -307,9 +307,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon */}
+        {/* Mobile Menu Icon - Hidden on desktop/laptop */}
         <div
-          className="md:hidden text-white text-3xl cursor-pointer"
+          className="lg:hidden text-white text-3xl cursor-pointer"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? "✕" : "☰"}
@@ -318,7 +318,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden bg-black/70 backdrop-blur-xl text-white p-6 space-y-4">
+        <div className="lg:hidden bg-black/70 backdrop-blur-xl text-white p-6 space-y-4">
           <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
             Home
           </Link>
