@@ -64,8 +64,74 @@ export default function Signup() {
   }
 
   function handleGoogleLogin() {
-    // Google OAuth will create user with default "user" role
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const googleAuthUrl = `${backendUrl}/auth/google?popup=1`;
+    const popup = window.open(
+      googleAuthUrl,
+      'google-auth',
+      'width=500,height=600,left=' + (window.screen.width / 2 - 250) + ',top=' + (window.screen.height / 2 - 300)
+    );
+
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      // Popup blocked - fallback to full redirect
+      window.location.href = `${backendUrl}/auth/google`;
+      return;
+    }
+
+    // Listen for message from popup
+    const messageListener = (event) => {
+      const allowedOrigins = [
+        backendUrl.replace(/\/$/, ''),
+        window.location.origin
+      ];
+      
+      if (!allowedOrigins.includes(event.origin)) {
+        return;
+      }
+
+      if (event.data.type === 'GOOGLE_OAUTH_SUCCESS') {
+        window.removeEventListener('message', messageListener);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+        
+        setTimeout(async () => {
+          try {
+            const authData = await verifyAuth();
+            if (authData.success) {
+              const user = authData.user;
+              if (user.role === "admin") {
+                window.location.href = "/admin/dashboard";
+              } else if (user.role === "tutor" && !user.isTutorProfileComplete) {
+                window.location.href = "/complete-profile";
+              } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+                window.location.href = "/apply-tutor";
+              } else {
+                window.location.href = "/";
+              }
+            }
+          } catch (err) {
+            console.error("Auth verification failed:", err);
+            setError("Authentication failed. Please try again.");
+          }
+        }, 500);
+      } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
+        window.removeEventListener('message', messageListener);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+        setError("Google authentication failed. Please try again.");
+      }
+    };
+
+    window.addEventListener('message', messageListener);
+
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        window.removeEventListener('message', messageListener);
+      }
+    }, 1000);
   }
 
   async function handleSubmit(e) {
