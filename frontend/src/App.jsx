@@ -49,25 +49,19 @@ function AppContent() {
             // Redirect based on role - navigate will handle the routing
             if (user.role === "tutor" && !user.isTutorProfileComplete) {
               console.log("➡️ Redirecting to complete-profile");
-              setTimeout(() => {
-                navigate("/complete-profile", { replace: true });
-                // Reset processing flag after navigation
-                setTimeout(() => setIsOAuthProcessing(false), 100);
-              }, 0);
+              navigate("/complete-profile", { replace: true });
+              // Reset processing flag immediately after navigation
+              setTimeout(() => setIsOAuthProcessing(false), 30);
             } else if (user.role === "tutor" && user.isTutorProfileComplete) {
               console.log("➡️ Redirecting to apply-tutor");
-              setTimeout(() => {
-                navigate("/apply-tutor", { replace: true });
-                // Reset processing flag after navigation
-                setTimeout(() => setIsOAuthProcessing(false), 100);
-              }, 0);
+              navigate("/apply-tutor", { replace: true });
+              // Reset processing flag immediately after navigation
+              setTimeout(() => setIsOAuthProcessing(false), 30);
             } else if (user.role === "admin") {
               console.log("➡️ Redirecting to admin dashboard");
-              setTimeout(() => {
-                navigate("/admin/dashboard", { replace: true });
-                // Reset processing flag after navigation
-                setTimeout(() => setIsOAuthProcessing(false), 100);
-              }, 0);
+              navigate("/admin/dashboard", { replace: true });
+              // Reset processing flag immediately after navigation
+              setTimeout(() => setIsOAuthProcessing(false), 30);
             } else {
               console.log("➡️ Redirecting to home");
               // For regular users, just reset and let normal routing work
@@ -89,7 +83,7 @@ function AppContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 500); // Small delay for smooth transition
+    }, 200); // Minimal delay for smooth transition
 
     return () => clearTimeout(timer);
   }, []);
@@ -106,7 +100,7 @@ function AppContent() {
     setIsNavigating(true);
     const timer = setTimeout(() => {
       setIsNavigating(false);
-    }, 200); // Short delay for route transitions
+    }, 100); // Minimal delay for route transitions
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
