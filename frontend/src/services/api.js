@@ -16,11 +16,21 @@ export async function apiRequest(endpoint, options = {}) {
   console.log(`🌐 API Request: ${options.method || 'GET'} ${endpoint}`);
 
   try {
+    // FIX FOR BRAVE/PRIVACY BROWSERS: Use stored token if available (for third-party cookie blocking)
+    const headers = {
+      "Content-Type": "application/json",
+      ...options.headers,
+    };
+    
+    // Check for token in storage (fallback for privacy browsers that block third-party cookies)
+    const storedToken = sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
+    if (storedToken) {
+      headers["Authorization"] = `Bearer ${storedToken}`;
+    }
+    
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       credentials: "include", // Important: Include cookies in requests
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       signal: controller.signal,
       ...options,
     });
