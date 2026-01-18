@@ -239,11 +239,17 @@ router.get(
       if (isPopup) {
         // For popup: serve HTML page that sends token to parent window
         console.log("   - Popup mode: Serving success page");
+        
+        // Set headers to allow popup communication
+        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+        res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+        
         const html = `
 <!DOCTYPE html>
 <html>
 <head>
   <title>Authentication Successful</title>
+  <meta charset="UTF-8">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -281,21 +287,37 @@ router.get(
     <p>You can close this window.</p>
   </div>
   <script>
-    // Send success message to parent window
-    if (window.opener) {
-      window.opener.postMessage({
-        type: 'GOOGLE_OAUTH_SUCCESS',
-        message: 'Authentication successful'
-      }, '${process.env.CLIENT_URL}');
-      
-      // Close popup after a short delay
-      setTimeout(() => {
-        window.close();
-      }, 1000);
-    } else {
-      // Not in popup, redirect to frontend
-      window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
-    }
+    (function() {
+      // Send success message to parent window
+      if (window.opener && !window.opener.closed) {
+        try {
+          const clientUrl = '${process.env.CLIENT_URL}';
+          window.opener.postMessage({
+            type: 'GOOGLE_OAUTH_SUCCESS',
+            message: 'Authentication successful'
+          }, clientUrl);
+          
+          console.log('Message sent to parent window');
+          
+          // Close popup after a short delay
+          setTimeout(() => {
+            if (window.opener && !window.opener.closed) {
+              window.close();
+            }
+          }, 1500);
+        } catch (err) {
+          console.error('Error sending message:', err);
+          // Fallback: redirect parent window
+          if (window.opener && !window.opener.closed) {
+            window.opener.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
+            window.close();
+          }
+        }
+      } else {
+        // Not in popup or opener closed, redirect to frontend
+        window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
+      }
+    })();
   </script>
 </body>
 </html>`;
