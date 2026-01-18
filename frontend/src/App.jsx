@@ -29,6 +29,18 @@ function AppContent() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [isOAuthProcessing, setIsOAuthProcessing] = useState(false);
 
+  // Preload auth background image on component mount
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/auth-bg.jpg";
+    img.onload = () => {
+      console.log("🖼️ Auth background image preloaded");
+    };
+    img.onerror = () => {
+      console.warn("⚠️ Failed to preload auth background image");
+    };
+  }, []);
+
   // Handle OAuth callback BEFORE rendering anything
   useEffect(() => {
     const authParam = searchParams.get("auth");
