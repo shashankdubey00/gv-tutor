@@ -34,12 +34,21 @@ function AuthVerifier() {
       console.log("🔵 STEP 5: OAuth Callback Received on Frontend");
       console.log("   - URL params: auth=success, provider=google");
       console.log("   - Current URL:", window.location.href);
-      console.log("   - Checking cookies in DevTools → Application → Cookies");
+      console.log("   - ⚠️  IMPORTANT: Check Network tab for redirect response");
+      console.log("   - ⚠️  Look for redirect from gvtutor.onrender.com → vercel.app");
+      console.log("   - ⚠️  Check Response Headers for 'Set-Cookie' header");
+      console.log("   - ⚠️  Check Application → Cookies → gvtutor.onrender.com");
+      console.log("   - ⚠️  Cookie should have: HttpOnly, Secure=true, SameSite=None");
       
       // Check if cookie exists in document.cookie (though httpOnly cookies won't show)
-      console.log("   - document.cookie:", document.cookie);
+      console.log("   - document.cookie:", document.cookie || "(empty - expected for httpOnly)");
       console.log("   - Note: httpOnly cookies are NOT visible in document.cookie");
       console.log("   - Waiting 500ms before verification to allow cookie propagation...");
+      
+      // Try to check if cookie was set by checking Network response
+      console.log("   - 🔍 ACTION REQUIRED: Open Network tab");
+      console.log("   - 🔍 Find the redirect response (status 302 or 301)");
+      console.log("   - 🔍 Check if 'Set-Cookie: token=...' is in Response Headers");
       
       // Wait a moment for cookie to be set after redirect
       // Then verify authentication after Google OAuth
