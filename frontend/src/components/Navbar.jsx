@@ -318,33 +318,34 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden bg-black/70 backdrop-blur-xl text-white p-6 space-y-4">
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+        <div className="md:hidden bg-gradient-to-b from-black/80 to-black/95 backdrop-blur-xl text-white p-6 space-y-3 border-t border-white/10">
+          <Link to="/" onClick={() => setMenuOpen(false)} className="block px-4 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
             Home
           </Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+          <Link to="/about" onClick={() => setMenuOpen(false)} className="block px-4 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
             About
           </Link>
 
           <div>
-            <p
-              className="font-semibold mb-2 cursor-pointer"
+            <button
+              className="w-full text-left px-4 py-3 font-semibold mb-2 cursor-pointer rounded-lg hover:bg-white/10 transition-colors duration-200 flex items-center justify-between"
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
             >
-              Home Tutor ▾
-            </p>
+              <span>Home Tutor</span>
+              <span className={`transition-transform duration-200 ${tutorMenuOpen ? 'rotate-180' : ''}`}>▾</span>
+            </button>
 
             {tutorMenuOpen && (
-              <div className="ml-4 space-y-2">
+              <div className="ml-0 space-y-2 mt-2 bg-white/5 rounded-lg p-3 border border-white/10">
                 <Link
                   to="/find-tutor"
                   onClick={() => {
                     setTutorMenuOpen(false);
                     setMenuOpen(false);
                   }}
-                  className="block hover:text-blue-400"
+                  className="block px-4 py-2 rounded hover:bg-blue-500/20 transition-colors duration-200 text-blue-300"
                 >
-                  Find Tutor
+                  📚 Find Tutor
                 </Link>
                 {/* Only show "Apply as Tutor" if user is not logged in OR is a tutor (not admin) */}
                 {(!user || (user.role === "tutor" && user.role !== "admin")) && (
@@ -354,80 +355,82 @@ export default function Navbar() {
                       setMenuOpen(false);
                       handleApplyAsTutor(navigate);
                     }}
-                    className="block w-full text-left hover:text-blue-400"
+                    className="block w-full text-left px-4 py-2 rounded hover:bg-green-500/20 transition-colors duration-200 text-green-300"
                   >
-                    Apply as Tutor
+                    ✏️ Apply as Tutor
                   </button>
                 )}
               </div>
             )}
           </div>
 
-          <Link to="/library" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+          <Link to="/library" onClick={() => setMenuOpen(false)} className="block px-4 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
             Library
           </Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block hover:text-blue-400">
+          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block px-4 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
             Contact
           </Link>
 
           {user && user.role === "admin" ? (
             <>
-              <Link
-                to="/admin/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
-              >
-                Admin Dashboard
-              </Link>
-              <button
-                type="button"
-                onClick={async () => {
-                  setMenuOpen(false);
-                  try {
-                    // Clear user state immediately
-                    setUser(null);
-                    setProfile(null);
-                    // Call logout API
-                    await logoutUser();
-                  } catch (err) {
-                    console.error("Logout error:", err);
-                  } finally {
-                    // Always clear cookies and redirect
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                    if (window.location.protocol === "https:") {
-                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+              <div className="border-t border-white/10 pt-4 space-y-2">
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="block text-center w-full py-3 border border-purple-500/50 bg-purple-500/10 rounded-lg hover:bg-purple-500/20 transition-all duration-200 text-purple-300 font-medium"
+                >
+                  ⚙️ Admin Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setMenuOpen(false);
+                    try {
+                      // Clear user state immediately
+                      setUser(null);
+                      setProfile(null);
+                      // Call logout API
+                      await logoutUser();
+                    } catch (err) {
+                      console.error("Logout error:", err);
+                    } finally {
+                      // Always clear cookies and redirect
+                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                      if (window.location.protocol === "https:") {
+                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                      }
+                      // Force full page reload to clear all state
+                      window.location.href = "/";
                     }
-                    // Force full page reload to clear all state
-                    window.location.href = "/";
-                  }
-                }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
-              >
-                Logout ({user.email})
-              </button>
+                  }}
+                  className="block text-center w-full py-3 bg-red-600/80 hover:bg-red-600 rounded-lg transition-all duration-200 font-medium shadow-lg shadow-red-600/20"
+                >
+                  🚪 Logout ({user.email})
+                </button>
+              </div>
             </>
           ) : user && (user.role === "tutor" || user.role === "user") ? (
             <>
               {/* Only show "Apply as Tutor" button for tutors, NOT for regular users or admins */}
               {user.role === "tutor" && user.role !== "admin" && (
-                <>
+                <div className="space-y-2">
                   <Link
                     to="/apply-tutor"
                     onClick={() => setMenuOpen(false)}
-                    className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
+                    className="block text-center w-full py-3 border border-green-500/50 bg-green-500/10 rounded-lg hover:bg-green-500/20 transition-all duration-200 text-green-300 font-medium"
                   >
-                    Apply as Tutor
+                    ✏️ Apply as Tutor
                   </Link>
                   {profile && (
                     <Link
                       to="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
+                      className="block text-center w-full py-3 border border-cyan-500/50 bg-cyan-500/10 rounded-lg hover:bg-cyan-500/20 transition-all duration-200 text-cyan-300 font-medium"
                     >
-                      My Profile
+                      👤 My Profile
                     </Link>
                   )}
-                </>
+                </div>
               )}
               <button
                 type="button"
@@ -451,28 +454,28 @@ export default function Navbar() {
                     window.location.href = "/";
                   }
                 }}
-                className="block text-center w-full py-2 bg-red-600 hover:bg-red-700 rounded transition cursor-pointer"
+                className="block text-center w-full py-3 bg-red-600/80 hover:bg-red-600 rounded-lg transition-all duration-200 font-medium shadow-lg shadow-red-600/20"
               >
-                Logout ({user.email})
+                🚪 Logout ({user.email})
               </button>
             </>
           ) : (
-            <>
+            <div className="border-t border-white/10 pt-4 space-y-2">
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 border border-white/30 rounded hover:bg-white/20"
+                className="block text-center w-full py-3 border border-blue-500/50 bg-blue-500/10 rounded-lg hover:bg-blue-500/20 transition-all duration-200 text-blue-300 font-medium"
               >
-                Login
+                🔐 Login
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-2 bg-blue-600 rounded hover:bg-blue-700"
+                className="block text-center w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 text-white font-medium shadow-lg shadow-blue-600/30"
               >
-                Sign Up
+                ✍️ Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       )}

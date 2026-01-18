@@ -83,7 +83,7 @@ function AppContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 200); // Minimal delay for smooth transition
+    }, 150); // Minimal delay for smooth transition
 
     return () => clearTimeout(timer);
   }, []);
@@ -100,7 +100,7 @@ function AppContent() {
     setIsNavigating(true);
     const timer = setTimeout(() => {
       setIsNavigating(false);
-    }, 100); // Minimal delay for route transitions
+    }, 80); // Minimal delay for route transitions
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
