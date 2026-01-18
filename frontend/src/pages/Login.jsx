@@ -16,6 +16,17 @@ export default function Login() {
   const [emailError, setEmailError] = useState("");
   const [showBraveNotice, setShowBraveNotice] = useState(false);
 
+  // Handle OAuth callback after Google redirects back
+  useEffect(() => {
+    const authSuccess = searchParams.get("auth");
+    const provider = searchParams.get("provider");
+    
+    if (authSuccess === "success" && provider === "google") {
+      console.log("✅ OAuth callback detected - verifying and redirecting");
+      performAuthRedirect();
+    }
+  }, [searchParams]);
+
   // Enhanced email validation
   const validateEmail = (email) => {
     if (!email) {
@@ -69,111 +80,10 @@ export default function Login() {
   function handleGoogleLogin() {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     
-    // Detect if browser blocks third-party cookies (Brave, Safari, etc.)
-    // Try popup approach first (works better with privacy browsers)
-    const googleAuthUrl = `${backendUrl}/auth/google?popup=1`;
-    const popup = window.open(
-      googleAuthUrl,
-      'google-auth',
-      'width=500,height=600,left=' + (window.screen.width / 2 - 250) + ',top=' + (window.screen.height / 2 - 300)
-    );
-
-    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-      // Popup blocked - fallback to full redirect
-      console.log("🔵 STEP 1: Google Login Button Clicked (Full Redirect - Popup Blocked)");
-      console.log("   - Backend URL:", backendUrl);
-      console.log("   - Using full redirect fallback");
-      window.location.href = `${backendUrl}/auth/google`;
-      return;
-    }
-
-    console.log("🔵 STEP 1: Google Login Button Clicked (Popup Mode)");
-    console.log("   - Using popup for better privacy browser compatibility");
-    console.log("   - Popup will stay on backend domain (cookies work)");
-    
-    // Listen for message from popup
-    const messageListener = (event) => {
-      // Verify origin for security - allow both backend and frontend origins
-      const allowedOrigins = [
-        backendUrl.replace(/\/$/, ''),
-        window.location.origin
-      ];
-      
-      if (!allowedOrigins.includes(event.origin)) {
-        console.warn("⚠️ Ignoring message from untrusted origin:", event.origin);
-        return;
-      }
-
-      if (event.data.type === 'GOOGLE_OAUTH_SUCCESS') {
-        console.log("✅ Received OAuth success from popup");
-        window.removeEventListener('message', messageListener);
-        messageReceived = true;
-        
-        // Close popup immediately
-        if (popup && !popup.closed) {
-          popup.close();
-        }
-        
-        // FIX FOR BRAVE/PRIVACY BROWSERS & WEBAPP: Store token in localStorage (survives redirects)
-        if (event.data.token) {
-          console.log("📦 Token received from popup - storing in localStorage");
-          localStorage.setItem('auth_token', event.data.token);
-        }
-        
-        // Verify authentication and redirect in SAME TAB (important for webapp)
-        performAuthRedirect();
-      } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
-        console.error("❌ OAuth error from popup:", event.data.error);
-        window.removeEventListener('message', messageListener);
-        if (popup && !popup.closed) {
-          popup.close();
-        }
-        // Check if it's a cookie/third-party blocking issue
-        if (event.data.error?.includes('cookie') || event.data.error?.includes('third-party')) {
-          setShowBraveNotice(true);
-        } else {
-          setError(event.data.error || "Google authentication failed. Please try again.");
-        }
-      }
-    };
-
-    window.addEventListener('message', messageListener);
-
-    // Check if popup was closed manually (but don't spam console)
-    let popupClosedLogged = false;
-    let messageReceived = false;
-    const checkClosed = setInterval(() => {
-      if (popup.closed && !messageReceived) {
-        clearInterval(checkClosed);
-        window.removeEventListener('message', messageListener);
-        if (!popupClosedLogged) {
-          console.log("Popup closed by user before OAuth completed");
-          popupClosedLogged = true;
-          // Show Brave notice if popup closed without success (likely cookie blocking)
-          setShowBraveNotice(true);
-        }
-      }
-    }, 1000);
-    
-    // Track if we received a message
-    const originalListener = messageListener;
-    const wrappedListener = (event) => {
-      messageReceived = true;
-      originalListener(event);
-    };
-    window.removeEventListener('message', messageListener);
-    window.addEventListener('message', wrappedListener);
-    
-    // Cleanup after 5 minutes (timeout)
-    setTimeout(() => {
-      clearInterval(checkClosed);
-      window.removeEventListener('message', wrappedListener);
-      if (popup && !popup.closed && !messageReceived) {
-        console.warn("OAuth popup timeout - closing");
-        popup.close();
-        setShowBraveNotice(true);
-      }
-    }, 5 * 60 * 1000);
+    // Standard OAuth flow: Full-page redirect (like most websites do)
+    // This ensures single tab experience and proper session handling
+    console.log("🔵 Google Login - Full page redirect");
+    window.location.href = `${backendUrl}/auth/google`;
   }
 
 

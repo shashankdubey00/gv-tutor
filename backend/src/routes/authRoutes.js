@@ -229,113 +229,11 @@ router.get(
       
       res.cookie("token", token, cookieOptions);
       console.log("   - ✅ Cookie 'token' set in response");
-      console.log("   - ⚠️  CHECK: Set-Cookie header should be in response");
-      console.log("   - ⚠️  CHECK: Cookie domain will be set to backend domain by browser");
-      console.log("   - ⚠️  CHECK: For cross-origin, sameSite must be 'none' AND secure must be 'true'");
 
-      // Check if this is a popup request (has popup=1 query param)
-      const isPopup = req.query.popup === "1" || req.headers.referer?.includes("popup");
-      
-      if (isPopup) {
-        // For popup: serve HTML page that sends token to parent window
-        console.log("   - Popup mode: Serving success page");
-        
-        // Set headers to allow popup communication
-        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-        res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
-        
-        // CRITICAL FIX FOR BRAVE/PRIVACY BROWSERS: Send token via postMessage
-        // This bypasses third-party cookie blocking by letting frontend handle token storage
-        const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Authentication Successful</title>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-    .container {
-      text-align: center;
-      padding: 2rem;
-    }
-    .spinner {
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid white;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="spinner"></div>
-    <h2>Authentication Successful!</h2>
-    <p>You can close this window.</p>
-  </div>
-  <script>
-    (function() {
-      // FIX FOR BRAVE/PRIVACY BROWSERS: Send token via postMessage instead of relying on cookies
-      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-      const clientUrl = '${process.env.CLIENT_URL}';
-      
-      if (window.opener && !window.opener.closed) {
-        try {
-          // Send token along with success message to bypass third-party cookie blocking
-          // IMPORTANT: Use '*' to ensure message gets through (will be verified on frontend)
-          window.opener.postMessage({
-            type: 'GOOGLE_OAUTH_SUCCESS',
-            message: 'Authentication successful',
-            token: token || null
-          }, '*');
-          
-          console.log('✅ Message sent to parent window with token');
-          
-          // Close popup after a short delay - let parent handle redirect
-          setTimeout(() => {
-            if (window.opener && !window.opener.closed) {
-              window.close();
-            } else {
-              // If opener closed, redirect this popup to home (shouldn't happen)
-              window.location.href = clientUrl;
-            }
-          }, 1000);
-        } catch (err) {
-          console.error('❌ Error sending message to parent:', err);
-          // Fallback: If postMessage fails, redirect this popup to home
-          // Parent window should handle its own redirect via /verify endpoint
-          window.location.href = clientUrl;
-        }
-      } else {
-        // Not in popup or opener is closed - redirect this window to home
-        console.log('⚠️  No opener found - redirecting to home');
-        window.location.href = clientUrl;
-      }
-    })();
-  </script>
-</body>
-</html>`;
-        return res.send(html);
-      }
-      
-      // Normal redirect for full-page flow
+      // Standard OAuth flow: Simple redirect to frontend
+      // Frontend will verify auth via /verify endpoint and handle redirect
       const redirectUrl = process.env.CLIENT_URL + "/?auth=success&provider=google";
-      console.log("   - Redirecting to:", redirectUrl);
+      console.log("   - ✅ Standard OAuth redirect to:", redirectUrl);
       res.redirect(redirectUrl);
     } catch (error) {
       console.error("Google OAuth callback error:", error);
