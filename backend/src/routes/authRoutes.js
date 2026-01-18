@@ -196,6 +196,8 @@ router.get(
         sameSite: cookieOptions.sameSite,
         secure: cookieOptions.secure,
         path: cookieOptions.path,
+        nodeEnv: process.env.NODE_ENV,
+        clientUrl: process.env.CLIENT_URL,
       });
 
       // Redirect to home page - frontend will handle routing based on user state

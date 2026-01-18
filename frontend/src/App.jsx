@@ -31,28 +31,55 @@ function AuthVerifier() {
     const provider = searchParams.get("provider");
 
     if (authParam === "success" && provider === "google") {
-      // Verify authentication after Google OAuth
-      verifyAuth()
-        .then((data) => {
-          if (data.success) {
-            console.log("✅ Google authentication verified:", data.user);
-            const user = data.user;
-            
-            // Redirect based on role and profile completion
-            if (user.role === "tutor" && !user.isTutorProfileComplete) {
-              navigate("/complete-profile", { replace: true });
-            } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-              navigate("/apply-tutor", { replace: true });
-            } else {
-              // For regular users, stay on home page
-              navigate("/", { replace: true });
+      // Wait a moment for cookie to be set after redirect
+      // Then verify authentication after Google OAuth
+      setTimeout(() => {
+        verifyAuth()
+          .then((data) => {
+            if (data.success) {
+              console.log("✅ Google authentication verified:", data.user);
+              const user = data.user;
+              
+              // Redirect based on role and profile completion
+              if (user.role === "tutor" && !user.isTutorProfileComplete) {
+                navigate("/complete-profile", { replace: true });
+              } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+                navigate("/apply-tutor", { replace: true });
+              } else if (user.role === "admin") {
+                navigate("/admin/dashboard", { replace: true });
+              } else {
+                // For regular users, reload to ensure cookie is available everywhere
+                window.location.href = "/";
+              }
             }
-          }
-        })
-        .catch((error) => {
-          console.error("❌ Authentication verification failed:", error);
-          navigate("/login", { replace: true });
-        });
+          })
+          .catch((error) => {
+            console.error("❌ Authentication verification failed:", error);
+            // Try one more time after a longer delay in case cookie propagation was slow
+            setTimeout(() => {
+              verifyAuth()
+                .then((data) => {
+                  if (data.success) {
+                    console.log("✅ Google authentication verified on retry:", data.user);
+                    const user = data.user;
+                    if (user.role === "tutor" && !user.isTutorProfileComplete) {
+                      navigate("/complete-profile", { replace: true });
+                    } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+                      navigate("/apply-tutor", { replace: true });
+                    } else if (user.role === "admin") {
+                      navigate("/admin/dashboard", { replace: true });
+                    } else {
+                      window.location.href = "/";
+                    }
+                  }
+                })
+                .catch((retryError) => {
+                  console.error("❌ Authentication verification failed on retry:", retryError);
+                  navigate("/login?error=oauth_failed", { replace: true });
+                });
+            }, 1000);
+          });
+      }, 500); // Wait 500ms for cookie to propagate
     }
   }, [searchParams, navigate]);
 
