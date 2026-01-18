@@ -21,21 +21,29 @@ import Library from "./pages/Library";
 import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// Component to handle Google OAuth verification
-function AuthVerifier() {
+// Context to share OAuth processing state
+import { createContext, useContext } from "react";
+
+const OAuthContext = createContext(false);
+
+function AppContent() {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isOAuthProcessing, setIsOAuthProcessing] = useState(false);
 
+  // Handle OAuth callback BEFORE rendering anything
   useEffect(() => {
     const authParam = searchParams.get("auth");
     const provider = searchParams.get("provider");
 
     if (authParam === "success" && provider === "google") {
-      setIsProcessing(true);
-      console.log("🔵 OAuth callback detected - processing...");
+      setIsOAuthProcessing(true);
+      console.log("🔵 OAuth processing - blocking page render");
       
-      // Don't wait, verify immediately
+      // Verify immediately
       verifyAuth()
         .then((data) => {
           console.log("✅ Auth verified:", data.user.role);
@@ -43,33 +51,29 @@ function AuthVerifier() {
           if (data.success) {
             const user = data.user;
             
-            // Redirect immediately based on role
+            // Redirect immediately - don't render landing page
             if (user.role === "tutor" && !user.isTutorProfileComplete) {
+              console.log("➡️ Tutor redirect to complete-profile");
               navigate("/complete-profile", { replace: true });
             } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+              console.log("➡️ Tutor redirect to apply-tutor");
               navigate("/apply-tutor", { replace: true });
             } else if (user.role === "admin") {
+              console.log("➡️ Admin redirect to dashboard");
               navigate("/admin/dashboard", { replace: true });
             } else {
-              // For regular users, use location.replace to avoid rendering Hero first
-              window.location.replace("/");
+              console.log("➡️ Regular user - clean redirect");
+              // Use window.location to completely replace history
+              window.location.href = "/";
             }
           }
         })
         .catch((error) => {
           console.error("Auth verification failed:", error.message);
-          setIsProcessing(false);
+          setIsOAuthProcessing(false);
         });
     }
   }, [searchParams, navigate]);
-
-  return null;
-}
-
-function AppContent() {
-  const location = useLocation();
-  const [loading, setLoading] = useState(true);
-  const [isNavigating, setIsNavigating] = useState(false);
 
   // Handle initial page load
   useEffect(() => {
@@ -97,9 +101,13 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  // BLOCK rendering if OAuth is processing - show loading spinner instead
+  if (isOAuthProcessing) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <>
-      <AuthVerifier />
+    <OAuthContext.Provider value={isOAuthProcessing}>
       {(loading || isNavigating) && <LoadingSpinner />}
       <Routes>
         {/* Admin routes without Navbar */}
@@ -115,6 +123,9 @@ function AppContent() {
               <Routes>
                 {/* Public pages - no authentication required */}
         <Route path="/" element={<Hero />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/contact" element={<Contact />} />
