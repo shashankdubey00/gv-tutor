@@ -107,48 +107,21 @@ export default function Login() {
       if (event.data.type === 'GOOGLE_OAUTH_SUCCESS') {
         console.log("✅ Received OAuth success from popup");
         window.removeEventListener('message', messageListener);
+        messageReceived = true;
         
-        // Close popup if still open
+        // Close popup immediately
         if (popup && !popup.closed) {
           popup.close();
         }
         
-        // FIX FOR BRAVE/PRIVACY BROWSERS: Handle token from postMessage if cookies are blocked
+        // FIX FOR BRAVE/PRIVACY BROWSERS & WEBAPP: Store token in localStorage (survives redirects)
         if (event.data.token) {
-          console.log("📦 Token received from popup - storing locally");
-          // Store token in sessionStorage for privacy browsers that block third-party cookies
-          sessionStorage.setItem('auth_token', event.data.token);
-          // Also store in localStorage as backup
+          console.log("📦 Token received from popup - storing in localStorage");
           localStorage.setItem('auth_token', event.data.token);
         }
         
-        // Verify authentication and redirect in PARENT window (keeps focus on main window)
-        setTimeout(async () => {
-          try {
-            console.log("🔍 Verifying authentication...");
-            const authData = await verifyAuth();
-            if (authData.success) {
-              const user = authData.user;
-              console.log("✅ Authentication verified, redirecting to:", user.role);
-              
-              // All redirects in main window (parent) - this keeps browser focus correct
-              if (user.role === "admin") {
-                window.location.href = "/admin/dashboard";
-              } else if (user.role === "tutor" && !user.isTutorProfileComplete) {
-                window.location.href = "/complete-profile";
-              } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-                window.location.href = "/apply-tutor";
-              } else {
-                window.location.href = "/";
-              }
-            } else {
-              setError("Authentication verification failed. Please try again.");
-            }
-          } catch (err) {
-            console.error("Auth verification failed:", err);
-            setError("Authentication failed. Please try again.");
-          }
-        }, 300);
+        // Verify authentication and redirect in SAME TAB (important for webapp)
+        performAuthRedirect();
       } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
         console.error("❌ OAuth error from popup:", event.data.error);
         window.removeEventListener('message', messageListener);
@@ -225,46 +198,46 @@ export default function Login() {
       // Longer delay to ensure cookie is set and browser processes it
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Verify auth to get user role and redirect accordingly
-      console.log("🔍 Verifying authentication...");
-      const authData = await verifyAuth();
-      console.log("✅ Auth verification result:", authData);
-      
-      if (authData.success) {
-        const user = authData.user;
-        console.log("✅ Login successful, user role:", user.role, "Email:", user.email);
-        
-        // Force page reload to ensure cookie is read by all components
-        // Check if user is admin first
-        if (user.role === "admin") {
-          console.log("➡️ Redirecting admin to dashboard");
-          window.location.href = "/admin/dashboard";
-          return;
-        } else if (user.role === "tutor") {
-          // User is a tutor
-          if (!user.isTutorProfileComplete) {
-            console.log("➡️ Redirecting tutor to complete-profile");
-            window.location.href = "/complete-profile";
-          } else {
-            console.log("➡️ Redirecting tutor to apply-tutor");
-            window.location.href = "/apply-tutor";
-          }
-          return;
-        } else {
-          // Regular user - go to home
-          console.log("➡️ Redirecting user to home");
-          window.location.href = "/";
-          return;
-        }
-      } else {
-        console.error("❌ Auth verification failed after login:", authData);
-        setError("Login successful but session verification failed. Please check browser cookies and try again.");
-      }
+      // Use shared redirect function (works for both regular login and OAuth)
+      await performAuthRedirect();
     } catch (err) {
       console.error("❌ Login error:", err);
       setError(err.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Handle authentication redirect (used by both OAuth popup and regular login)
+  // Ensures redirect happens in SAME TAB for webapp compatibility
+  async function performAuthRedirect() {
+    try {
+      console.log("🔍 Verifying authentication...");
+      const authData = await verifyAuth();
+      if (authData.success) {
+        const user = authData.user;
+        console.log("✅ Auth verified - user role:", user.role);
+        
+        // Redirect in SAME TAB using window.location (critical for webapp)
+        if (user.role === "admin") {
+          console.log("➡️ Redirecting to /admin/dashboard");
+          window.location.href = "/admin/dashboard";
+        } else if (user.role === "tutor" && !user.isTutorProfileComplete) {
+          console.log("➡️ Redirecting to /complete-profile");
+          window.location.href = "/complete-profile";
+        } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+          console.log("➡️ Redirecting to /apply-tutor");
+          window.location.href = "/apply-tutor";
+        } else {
+          console.log("➡️ Redirecting to /");
+          window.location.href = "/";
+        }
+      } else {
+        setError("Authentication verification failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Auth verification failed:", err);
+      setError("Authentication failed. Please try again.");
     }
   }
 
