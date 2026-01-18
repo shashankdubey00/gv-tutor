@@ -111,16 +111,7 @@ export default function Login() {
           popup.close();
         }
         
-        // FIX FOR BRAVE/PRIVACY BROWSERS: Handle token from postMessage if cookies are blocked
-        if (event.data.token) {
-          console.log("📦 Token received from popup - storing locally");
-          // Store token temporarily in sessionStorage for privacy browsers that block third-party cookies
-          sessionStorage.setItem('auth_token', event.data.token);
-          // Also set as Authorization header for API requests
-          localStorage.setItem('auth_token', event.data.token);
-        }
-        
-        // Token is in cookie (set by backend) OR in sessionStorage (for privacy browsers)
+        // Token is in cookie (set by backend), verify and redirect
         setTimeout(async () => {
           try {
             const authData = await verifyAuth();

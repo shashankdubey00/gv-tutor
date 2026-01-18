@@ -244,8 +244,6 @@ router.get(
         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
         res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
         
-        // CRITICAL FIX FOR BRAVE/PRIVACY BROWSERS: Send token via postMessage
-        // This bypasses third-party cookie blocking by letting frontend handle token storage
         const html = `
 <!DOCTYPE html>
 <html>
@@ -290,20 +288,16 @@ router.get(
   </div>
   <script>
     (function() {
-      // FIX FOR BRAVE/PRIVACY BROWSERS: Send token via postMessage instead of relying on cookies
-      const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-      
+      // Send success message to parent window
       if (window.opener && !window.opener.closed) {
         try {
           const clientUrl = '${process.env.CLIENT_URL}';
-          // Send token along with success message to bypass third-party cookie blocking
           window.opener.postMessage({
             type: 'GOOGLE_OAUTH_SUCCESS',
-            message: 'Authentication successful',
-            token: token || null
+            message: 'Authentication successful'
           }, clientUrl);
           
-          console.log('Message sent to parent window with token');
+          console.log('Message sent to parent window');
           
           // Close popup after a short delay
           setTimeout(() => {
@@ -313,17 +307,15 @@ router.get(
           }, 1500);
         } catch (err) {
           console.error('Error sending message:', err);
-          // Fallback: redirect parent window with token in URL (secure: HTTPS only in production)
+          // Fallback: redirect parent window
           if (window.opener && !window.opener.closed) {
-            const tokenParam = token ? '&token=' + encodeURIComponent(token) : '';
-            window.opener.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google' + tokenParam;
+            window.opener.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
             window.close();
           }
         }
       } else {
-        // Not in popup or opener closed, redirect to frontend with token in URL
-        const tokenParam = token ? '?token=' + encodeURIComponent(token) : '';
-        window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google' + tokenParam;
+        // Not in popup or opener closed, redirect to frontend
+        window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
       }
     })();
   </script>
