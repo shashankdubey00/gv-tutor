@@ -40,9 +40,9 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
           className="text-center z-10"
         >
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
-            Connecting students with the <br/>
-            <span className="text-blue-500">best home tutors</span> in your area
+          <h1 className="text-4xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
+            <span className="block md:hidden">Connect with the <br/><span className="text-blue-500">best tutors</span> <br/>in your area</span>
+            <span className="hidden md:block">Connecting students with the <br/><span className="text-blue-500">best home tutors</span> in your area</span>
           </h1>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12">
             Choose a trusted tutor for your learning needs or start earning as a home tutor today.
