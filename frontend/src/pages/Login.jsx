@@ -14,6 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [showBraveNotice, setShowBraveNotice] = useState(false);
 
   // Enhanced email validation
   const validateEmail = (email) => {
@@ -139,7 +140,12 @@ export default function Login() {
         if (popup && !popup.closed) {
           popup.close();
         }
-        setError(event.data.error || "Google authentication failed. Please try again.");
+        // Check if it's a cookie/third-party blocking issue
+        if (event.data.error?.includes('cookie') || event.data.error?.includes('third-party')) {
+          setShowBraveNotice(true);
+        } else {
+          setError(event.data.error || "Google authentication failed. Please try again.");
+        }
       }
     };
 
@@ -147,24 +153,37 @@ export default function Login() {
 
     // Check if popup was closed manually (but don't spam console)
     let popupClosedLogged = false;
+    let messageReceived = false;
     const checkClosed = setInterval(() => {
-      if (popup.closed) {
+      if (popup.closed && !messageReceived) {
         clearInterval(checkClosed);
         window.removeEventListener('message', messageListener);
         if (!popupClosedLogged) {
-          console.log("Popup closed by user");
+          console.log("Popup closed by user before OAuth completed");
           popupClosedLogged = true;
+          // Show Brave notice if popup closed without success (likely cookie blocking)
+          setShowBraveNotice(true);
         }
       }
     }, 1000);
     
+    // Track if we received a message
+    const originalListener = messageListener;
+    const wrappedListener = (event) => {
+      messageReceived = true;
+      originalListener(event);
+    };
+    window.removeEventListener('message', messageListener);
+    window.addEventListener('message', wrappedListener);
+    
     // Cleanup after 5 minutes (timeout)
     setTimeout(() => {
       clearInterval(checkClosed);
-      window.removeEventListener('message', messageListener);
-      if (popup && !popup.closed) {
+      window.removeEventListener('message', wrappedListener);
+      if (popup && !popup.closed && !messageReceived) {
         console.warn("OAuth popup timeout - closing");
         popup.close();
+        setShowBraveNotice(true);
       }
     }, 5 * 60 * 1000);
   }
@@ -244,6 +263,28 @@ export default function Login() {
         </p>
 
         {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
+        
+        {showBraveNotice && (
+          <div className="mt-4 p-4 bg-yellow-500/10 border-2 border-yellow-500/50 rounded-lg">
+            <div className="flex items-start gap-3">
+              <span className="text-yellow-400 text-xl">⚠️</span>
+              <div className="flex-1">
+                <p className="text-yellow-300 font-semibold mb-2">Brave Browser Notice:</p>
+                <p className="text-white/90 text-sm mb-3">
+                  Google OAuth requires third-party cookies. Click the Brave icon (🦁) in your address bar → 
+                  <strong> Shields</strong> → Turn OFF <strong>"Block cross-site cookies"</strong> for this site, 
+                  or use email/password login below.
+                </p>
+                <button
+                  onClick={() => setShowBraveNotice(false)}
+                  className="text-yellow-300 hover:text-yellow-200 text-sm underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
 
