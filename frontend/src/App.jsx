@@ -31,36 +31,65 @@ function AuthVerifier() {
     const provider = searchParams.get("provider");
 
     if (authParam === "success" && provider === "google") {
+      console.log("🔵 STEP 5: OAuth Callback Received on Frontend");
+      console.log("   - URL params: auth=success, provider=google");
+      console.log("   - Current URL:", window.location.href);
+      console.log("   - Checking cookies in DevTools → Application → Cookies");
+      
+      // Check if cookie exists in document.cookie (though httpOnly cookies won't show)
+      console.log("   - document.cookie:", document.cookie);
+      console.log("   - Note: httpOnly cookies are NOT visible in document.cookie");
+      console.log("   - Waiting 500ms before verification to allow cookie propagation...");
+      
       // Wait a moment for cookie to be set after redirect
       // Then verify authentication after Google OAuth
       setTimeout(() => {
+        console.log("🔵 STEP 6: Starting verifyAuth() call");
+        console.log("   - Backend URL:", import.meta.env.VITE_BACKEND_URL);
+        console.log("   - Endpoint: /api/auth/verify");
+        console.log("   - Expected: Cookie should be sent automatically with credentials: 'include'");
+        
         verifyAuth()
           .then((data) => {
+            console.log("🔵 STEP 7: verifyAuth() Response Received");
+            console.log("   - Success:", data.success);
+            console.log("   - User data:", data.user);
+            
             if (data.success) {
-              console.log("✅ Google authentication verified:", data.user);
+              console.log("✅ STEP 8: Google authentication verified successfully");
               const user = data.user;
               
               // Redirect based on role and profile completion
               if (user.role === "tutor" && !user.isTutorProfileComplete) {
+                console.log("   - Redirecting to: /complete-profile");
                 navigate("/complete-profile", { replace: true });
               } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+                console.log("   - Redirecting to: /apply-tutor");
                 navigate("/apply-tutor", { replace: true });
               } else if (user.role === "admin") {
+                console.log("   - Redirecting to: /admin/dashboard");
                 navigate("/admin/dashboard", { replace: true });
               } else {
-                // For regular users, reload to ensure cookie is available everywhere
+                console.log("   - Redirecting to: / (home)");
                 window.location.href = "/";
               }
+            } else {
+              console.error("❌ STEP 8: verifyAuth() returned success=false");
             }
           })
           .catch((error) => {
-            console.error("❌ Authentication verification failed:", error);
+            console.error("❌ STEP 7: verifyAuth() Failed (First Attempt)");
+            console.error("   - Error:", error.message);
+            console.error("   - This usually means cookie was not sent or not valid");
+            console.error("   - Retrying after 1000ms delay...");
+            
             // Try one more time after a longer delay in case cookie propagation was slow
             setTimeout(() => {
+              console.log("🔵 STEP 9: Retrying verifyAuth() (Second Attempt)");
               verifyAuth()
                 .then((data) => {
                   if (data.success) {
-                    console.log("✅ Google authentication verified on retry:", data.user);
+                    console.log("✅ STEP 10: Google authentication verified on retry");
                     const user = data.user;
                     if (user.role === "tutor" && !user.isTutorProfileComplete) {
                       navigate("/complete-profile", { replace: true });
@@ -74,7 +103,12 @@ function AuthVerifier() {
                   }
                 })
                 .catch((retryError) => {
-                  console.error("❌ Authentication verification failed on retry:", retryError);
+                  console.error("❌ STEP 10: verifyAuth() Failed (Second Attempt - FINAL)");
+                  console.error("   - Error:", retryError.message);
+                  console.error("   - Redirecting to login with error");
+                  console.error("   - CHECK: Cookie should be visible in DevTools → Application → Cookies");
+                  console.error("   - CHECK: Cookie domain should match backend domain");
+                  console.error("   - CHECK: Cookie sameSite should be 'none' for cross-origin");
                   navigate("/login?error=oauth_failed", { replace: true });
                 });
             }, 1000);

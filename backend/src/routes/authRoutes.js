@@ -78,12 +78,13 @@ router.get(
   "/google",
   (req, res, next) => {
     // Log Google OAuth initiation for debugging
-    console.log("🔍 Google OAuth initiated:", {
-      clientId: process.env.GOOGLE_CLIENT_ID ? "✅ Set" : "❌ Missing",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? "✅ Set" : "❌ Missing",
-      callbackUrl: process.env.GOOGLE_CALLBACK_URL,
-      clientUrl: process.env.CLIENT_URL,
-    });
+    console.log("🔵 STEP 2: Google OAuth Initiation Route Hit (/auth/google)");
+    console.log("   - GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID ? "✅ Set" : "❌ Missing");
+    console.log("   - GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET ? "✅ Set" : "❌ Missing");
+    console.log("   - GOOGLE_CALLBACK_URL:", process.env.GOOGLE_CALLBACK_URL);
+    console.log("   - CLIENT_URL:", process.env.CLIENT_URL);
+    console.log("   - NODE_ENV:", process.env.NODE_ENV);
+    console.log("   - Next: Redirecting to Google OAuth consent screen...");
     
     // Get role from query parameter and pass via state
     const role = req.query.role || "user";
@@ -132,12 +133,12 @@ router.get(
   "/google/callback",
   (req, res, next) => {
     // Log callback attempt for debugging
-    console.log("🔍 Google OAuth callback received:", {
-      query: req.query,
-      hasState: !!req.query.state,
-      callbackUrl: process.env.GOOGLE_CALLBACK_URL,
-      clientUrl: process.env.CLIENT_URL,
-    });
+    console.log("🔵 STEP 3: Google OAuth Callback Route Hit");
+    console.log("   - Callback URL from env:", process.env.GOOGLE_CALLBACK_URL);
+    console.log("   - Client URL from env:", process.env.CLIENT_URL);
+    console.log("   - Query params:", req.query);
+    console.log("   - Has state param:", !!req.query.state);
+    console.log("   - Next: passport.authenticate will verify Google token...");
     next();
   },
   passport.authenticate("google", {
@@ -190,7 +191,8 @@ router.get(
         await user.save();
       }
 
-      console.log("Google OAuth: Successfully authenticated user:", user.email, "Role:", user.role);
+      console.log("🔵 STEP 4: Google OAuth Callback Handler Executing");
+      console.log("   - User authenticated:", user.email, "Role:", user.role);
 
       // Create JWT token (same as login endpoint)
       const token = jwt.sign(
@@ -198,6 +200,7 @@ router.get(
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
+      console.log("   - JWT token created (length:", token.length, "chars)");
 
       // Set cookie with explicit settings for cross-origin (EXACT same as login endpoint)
       const cookieOptions = {
@@ -213,10 +216,26 @@ router.get(
         cookieOptions.domain = undefined; // Let browser set domain automatically
       }
       
+      console.log("   - Cookie options:", {
+        httpOnly: cookieOptions.httpOnly,
+        sameSite: cookieOptions.sameSite,
+        secure: cookieOptions.secure,
+        path: cookieOptions.path,
+        domain: cookieOptions.domain || "undefined (auto-set by browser)",
+        maxAge: cookieOptions.maxAge,
+        nodeEnv: process.env.NODE_ENV,
+      });
+      
       res.cookie("token", token, cookieOptions);
+      console.log("   - ✅ Cookie 'token' set in response");
+      console.log("   - ⚠️  CHECK: Set-Cookie header should be in response");
+      console.log("   - ⚠️  CHECK: Cookie domain will be set to backend domain by browser");
+      console.log("   - ⚠️  CHECK: For cross-origin, sameSite must be 'none' AND secure must be 'true'");
 
       // Redirect to home page - frontend will handle routing based on user state
-      res.redirect(process.env.CLIENT_URL + "/?auth=success&provider=google");
+      const redirectUrl = process.env.CLIENT_URL + "/?auth=success&provider=google";
+      console.log("   - Redirecting to:", redirectUrl);
+      res.redirect(redirectUrl);
     } catch (error) {
       console.error("Google OAuth callback error:", error);
       res.redirect(process.env.CLIENT_URL + "/login?error=server_error");

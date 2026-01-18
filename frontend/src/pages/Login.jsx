@@ -66,7 +66,13 @@ export default function Login() {
   }
 
   function handleGoogleLogin() {
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`;
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const googleAuthUrl = `${backendUrl}/auth/google`;
+    console.log("🔵 STEP 1: Google Login Button Clicked");
+    console.log("   - Backend URL:", backendUrl);
+    console.log("   - Redirecting to:", googleAuthUrl);
+    console.log("   - Expected flow: Frontend → Backend → Google → Backend Callback → Frontend");
+    window.location.href = googleAuthUrl;
   }
 
 
