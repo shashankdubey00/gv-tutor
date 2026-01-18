@@ -145,14 +145,28 @@ export default function Login() {
 
     window.addEventListener('message', messageListener);
 
-    // Check if popup was closed manually
+    // Check if popup was closed manually (but don't spam console)
+    let popupClosedLogged = false;
     const checkClosed = setInterval(() => {
       if (popup.closed) {
         clearInterval(checkClosed);
         window.removeEventListener('message', messageListener);
-        console.log("Popup closed by user");
+        if (!popupClosedLogged) {
+          console.log("Popup closed by user");
+          popupClosedLogged = true;
+        }
       }
     }, 1000);
+    
+    // Cleanup after 5 minutes (timeout)
+    setTimeout(() => {
+      clearInterval(checkClosed);
+      window.removeEventListener('message', messageListener);
+      if (popup && !popup.closed) {
+        console.warn("OAuth popup timeout - closing");
+        popup.close();
+      }
+    }, 5 * 60 * 1000);
   }
 
 
