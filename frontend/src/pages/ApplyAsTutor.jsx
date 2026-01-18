@@ -24,12 +24,10 @@ export default function ApplyAsTutor() {
     let isMounted = true;
     let timeoutId = null;
     
-    // Clear any previous redirect flags after a delay
-    setTimeout(() => {
-      clearRedirecting();
-    }, 1000);
+    // Clear any previous redirect flags
+    clearRedirecting();
     
-    // Set timeout first to prevent race conditions
+    // Set timeout for slower connections (30 seconds for API timeout)
     timeoutId = setTimeout(() => {
       if (isMounted && checking) {
         console.error("⏱️ Timeout: Initial check took too long");
@@ -37,7 +35,7 @@ export default function ApplyAsTutor() {
         setLoading(false);
         setChecking(false);
       }
-    }, 35000); // 35 seconds timeout to allow API timeout (30s) to complete first
+    }, 30000); // 30 seconds timeout
     
     async function checkAuth() {
       // Prevent redirect loops

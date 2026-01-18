@@ -24,7 +24,6 @@ export default function AdminDashboard() {
     async function checkAuth() {
       try {
         console.log("🔍 AdminDashboard: Checking authentication...");
-        await new Promise(resolve => setTimeout(resolve, 200));
         
         const authData = await verifyAuth();
         console.log("🔍 AdminDashboard: Auth data:", authData);
@@ -50,7 +49,7 @@ export default function AdminDashboard() {
 
   async function loadData() {
     try {
-      setLoading(true);
+      // Show empty dashboard immediately, load data in background
       const [parentData, tutorData, membersData] = await Promise.all([
         apiRequest("/api/admin/parent-applications", { method: "GET" }),
         apiRequest("/api/admin/tutor-applications", { method: "GET" }),
