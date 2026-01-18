@@ -61,17 +61,6 @@ export default function Login() {
     }
   };
 
-  // Handle OAuth callback after Google redirects back
-  useEffect(() => {
-    const authSuccess = searchParams.get("auth");
-    const provider = searchParams.get("provider");
-    
-    if (authSuccess === "success" && provider === "google") {
-      console.log("✅ OAuth callback detected - verifying and redirecting");
-      performAuthRedirect();
-    }
-  }, [searchParams]);
-
   // Enhanced email validation
   const validateEmail = (email) => {
     if (!email) {
