@@ -25,104 +25,41 @@ import LoadingSpinner from "./components/LoadingSpinner";
 function AuthVerifier() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const authParam = searchParams.get("auth");
     const provider = searchParams.get("provider");
 
     if (authParam === "success" && provider === "google") {
-      console.log("🔵 STEP 5: OAuth Callback Received on Frontend");
-      console.log("   - URL params: auth=success, provider=google");
-      console.log("   - Current URL:", window.location.href);
-      console.log("   - ⚠️  IMPORTANT: Check Network tab for redirect response");
-      console.log("   - ⚠️  Look for redirect from gvtutor.onrender.com → vercel.app");
-      console.log("   - ⚠️  Check Response Headers for 'Set-Cookie' header");
-      console.log("   - ⚠️  Check Application → Cookies → gvtutor.onrender.com");
-      console.log("   - ⚠️  Cookie should have: HttpOnly, Secure=true, SameSite=None");
+      setIsProcessing(true);
+      console.log("🔵 OAuth callback detected - processing...");
       
-      // Check if cookie exists in document.cookie (though httpOnly cookies won't show)
-      console.log("   - document.cookie:", document.cookie || "(empty - expected for httpOnly)");
-      console.log("   - Note: httpOnly cookies are NOT visible in document.cookie");
-      console.log("   - Waiting 500ms before verification to allow cookie propagation...");
-      
-      // Try to check if cookie was set by checking Network response
-      console.log("   - 🔍 ACTION REQUIRED: Open Network tab");
-      console.log("   - 🔍 Find the redirect response (status 302 or 301)");
-      console.log("   - 🔍 Check if 'Set-Cookie: token=...' is in Response Headers");
-      
-      // Wait a moment for cookie to be set after redirect
-      // Then verify authentication after Google OAuth
-      setTimeout(() => {
-        console.log("🔵 STEP 6: Starting verifyAuth() call");
-        console.log("   - Backend URL:", import.meta.env.VITE_BACKEND_URL);
-        console.log("   - Endpoint: /api/auth/verify");
-        console.log("   - Expected: Cookie should be sent automatically with credentials: 'include'");
-        
-        verifyAuth()
-          .then((data) => {
-            console.log("🔵 STEP 7: verifyAuth() Response Received");
-            console.log("   - Success:", data.success);
-            console.log("   - User data:", data.user);
+      // Don't wait, verify immediately
+      verifyAuth()
+        .then((data) => {
+          console.log("✅ Auth verified:", data.user.role);
+          
+          if (data.success) {
+            const user = data.user;
             
-            if (data.success) {
-              console.log("✅ STEP 8: Google authentication verified successfully");
-              const user = data.user;
-              
-              // Redirect based on role and profile completion
-              if (user.role === "tutor" && !user.isTutorProfileComplete) {
-                console.log("   - Redirecting to: /complete-profile");
-                navigate("/complete-profile", { replace: true });
-              } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-                console.log("   - Redirecting to: /apply-tutor");
-                navigate("/apply-tutor", { replace: true });
-              } else if (user.role === "admin") {
-                console.log("   - Redirecting to: /admin/dashboard");
-                navigate("/admin/dashboard", { replace: true });
-              } else {
-                console.log("   - Redirecting to: / (home)");
-                window.location.href = "/";
-              }
+            // Redirect immediately based on role
+            if (user.role === "tutor" && !user.isTutorProfileComplete) {
+              navigate("/complete-profile", { replace: true });
+            } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+              navigate("/apply-tutor", { replace: true });
+            } else if (user.role === "admin") {
+              navigate("/admin/dashboard", { replace: true });
             } else {
-              console.error("❌ STEP 8: verifyAuth() returned success=false");
+              // For regular users, use location.replace to avoid rendering Hero first
+              window.location.replace("/");
             }
-          })
-          .catch((error) => {
-            console.error("❌ STEP 7: verifyAuth() Failed (First Attempt)");
-            console.error("   - Error:", error.message);
-            console.error("   - This usually means cookie was not sent or not valid");
-            console.error("   - Retrying after 1000ms delay...");
-            
-            // Try one more time after a longer delay in case cookie propagation was slow
-            setTimeout(() => {
-              console.log("🔵 STEP 9: Retrying verifyAuth() (Second Attempt)");
-              verifyAuth()
-                .then((data) => {
-                  if (data.success) {
-                    console.log("✅ STEP 10: Google authentication verified on retry");
-                    const user = data.user;
-                    if (user.role === "tutor" && !user.isTutorProfileComplete) {
-                      navigate("/complete-profile", { replace: true });
-                    } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-                      navigate("/apply-tutor", { replace: true });
-                    } else if (user.role === "admin") {
-                      navigate("/admin/dashboard", { replace: true });
-                    } else {
-                      window.location.href = "/";
-                    }
-                  }
-                })
-                .catch((retryError) => {
-                  console.error("❌ STEP 10: verifyAuth() Failed (Second Attempt - FINAL)");
-                  console.error("   - Error:", retryError.message);
-                  console.error("   - Redirecting to login with error");
-                  console.error("   - CHECK: Cookie should be visible in DevTools → Application → Cookies");
-                  console.error("   - CHECK: Cookie domain should match backend domain");
-                  console.error("   - CHECK: Cookie sameSite should be 'none' for cross-origin");
-                  navigate("/login?error=oauth_failed", { replace: true });
-                });
-            }, 1000);
-          });
-      }, 500); // Wait 500ms for cookie to propagate
+          }
+        })
+        .catch((error) => {
+          console.error("Auth verification failed:", error.message);
+          setIsProcessing(false);
+        });
     }
   }, [searchParams, navigate]);
 
