@@ -21,11 +21,6 @@ import Library from "./pages/Library";
 import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// Context to share OAuth processing state
-import { createContext, useContext } from "react";
-
-const OAuthContext = createContext(false);
-
 function AppContent() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -107,7 +102,7 @@ function AppContent() {
   }
 
   return (
-    <OAuthContext.Provider value={isOAuthProcessing}>
+    <>
       {(loading || isNavigating) && <LoadingSpinner />}
       <Routes>
         {/* Admin routes without Navbar */}
@@ -122,21 +117,18 @@ function AppContent() {
               <Navbar />
               <Routes>
                 {/* Public pages - no authentication required */}
-        <Route path="/" element={<Hero />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/contact" element={<Contact />} />
+                <Route path="/" element={<Hero />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/contact" element={<Contact />} />
                 
                 {/* Auth pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/verify-otp" element={<VerifyOTP />} />
-        <Route path="/set-password" element={<SetPassword />} />
-        <Route path="/change-password" element={<ChangePassword />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/verify-otp" element={<VerifyOTP />} />
+                <Route path="/set-password" element={<SetPassword />} />
+                <Route path="/change-password" element={<ChangePassword />} />
                 
                 {/* Protected pages */}
                 <Route path="/find-tutor" element={<FindTutor />} />
