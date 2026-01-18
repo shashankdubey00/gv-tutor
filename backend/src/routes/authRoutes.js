@@ -203,10 +203,11 @@ router.get(
       console.log("   - JWT token created (length:", token.length, "chars)");
 
       // Set cookie with explicit settings for cross-origin (EXACT same as login endpoint)
+      // FORCE sameSite: "none" for cross-origin deployment (Vercel -> Render)
       const cookieOptions = {
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" for cross-origin in production
-        secure: process.env.NODE_ENV === "production", // true in production with HTTPS
+        sameSite: "none", // FORCED to "none" for cross-origin (Vercel frontend + Render backend)
+        secure: true, // REQUIRED when sameSite is "none"
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         path: "/", // Important: Set path so cookie is accessible across all routes
       };
