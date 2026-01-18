@@ -107,6 +107,8 @@ export default function Login() {
       if (event.data.type === 'GOOGLE_OAUTH_SUCCESS') {
         console.log("✅ Received OAuth success from popup");
         window.removeEventListener('message', messageListener);
+        
+        // Close popup if still open
         if (popup && !popup.closed) {
           popup.close();
         }
@@ -114,18 +116,22 @@ export default function Login() {
         // FIX FOR BRAVE/PRIVACY BROWSERS: Handle token from postMessage if cookies are blocked
         if (event.data.token) {
           console.log("📦 Token received from popup - storing locally");
-          // Store token temporarily in sessionStorage for privacy browsers that block third-party cookies
+          // Store token in sessionStorage for privacy browsers that block third-party cookies
           sessionStorage.setItem('auth_token', event.data.token);
-          // Also set as Authorization header for API requests
+          // Also store in localStorage as backup
           localStorage.setItem('auth_token', event.data.token);
         }
         
-        // Token is in cookie (set by backend) OR in sessionStorage (for privacy browsers)
+        // Verify authentication and redirect in PARENT window (keeps focus on main window)
         setTimeout(async () => {
           try {
+            console.log("🔍 Verifying authentication...");
             const authData = await verifyAuth();
             if (authData.success) {
               const user = authData.user;
+              console.log("✅ Authentication verified, redirecting to:", user.role);
+              
+              // All redirects in main window (parent) - this keeps browser focus correct
               if (user.role === "admin") {
                 window.location.href = "/admin/dashboard";
               } else if (user.role === "tutor" && !user.isTutorProfileComplete) {
@@ -142,7 +148,7 @@ export default function Login() {
             console.error("Auth verification failed:", err);
             setError("Authentication failed. Please try again.");
           }
-        }, 500);
+        }, 300);
       } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
         console.error("❌ OAuth error from popup:", event.data.error);
         window.removeEventListener('message', messageListener);

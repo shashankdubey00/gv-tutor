@@ -292,38 +292,39 @@ router.get(
     (function() {
       // FIX FOR BRAVE/PRIVACY BROWSERS: Send token via postMessage instead of relying on cookies
       const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+      const clientUrl = '${process.env.CLIENT_URL}';
       
       if (window.opener && !window.opener.closed) {
         try {
-          const clientUrl = '${process.env.CLIENT_URL}';
           // Send token along with success message to bypass third-party cookie blocking
+          // IMPORTANT: Use '*' to ensure message gets through (will be verified on frontend)
           window.opener.postMessage({
             type: 'GOOGLE_OAUTH_SUCCESS',
             message: 'Authentication successful',
             token: token || null
-          }, clientUrl);
+          }, '*');
           
-          console.log('Message sent to parent window with token');
+          console.log('✅ Message sent to parent window with token');
           
-          // Close popup after a short delay
+          // Close popup after a short delay - let parent handle redirect
           setTimeout(() => {
             if (window.opener && !window.opener.closed) {
               window.close();
+            } else {
+              // If opener closed, redirect this popup to home (shouldn't happen)
+              window.location.href = clientUrl;
             }
-          }, 1500);
+          }, 1000);
         } catch (err) {
-          console.error('Error sending message:', err);
-          // Fallback: redirect parent window with token in URL (secure: HTTPS only in production)
-          if (window.opener && !window.opener.closed) {
-            const tokenParam = token ? '&token=' + encodeURIComponent(token) : '';
-            window.opener.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google' + tokenParam;
-            window.close();
-          }
+          console.error('❌ Error sending message to parent:', err);
+          // Fallback: If postMessage fails, redirect this popup to home
+          // Parent window should handle its own redirect via /verify endpoint
+          window.location.href = clientUrl;
         }
       } else {
-        // Not in popup or opener closed, redirect to frontend with token in URL
-        const tokenParam = token ? '?token=' + encodeURIComponent(token) : '';
-        window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google' + tokenParam;
+        // Not in popup or opener is closed - redirect this window to home
+        console.log('⚠️  No opener found - redirecting to home');
+        window.location.href = clientUrl;
       }
     })();
   </script>
