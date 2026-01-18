@@ -175,20 +175,28 @@ router.get(
       console.log("Google OAuth: Successfully authenticated user:", user.email, "Role:", user.role);
 
       // Create JWT token
-    const token = jwt.sign(
+      const token = jwt.sign(
         { userId: user._id.toString(), role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
 
-      // Set cookie with proper domain
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
+      // Set cookie with proper settings for cross-origin (same as login endpoint)
+      const cookieOptions = {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" for cross-origin in production
         secure: process.env.NODE_ENV === "production", // true in production with HTTPS
-      maxAge: 24 * 60 * 60 * 1000,
-        path: "/",
-    });
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        path: "/", // Important: Set path so cookie is accessible across all routes
+      };
+      
+      res.cookie("token", token, cookieOptions);
+      console.log("🍪 Cookie set with options:", {
+        httpOnly: cookieOptions.httpOnly,
+        sameSite: cookieOptions.sameSite,
+        secure: cookieOptions.secure,
+        path: cookieOptions.path,
+      });
 
       // Redirect to home page - frontend will handle routing based on user state
       res.redirect(process.env.CLIENT_URL + "/?auth=success&provider=google");
