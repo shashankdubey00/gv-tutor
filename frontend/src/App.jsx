@@ -36,7 +36,7 @@ function AppContent() {
 
     if (authParam === "success" && provider === "google") {
       setIsOAuthProcessing(true);
-      console.log("🔵 OAuth processing - blocking page render");
+      console.log("🔵 OAuth processing - redirecting to correct page");
       
       // Verify immediately
       verifyAuth()
@@ -46,21 +46,36 @@ function AppContent() {
           if (data.success) {
             const user = data.user;
             
-            // Redirect immediately - don't render landing page
+            // Redirect based on role - navigate will handle the routing
             if (user.role === "tutor" && !user.isTutorProfileComplete) {
-              console.log("➡️ Tutor redirect to complete-profile");
-              navigate("/complete-profile", { replace: true });
+              console.log("➡️ Redirecting to complete-profile");
+              setTimeout(() => {
+                navigate("/complete-profile", { replace: true });
+                // Reset processing flag after navigation
+                setTimeout(() => setIsOAuthProcessing(false), 100);
+              }, 0);
             } else if (user.role === "tutor" && user.isTutorProfileComplete) {
-              console.log("➡️ Tutor redirect to apply-tutor");
-              navigate("/apply-tutor", { replace: true });
+              console.log("➡️ Redirecting to apply-tutor");
+              setTimeout(() => {
+                navigate("/apply-tutor", { replace: true });
+                // Reset processing flag after navigation
+                setTimeout(() => setIsOAuthProcessing(false), 100);
+              }, 0);
             } else if (user.role === "admin") {
-              console.log("➡️ Admin redirect to dashboard");
-              navigate("/admin/dashboard", { replace: true });
+              console.log("➡️ Redirecting to admin dashboard");
+              setTimeout(() => {
+                navigate("/admin/dashboard", { replace: true });
+                // Reset processing flag after navigation
+                setTimeout(() => setIsOAuthProcessing(false), 100);
+              }, 0);
             } else {
-              console.log("➡️ Regular user - clean redirect");
-              // Use window.location to completely replace history
-              window.location.href = "/";
+              console.log("➡️ Redirecting to home");
+              // For regular users, just reset and let normal routing work
+              setIsOAuthProcessing(false);
+              navigate("/", { replace: true });
             }
+          } else {
+            setIsOAuthProcessing(false);
           }
         })
         .catch((error) => {
