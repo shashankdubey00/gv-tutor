@@ -77,12 +77,20 @@ router.get("/verify", protect, async (req, res) => {
 router.get(
   "/google",
   (req, res, next) => {
+    // Log Google OAuth initiation for debugging
+    console.log("🔍 Google OAuth initiated:", {
+      clientId: process.env.GOOGLE_CLIENT_ID ? "✅ Set" : "❌ Missing",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? "✅ Set" : "❌ Missing",
+      callbackUrl: process.env.GOOGLE_CALLBACK_URL,
+      clientUrl: process.env.CLIENT_URL,
+    });
+    
     // Get role from query parameter and pass via state
     const role = req.query.role || "user";
     const state = Buffer.from(JSON.stringify({ role })).toString("base64");
     
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
       state: state, // Pass role via state parameter
     })(req, res, next);
   }
@@ -122,6 +130,16 @@ router.post("/logout", (req, res) => {
 
 router.get(
   "/google/callback",
+  (req, res, next) => {
+    // Log callback attempt for debugging
+    console.log("🔍 Google OAuth callback received:", {
+      query: req.query,
+      hasState: !!req.query.state,
+      callbackUrl: process.env.GOOGLE_CALLBACK_URL,
+      clientUrl: process.env.CLIENT_URL,
+    });
+    next();
+  },
   passport.authenticate("google", {
     session: false,
     failureRedirect: process.env.CLIENT_URL + "/login?error=google_auth_failed",
