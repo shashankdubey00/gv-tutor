@@ -67,12 +67,92 @@ export default function Login() {
 
   function handleGoogleLogin() {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    const googleAuthUrl = `${backendUrl}/auth/google`;
-    console.log("🔵 STEP 1: Google Login Button Clicked");
-    console.log("   - Backend URL:", backendUrl);
-    console.log("   - Redirecting to:", googleAuthUrl);
-    console.log("   - Expected flow: Frontend → Backend → Google → Backend Callback → Frontend");
-    window.location.href = googleAuthUrl;
+    
+    // Detect if browser blocks third-party cookies (Brave, Safari, etc.)
+    // Try popup approach first (works better with privacy browsers)
+    const googleAuthUrl = `${backendUrl}/auth/google?popup=1`;
+    const popup = window.open(
+      googleAuthUrl,
+      'google-auth',
+      'width=500,height=600,left=' + (window.screen.width / 2 - 250) + ',top=' + (window.screen.height / 2 - 300)
+    );
+
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      // Popup blocked - fallback to full redirect
+      console.log("🔵 STEP 1: Google Login Button Clicked (Full Redirect - Popup Blocked)");
+      console.log("   - Backend URL:", backendUrl);
+      console.log("   - Using full redirect fallback");
+      window.location.href = `${backendUrl}/auth/google`;
+      return;
+    }
+
+    console.log("🔵 STEP 1: Google Login Button Clicked (Popup Mode)");
+    console.log("   - Using popup for better privacy browser compatibility");
+    console.log("   - Popup will stay on backend domain (cookies work)");
+    
+    // Listen for message from popup
+    const messageListener = (event) => {
+      // Verify origin for security - allow both backend and frontend origins
+      const allowedOrigins = [
+        backendUrl.replace(/\/$/, ''),
+        window.location.origin
+      ];
+      
+      if (!allowedOrigins.includes(event.origin)) {
+        console.warn("⚠️ Ignoring message from untrusted origin:", event.origin);
+        return;
+      }
+
+      if (event.data.type === 'GOOGLE_OAUTH_SUCCESS') {
+        console.log("✅ Received OAuth success from popup");
+        window.removeEventListener('message', messageListener);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+        
+        // Token is in cookie (set by backend), verify and redirect
+        setTimeout(async () => {
+          try {
+            const authData = await verifyAuth();
+            if (authData.success) {
+              const user = authData.user;
+              if (user.role === "admin") {
+                window.location.href = "/admin/dashboard";
+              } else if (user.role === "tutor" && !user.isTutorProfileComplete) {
+                window.location.href = "/complete-profile";
+              } else if (user.role === "tutor" && user.isTutorProfileComplete) {
+                window.location.href = "/apply-tutor";
+              } else {
+                window.location.href = "/";
+              }
+            } else {
+              setError("Authentication verification failed. Please try again.");
+            }
+          } catch (err) {
+            console.error("Auth verification failed:", err);
+            setError("Authentication failed. Please try again.");
+          }
+        }, 500);
+      } else if (event.data.type === 'GOOGLE_OAUTH_ERROR') {
+        console.error("❌ OAuth error from popup:", event.data.error);
+        window.removeEventListener('message', messageListener);
+        if (popup && !popup.closed) {
+          popup.close();
+        }
+        setError(event.data.error || "Google authentication failed. Please try again.");
+      }
+    };
+
+    window.addEventListener('message', messageListener);
+
+    // Check if popup was closed manually
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        window.removeEventListener('message', messageListener);
+        console.log("Popup closed by user");
+      }
+    }, 1000);
   }
 
 

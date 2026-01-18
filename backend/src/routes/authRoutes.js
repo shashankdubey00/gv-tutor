@@ -233,7 +233,76 @@ router.get(
       console.log("   - ⚠️  CHECK: Cookie domain will be set to backend domain by browser");
       console.log("   - ⚠️  CHECK: For cross-origin, sameSite must be 'none' AND secure must be 'true'");
 
-      // Redirect to home page - frontend will handle routing based on user state
+      // Check if this is a popup request (has popup=1 query param)
+      const isPopup = req.query.popup === "1" || req.headers.referer?.includes("popup");
+      
+      if (isPopup) {
+        // For popup: serve HTML page that sends token to parent window
+        console.log("   - Popup mode: Serving success page");
+        const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Authentication Successful</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .container {
+      text-align: center;
+      padding: 2rem;
+    }
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <h2>Authentication Successful!</h2>
+    <p>You can close this window.</p>
+  </div>
+  <script>
+    // Send success message to parent window
+    if (window.opener) {
+      window.opener.postMessage({
+        type: 'GOOGLE_OAUTH_SUCCESS',
+        message: 'Authentication successful'
+      }, '${process.env.CLIENT_URL}');
+      
+      // Close popup after a short delay
+      setTimeout(() => {
+        window.close();
+      }, 1000);
+    } else {
+      // Not in popup, redirect to frontend
+      window.location.href = '${process.env.CLIENT_URL}/?auth=success&provider=google';
+    }
+  </script>
+</body>
+</html>`;
+        return res.send(html);
+      }
+      
+      // Normal redirect for full-page flow
       const redirectUrl = process.env.CLIENT_URL + "/?auth=success&provider=google";
       console.log("   - Redirecting to:", redirectUrl);
       res.redirect(redirectUrl);
