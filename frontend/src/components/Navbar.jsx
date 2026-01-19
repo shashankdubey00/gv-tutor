@@ -319,16 +319,16 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       {menuOpen && (
         <div className="md:hidden bg-gradient-to-b from-black/80 to-black/95 backdrop-blur-xl text-white p-6 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300">
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block text-center px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
+          <Link to="/" onClick={() => setMenuOpen(false)} className="block text-left px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
             Home
           </Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="block text-center px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
+          <Link to="/about" onClick={() => setMenuOpen(false)} className="block text-left px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
             About
           </Link>
 
           <div>
             <button
-              className="w-full text-center px-4 py-3 font-semibold mb-2 cursor-pointer rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 border border-white/10 hover:border-white/30 shadow-lg hover:shadow-white/20"
+              className="w-full text-left px-4 py-3 font-semibold mb-2 cursor-pointer rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-between border border-white/10 hover:border-white/30 shadow-lg hover:shadow-white/20"
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
             >
               <span>Home Tutor</span>
@@ -343,7 +343,7 @@ export default function Navbar() {
                     setTutorMenuOpen(false);
                     setMenuOpen(false);
                   }}
-                  className="block text-center px-4 py-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/30 hover:scale-105 active:scale-95 transition-all duration-200 text-blue-300 border border-blue-500/20 hover:border-blue-500/50 font-medium shadow-lg hover:shadow-blue-500/30"
+                  className="block text-left px-4 py-3 rounded-lg bg-blue-500/10 hover:bg-blue-500/30 hover:scale-105 active:scale-95 transition-all duration-200 text-blue-300 border border-blue-500/20 hover:border-blue-500/50 font-medium shadow-lg hover:shadow-blue-500/30"
                 >
                   Find Tutor
                 </Link>
@@ -355,7 +355,7 @@ export default function Navbar() {
                       setMenuOpen(false);
                       handleApplyAsTutor(navigate);
                     }}
-                    className="block w-full text-center px-4 py-3 rounded-lg bg-green-500/10 hover:bg-green-500/30 hover:scale-105 active:scale-95 transition-all duration-200 text-green-300 border border-green-500/20 hover:border-green-500/50 font-medium shadow-lg hover:shadow-green-500/30"
+                    className="block w-full text-left px-4 py-3 rounded-lg bg-green-500/10 hover:bg-green-500/30 hover:scale-105 active:scale-95 transition-all duration-200 text-green-300 border border-green-500/20 hover:border-green-500/50 font-medium shadow-lg hover:shadow-green-500/30"
                   >
                     Apply as Tutor
                   </button>
@@ -364,10 +364,10 @@ export default function Navbar() {
             )}
           </div>
 
-          <Link to="/library" onClick={() => setMenuOpen(false)} className="block text-center px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
+          <Link to="/library" onClick={() => setMenuOpen(false)} className="block text-left px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
             Library
           </Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block text-center px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
+          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block text-left px-4 py-3 rounded-lg bg-white/5 hover:bg-white/15 hover:scale-105 active:scale-95 transition-all duration-200 border border-white/10 hover:border-white/30 font-medium shadow-lg hover:shadow-white/20">
             Contact
           </Link>
 
@@ -377,7 +377,7 @@ export default function Navbar() {
                 <Link
                   to="/admin/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="block text-center w-full py-3 border border-purple-500/50 bg-gradient-to-r from-purple-600/30 to-purple-500/20 rounded-lg hover:from-purple-600/50 hover:to-purple-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-purple-200 font-bold shadow-lg shadow-purple-600/20 hover:shadow-purple-500/40"
+                  className="block text-left w-full py-3 px-4 border border-purple-500/50 bg-gradient-to-r from-purple-600/30 to-purple-500/20 rounded-lg hover:from-purple-600/50 hover:to-purple-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-purple-200 font-bold shadow-lg shadow-purple-600/20 hover:shadow-purple-500/40"
                 >
                   Admin Dashboard
                 </Link>
@@ -403,7 +403,7 @@ export default function Navbar() {
                       window.location.href = "/";
                     }
                   }}
-                  className="block text-center w-full py-3 bg-gradient-to-r from-red-600/80 to-red-500/70 hover:from-red-600 hover:to-red-500 rounded-lg transition-all duration-200 font-bold shadow-lg shadow-red-600/30 hover:shadow-red-500/50 hover:scale-105 active:scale-95 border border-red-500/30 hover:border-red-400/50"
+                  className="block text-left w-full py-3 px-4 bg-gradient-to-r from-red-600/80 to-red-500/70 hover:from-red-600 hover:to-red-500 rounded-lg transition-all duration-200 font-bold shadow-lg shadow-red-600/30 hover:shadow-red-500/50 hover:scale-105 active:scale-95 border border-red-500/30 hover:border-red-400/50"
                 >
                   Logout ({user.email})
                 </button>
@@ -417,7 +417,7 @@ export default function Navbar() {
                   <Link
                     to="/apply-tutor"
                     onClick={() => setMenuOpen(false)}
-                    className="block text-center w-full py-3 border border-green-500/50 bg-gradient-to-r from-green-600/30 to-green-500/20 rounded-lg hover:from-green-600/50 hover:to-green-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-green-200 font-bold shadow-lg shadow-green-600/20 hover:shadow-green-500/40"
+                    className="block text-left w-full py-3 px-4 border border-green-500/50 bg-gradient-to-r from-green-600/30 to-green-500/20 rounded-lg hover:from-green-600/50 hover:to-green-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-green-200 font-bold shadow-lg shadow-green-600/20 hover:shadow-green-500/40"
                   >
                     Apply as Tutor
                   </Link>
@@ -425,7 +425,7 @@ export default function Navbar() {
                     <Link
                       to="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="block text-center w-full py-3 border border-cyan-500/50 bg-gradient-to-r from-cyan-600/30 to-cyan-500/20 rounded-lg hover:from-cyan-600/50 hover:to-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-cyan-200 font-bold shadow-lg shadow-cyan-600/20 hover:shadow-cyan-500/40"
+                      className="block text-left w-full py-3 px-4 border border-cyan-500/50 bg-gradient-to-r from-cyan-600/30 to-cyan-500/20 rounded-lg hover:from-cyan-600/50 hover:to-cyan-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-cyan-200 font-bold shadow-lg shadow-cyan-600/20 hover:shadow-cyan-500/40"
                     >
                       My Profile
                     </Link>
@@ -454,7 +454,7 @@ export default function Navbar() {
                     window.location.href = "/";
                   }
                 }}
-                className="block text-center w-full py-3 bg-gradient-to-r from-red-600/80 to-red-500/70 hover:from-red-600 hover:to-red-500 rounded-lg transition-all duration-200 font-bold shadow-lg shadow-red-600/30 hover:shadow-red-500/50 hover:scale-105 active:scale-95 border border-red-500/30 hover:border-red-400/50"
+                className="block text-left w-full py-3 px-4 bg-gradient-to-r from-red-600/80 to-red-500/70 hover:from-red-600 hover:to-red-500 rounded-lg transition-all duration-200 font-bold shadow-lg shadow-red-600/30 hover:shadow-red-500/50 hover:scale-105 active:scale-95 border border-red-500/30 hover:border-red-400/50"
               >
                 Logout ({user.email})
               </button>
@@ -464,14 +464,14 @@ export default function Navbar() {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-3 border border-blue-500/50 bg-gradient-to-r from-blue-600/30 to-blue-500/20 rounded-lg hover:from-blue-600/50 hover:to-blue-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-blue-200 font-bold shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40"
+                className="block text-left w-full py-3 px-4 border border-blue-500/50 bg-gradient-to-r from-blue-600/30 to-blue-500/20 rounded-lg hover:from-blue-600/50 hover:to-blue-500/40 hover:scale-105 active:scale-95 transition-all duration-200 text-blue-200 font-bold shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setMenuOpen(false)}
-                className="block text-center w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg transition-all duration-200 text-white font-bold shadow-lg shadow-blue-600/40 hover:shadow-blue-400/60 hover:scale-105 active:scale-95 border border-blue-400/30 hover:border-blue-300/50"
+                className="block text-left w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg transition-all duration-200 text-white font-bold shadow-lg shadow-blue-600/40 hover:shadow-blue-400/60 hover:scale-105 active:scale-95 border border-blue-400/30 hover:border-blue-300/50"
               >
                 Sign Up
               </Link>
