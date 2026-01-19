@@ -318,7 +318,7 @@ export default function Navbar() {
           className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? "✕" : "☰"}
+          {menuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
         </div>
       </div>
 
