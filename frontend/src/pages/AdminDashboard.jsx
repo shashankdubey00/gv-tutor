@@ -24,16 +24,16 @@ export default function AdminDashboard() {
     async function checkAuth() {
       try {
         console.log("🔍 AdminDashboard: Checking authentication...");
-        
+
         const authData = await verifyAuth();
         console.log("🔍 AdminDashboard: Auth data:", authData);
-        
+
         if (!authData.success || authData.user.role !== "admin") {
           console.error("❌ AdminDashboard: Not an admin, redirecting to login");
           window.location.href = "/admin/login";
           return;
         }
-        
+
         console.log("✅ AdminDashboard: Admin verified, loading data...");
         setAdminUser(authData.user);
         loadData();
@@ -212,31 +212,28 @@ export default function AdminDashboard() {
           <div className="hidden md:flex gap-2 lg:gap-4 items-center">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
-                activeTab === "dashboard"
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "dashboard"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
-              }`}
+                }`}
             >
               Dashboard
             </button>
             <button
               onClick={() => setActiveTab("parent")}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
-                activeTab === "parent"
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "parent"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
-              }`}
+                }`}
             >
               Parent
             </button>
             <button
               onClick={() => setActiveTab("tutor")}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${
-                activeTab === "tutor"
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "tutor"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
-              }`}
+                }`}
             >
               Tutor
             </button>
@@ -296,8 +293,8 @@ export default function AdminDashboard() {
           {/* Hamburger Menu Button - Mobile Only */}
           <button
             onClick={() => {
-              setExpandedItems(prev => ({ 
-                ...prev, 
+              setExpandedItems(prev => ({
+                ...prev,
                 mobileMenu: !prev.mobileMenu
               }));
             }}
@@ -349,11 +346,10 @@ export default function AdminDashboard() {
                     setActiveTab("dashboard");
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
-                    activeTab === "dashboard"
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "dashboard"
                       ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                       : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
-                  }`}
+                    }`}
                 >
                   Dashboard
                 </button>
@@ -362,11 +358,10 @@ export default function AdminDashboard() {
                     setActiveTab("parent");
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
-                    activeTab === "parent"
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "parent"
                       ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                       : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
-                  }`}
+                    }`}
                 >
                   Parent
                 </button>
@@ -375,11 +370,10 @@ export default function AdminDashboard() {
                     setActiveTab("tutor");
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${
-                    activeTab === "tutor"
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "tutor"
                       ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                       : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
-                  }`}
+                    }`}
                 >
                   Tutor
                 </button>
@@ -387,6 +381,26 @@ export default function AdminDashboard() {
 
               {/* Action Buttons */}
               <div className="p-4 space-y-2 border-t border-cyan-500/30 pt-4">
+                {adminUser?.authProviders &&
+                  adminUser.authProviders.includes("google") &&
+                  !adminUser.hasPassword && (
+                    <Link
+                      to="/set-password"
+                      className="block w-full px-4 py-3 rounded-lg font-medium transition text-left bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    >
+                      Set Password
+                    </Link>
+                  )}
+
+                {adminUser?.hasPassword && (
+                  <Link
+                    to="/change-password"
+                    className="block w-full px-4 py-3 rounded-lg font-medium transition text-left bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                  >
+                    Change Password
+                  </Link>
+                )}
+
                 <button
                   type="button"
                   onClick={async () => {
@@ -423,7 +437,7 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-            {activeTab === "dashboard" && (
+        {activeTab === "dashboard" && (
           <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Dashboard</h2>
 
@@ -504,13 +518,12 @@ export default function AdminDashboard() {
                             </div>
                             <div className="pt-3 border-t border-gray-200">
                               <span
-                                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                  request.status === "posted"
+                                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
                                     ? "bg-green-100 text-green-700 border border-green-300"
                                     : request.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                    : "bg-blue-100 text-blue-700 border border-blue-300"
-                                }`}
+                                      ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                      : "bg-blue-100 text-blue-700 border border-blue-300"
+                                  }`}
                               >
                                 {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                               </span>
@@ -564,10 +577,10 @@ export default function AdminDashboard() {
                             <div
                               key={profile._id}
                               onClick={() => {
-                                setSelectedTutorProfile({ 
-                                  profile: profile, 
+                                setSelectedTutorProfile({
+                                  profile: profile,
                                   userId: profile.userId,
-                                  email: profile.userId?.email 
+                                  email: profile.userId?.email
                                 });
                               }}
                               className="bg-white text-gray-900 p-5 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -607,11 +620,10 @@ export default function AdminDashboard() {
                               </div>
                               <div className="pt-3 border-t border-gray-200">
                                 <span
-                                  className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                    profile.isProfileComplete
+                                  className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${profile.isProfileComplete
                                       ? "bg-green-100 text-green-700 border border-green-300"
                                       : "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                  }`}
+                                    }`}
                                 >
                                   {profile.isProfileComplete ? "Complete" : "Incomplete"}
                                 </span>
@@ -760,13 +772,12 @@ export default function AdminDashboard() {
                           </p>
                           <div className="pt-2 border-t border-gray-200">
                             <span
-                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                request.status === "posted"
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
                                   ? "bg-green-100 text-green-700 border border-green-300"
                                   : request.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                  : "bg-blue-100 text-blue-700 border border-blue-300"
-                              }`}
+                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                    : "bg-blue-100 text-blue-700 border border-blue-300"
+                                }`}
                             >
                               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                             </span>
@@ -839,8 +850,8 @@ export default function AdminDashboard() {
                       <div
                         key={profile._id}
                         onClick={() => {
-                          setSelectedTutorProfile({ 
-                            profile: profile, 
+                          setSelectedTutorProfile({
+                            profile: profile,
                             userId: profile.userId,
                             email: profile.userId?.email,
                             appliedPosts: profile.appliedPosts || []
@@ -879,11 +890,10 @@ export default function AdminDashboard() {
                         </div>
                         <div className="pt-3 border-t border-gray-200">
                           <span
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                              profile.isProfileComplete
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${profile.isProfileComplete
                                 ? "bg-green-100 text-green-700 border border-green-300"
                                 : "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                            }`}
+                              }`}
                           >
                             {profile.isProfileComplete ? "Complete" : "Incomplete"}
                           </span>
@@ -1116,13 +1126,12 @@ export default function AdminDashboard() {
                               </p>
                             </div>
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                post.status === "posted"
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${post.status === "posted"
                                   ? "bg-green-100 text-green-700 border border-green-300"
                                   : post.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                  : "bg-gray-100 text-gray-700 border border-gray-300"
-                              }`}
+                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                    : "bg-gray-100 text-gray-700 border border-gray-300"
+                                }`}
                             >
                               {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                             </span>
@@ -1367,13 +1376,12 @@ export default function AdminDashboard() {
                           </div>
                           <div className="text-right">
                             <span
-                              className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
-                                applied.status === "accepted"
+                              className={`inline-block px-2 py-1 rounded text-xs font-semibold ${applied.status === "accepted"
                                   ? "bg-green-500/20 text-green-300 border border-green-500/30"
                                   : applied.status === "rejected"
-                                  ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                                  : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
-                              }`}
+                                    ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                                    : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                                }`}
                             >
                               {applied.status?.charAt(0).toUpperCase() + applied.status?.slice(1) || "Pending"}
                             </span>
