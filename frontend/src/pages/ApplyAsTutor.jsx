@@ -23,10 +23,10 @@ export default function ApplyAsTutor() {
   useEffect(() => {
     let isMounted = true;
     let timeoutId = null;
-    
+
     // Clear any previous redirect flags
     clearRedirecting();
-    
+
     // Set timeout for slower connections (30 seconds for API timeout)
     timeoutId = setTimeout(() => {
       if (isMounted && checking) {
@@ -36,24 +36,24 @@ export default function ApplyAsTutor() {
         setChecking(false);
       }
     }, 30000); // 30 seconds timeout
-    
+
     async function checkAuth() {
       // Prevent redirect loops
       if (isRedirecting()) {
         return;
       }
-      
+
       try {
         console.log("🔍 Checking authentication...");
         const authData = await verifyAuth();
         console.log("✅ Auth check complete:", authData);
-        
+
         // Clear timeout since auth check completed
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
         }
-        
+
         // Only tutors can access this page
         if (!authData.success || authData.user.role !== "tutor") {
           console.log("❌ Not a tutor, redirecting to login or complete-profile");
@@ -69,7 +69,7 @@ export default function ApplyAsTutor() {
               }, 500);
               return;
             }
-            
+
             if (authData.success && authData.user.role === "user") {
               // User is logged in but not a tutor - redirect to complete profile
               setIsRedirectingState(true);
@@ -166,9 +166,9 @@ export default function ApplyAsTutor() {
         }
       }
     }
-    
+
     checkAuth();
-    
+
     return () => {
       isMounted = false;
       if (timeoutId) clearTimeout(timeoutId);
@@ -182,26 +182,26 @@ export default function ApplyAsTutor() {
 
   const handleApply = async (requestId) => {
     if (applyingTo) return; // Prevent multiple clicks
-    
+
     if (!requestId) {
       setError("Invalid request ID. Please try again.");
       return;
     }
-    
+
     setApplyingTo(requestId);
     setError("");
     setSuccessMessage("");
-    
+
     try {
       console.log("📝 Applying to request:", requestId);
       const result = await applyToTutorRequest(requestId);
       console.log("✅ Apply result:", result);
-      
+
       if (result.success) {
         setSuccessMessage("Application submitted successfully!");
         // Update the request to show it's been applied
-        setRequests(requests.map(req => 
-          req._id === requestId 
+        setRequests(requests.map(req =>
+          req._id === requestId
             ? { ...req, hasApplied: true }
             : req
         ));
@@ -231,7 +231,7 @@ export default function ApplyAsTutor() {
   const displayedRequests = requests
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, displayCount);
-  
+
   const hasMore = requests.length > displayCount;
 
   if (checking || isRedirectingState) {
@@ -250,15 +250,7 @@ export default function ApplyAsTutor() {
               Browse and apply for tutor positions that match your expertise
             </p>
           </div>
-          <button
-            onClick={() => {
-              setDisplayCount(10);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            className="ml-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition-all shadow-lg text-sm whitespace-nowrap"
-          >
-            Recent Posts
-          </button>
+
         </div>
 
         {successMessage && (
@@ -334,11 +326,10 @@ export default function ApplyAsTutor() {
               {displayedRequests.map((request) => (
                 <div
                   key={request._id}
-                  className={`bg-white text-gray-900 p-3 rounded-lg shadow-md border ${
-                    request.hasApplied 
-                      ? "border-green-300 bg-green-50/30" 
+                  className={`bg-white text-gray-900 p-3 rounded-lg shadow-md border ${request.hasApplied
+                      ? "border-green-300 bg-green-50/30"
                       : "border-gray-200"
-                  } hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer`}
+                    } hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer`}
                   onClick={() => handleViewDetails(request)}
                 >
                   <div className="mb-2">
@@ -405,11 +396,10 @@ export default function ApplyAsTutor() {
                         handleViewDetails(request);
                       }}
                       disabled={request.hasApplied || applyingTo === request._id}
-                      className={`w-full py-1.5 rounded text-xs font-semibold text-white shadow-sm transition-all ${
-                        request.hasApplied
+                      className={`w-full py-1.5 rounded text-xs font-semibold text-white shadow-sm transition-all ${request.hasApplied
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600"
-                      }`}
+                        }`}
                     >
                       {request.hasApplied ? "Applied" : "View & Apply"}
                     </button>
@@ -534,19 +524,18 @@ export default function ApplyAsTutor() {
                   <button
                     onClick={() => handleApply(selectedRequest._id)}
                     disabled={selectedRequest.hasApplied || applyingTo === selectedRequest._id}
-                    className={`w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${
-                      selectedRequest.hasApplied
+                    className={`w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-all ${selectedRequest.hasApplied
                         ? "bg-gray-400 cursor-not-allowed"
                         : applyingTo === selectedRequest._id
-                        ? "bg-blue-400 cursor-wait"
-                        : "bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 hover:shadow-xl"
-                    }`}
+                          ? "bg-blue-400 cursor-wait"
+                          : "bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 hover:shadow-xl"
+                      }`}
                   >
                     {applyingTo === selectedRequest._id
                       ? "Applying..."
                       : selectedRequest.hasApplied
-                      ? "Already Applied"
-                      : "Apply Now"}
+                        ? "Already Applied"
+                        : "Apply Now"}
                   </button>
                 </div>
               </div>
