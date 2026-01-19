@@ -3,6 +3,11 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { handleApplyAsTutor } from "../utils/authHelper";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
+import {
+  Home, Info, GraduationCap, Library, Phone,
+  Search, BookOpen, User, LogIn, LogOut,
+  LayoutDashboard, ChevronDown, UserPlus, Sparkles
+} from "lucide-react";
 
 // Navbar component with logout functionality
 
@@ -27,7 +32,7 @@ export default function Navbar() {
       window.history.replaceState({}, "", "/");
       return;
     }
-    
+
     async function checkUser() {
       try {
         const authData = await verifyAuth();
@@ -68,7 +73,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-semibold tracking-wide">
+        <Link to="/" className="text-white text-2xl font-semibold tracking-wide flex items-center gap-2">
+          <GraduationCap className="w-8 h-8 text-blue-400" />
           GV Tutor
         </Link>
 
@@ -234,16 +240,16 @@ export default function Navbar() {
                     </Link>
                   )}
                   {/* Show "Set Password" for Google-only users (check if no password) */}
-                  {user.authProviders && 
-                   user.authProviders.includes("google") && 
-                   !user.hasPassword && (
-                    <Link
-                      to="/set-password"
-                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
-                    >
-                      Set Password
-                    </Link>
-                  )}
+                  {user.authProviders &&
+                    user.authProviders.includes("google") &&
+                    !user.hasPassword && (
+                      <Link
+                        to="/set-password"
+                        className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                      >
+                        Set Password
+                      </Link>
+                    )}
                   {/* Show "Change Password" for users who have a password */}
                   {user.hasPassword && (
                     <Link
@@ -307,9 +313,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon - Only visible on mobile/tablet, hidden on desktop */}
+        {/* Mobile Menu Icon */}
         <div
-          className="md:hidden text-white text-3xl cursor-pointer"
+          className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? "✕" : "☰"}
@@ -318,35 +324,35 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-2xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl">
-          <Link 
-            to="/" 
-            onClick={() => setMenuOpen(false)} 
-            className="group flex items-center px-4 py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-cyan-500/20 border border-white/10 hover:border-blue-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
+        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-80px)]">
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-cyan-500/20 border border-white/10 hover:border-blue-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
           >
-            <span className="text-lg mr-3 group-hover:scale-110 transition-transform duration-300">🏠</span>
-            <span className="font-medium tracking-wide group-hover:text-blue-300 transition-colors">Home</span>
+            <Home className="w-5 h-5 mr-3 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-medium tracking-wide group-hover:text-blue-200 transition-colors">Home</span>
           </Link>
-          
-          <Link 
-            to="/about" 
-            onClick={() => setMenuOpen(false)} 
-            className="group flex items-center px-4 py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-pink-500/20 border border-white/10 hover:border-purple-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
+
+          <Link
+            to="/about"
+            onClick={() => setMenuOpen(false)}
+            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-pink-500/20 border border-white/10 hover:border-purple-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
           >
-            <span className="text-lg mr-3 group-hover:scale-110 transition-transform duration-300">ℹ️</span>
-            <span className="font-medium tracking-wide group-hover:text-purple-300 transition-colors">About</span>
+            <Info className="w-5 h-5 mr-3 text-purple-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-medium tracking-wide group-hover:text-purple-200 transition-colors">About</span>
           </Link>
 
           <div>
             <button
-              className="w-full text-left px-4 py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-500/20 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20 flex items-center justify-between group"
+              className="w-full text-left px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-500/20 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20 flex items-center justify-between group"
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
             >
               <div className="flex items-center">
-                <span className="text-lg mr-3 group-hover:scale-110 transition-transform duration-300">👨‍🏫</span>
-                <span className="font-medium tracking-wide group-hover:text-emerald-300 transition-colors">Home Tutor</span>
+                <GraduationCap className="w-5 h-5 mr-3 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                <span className="font-medium tracking-wide group-hover:text-emerald-200 transition-colors">Home Tutor</span>
               </div>
-              <span className={`transition-transform duration-300 ${tutorMenuOpen ? 'rotate-180 text-emerald-400' : 'text-white/50 group-hover:text-emerald-400'}`}>▾</span>
+              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${tutorMenuOpen ? 'rotate-180 text-emerald-400' : 'text-white/50 group-hover:text-emerald-400'}`} />
             </button>
 
             {tutorMenuOpen && (
@@ -357,9 +363,10 @@ export default function Navbar() {
                     setTutorMenuOpen(false);
                     setMenuOpen(false);
                   }}
-                  className="block px-4 py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-200 hover:text-white border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 text-sm font-medium hover:translate-x-1"
+                  className="flex items-center px-4 py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-200 hover:text-white border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 text-sm font-medium hover:translate-x-1 group"
                 >
-                  🔍 Find Tutor
+                  <Search className="w-4 h-4 mr-2 text-emerald-400 group-hover:scale-110" />
+                  Find Tutor
                 </Link>
                 {/* Only show "Apply as Tutor" if user is not logged in OR is a tutor (not admin) */}
                 {(!user || (user.role === "tutor" && user.role !== "admin")) && (
@@ -369,88 +376,91 @@ export default function Navbar() {
                       setMenuOpen(false);
                       handleApplyAsTutor(navigate);
                     }}
-                    className="block w-full text-left px-4 py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-200 hover:text-white border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 text-sm font-medium hover:translate-x-1"
+                    className="flex w-full items-center px-4 py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-200 hover:text-white border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 text-sm font-medium hover:translate-x-1 group"
                   >
-                    📝 Apply as Tutor
+                    <BookOpen className="w-4 h-4 mr-2 text-blue-400 group-hover:scale-110" />
+                    Apply as Tutor
                   </button>
                 )}
               </div>
             )}
           </div>
 
-          <Link 
-            to="/library" 
-            onClick={() => setMenuOpen(false)} 
-            className="group flex items-center px-4 py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-amber-600/20 hover:to-orange-500/20 border border-white/10 hover:border-amber-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
+          <Link
+            to="/library"
+            onClick={() => setMenuOpen(false)}
+            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-amber-600/20 hover:to-orange-500/20 border border-white/10 hover:border-amber-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
           >
-            <span className="text-lg mr-3 group-hover:scale-110 transition-transform duration-300">📚</span>
-            <span className="font-medium tracking-wide group-hover:text-amber-300 transition-colors">Library</span>
+            <Library className="w-5 h-5 mr-3 text-amber-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-medium tracking-wide group-hover:text-amber-200 transition-colors">Library</span>
           </Link>
-          
-          <Link 
-            to="/contact" 
-            onClick={() => setMenuOpen(false)} 
-            className="group flex items-center px-4 py-3 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-rose-600/20 hover:to-red-500/20 border border-white/10 hover:border-rose-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
+
+          <Link
+            to="/contact"
+            onClick={() => setMenuOpen(false)}
+            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-rose-600/20 hover:to-red-500/20 border border-white/10 hover:border-rose-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
           >
-            <span className="text-lg mr-3 group-hover:scale-110 transition-transform duration-300">📞</span>
-            <span className="font-medium tracking-wide group-hover:text-rose-300 transition-colors">Contact</span>
+            <Phone className="w-5 h-5 mr-3 text-rose-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-medium tracking-wide group-hover:text-rose-200 transition-colors">Contact</span>
           </Link>
 
           <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4"></div>
 
           {user && user.role === "admin" ? (
-            <>
-              <div className="space-y-3">
-                <Link
-                  to="/admin/dashboard"
-                  onClick={() => setMenuOpen(false)}
-                  className="block w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-purple-900/40 transform hover:-translate-y-0.5 transition-all duration-200 text-center border border-white/10"
-                >
-                  ⚡ Admin Dashboard
-                </Link>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setMenuOpen(false);
-                    try {
-                      setUser(null);
-                      setProfile(null);
-                      await logoutUser();
-                    } catch (err) {
-                      console.error("Logout error:", err);
-                    } finally {
-                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
-                      if (window.location.protocol === "https:") {
-                        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
-                      }
-                      window.location.href = "/";
+            <div className="space-y-3 pt-2">
+              <Link
+                to="/admin/dashboard"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-purple-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
+              >
+                <LayoutDashboard className="w-5 h-5 mr-2 group-hover:animate-pulse" />
+                Admin Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={async () => {
+                  setMenuOpen(false);
+                  try {
+                    setUser(null);
+                    setProfile(null);
+                    await logoutUser();
+                  } catch (err) {
+                    console.error("Logout error:", err);
+                  } finally {
+                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                    if (window.location.protocol === "https:") {
+                      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
                     }
-                  }}
-                  className="block w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 font-semibold border border-red-500/20 hover:border-red-500/40 transition-all duration-200 text-center"
-                >
-                  Logout ({user.email})
-                </button>
-              </div>
-            </>
+                    window.location.href = "/";
+                  }
+                }}
+                className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 font-semibold border border-red-500/20 hover:border-red-500/40 transition-all duration-200 group"
+              >
+                <LogOut className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
+                Logout ({user.email})
+              </button>
+            </div>
           ) : user && (user.role === "tutor" || user.role === "user") ? (
-            <>
+            <div className="space-y-3 pt-2">
               {/* Only show "Apply as Tutor" button for tutors, NOT for regular users or admins */}
               {user.role === "tutor" && user.role !== "admin" && (
                 <div className="space-y-3">
                   <Link
                     to="/apply-tutor"
                     onClick={() => setMenuOpen(false)}
-                    className="block w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-900/40 transform hover:-translate-y-0.5 transition-all duration-200 text-center border border-white/10"
+                    className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
                   >
-                    ✨ Apply as Tutor
+                    <Sparkles className="w-5 h-5 mr-2 group-hover:spin-slow" />
+                    Apply as Tutor
                   </Link>
                   {profile && (
                     <Link
                       to="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="block w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-900/40 transform hover:-translate-y-0.5 transition-all duration-200 text-center border border-white/10"
+                      className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
                     >
-                      👤 My Profile
+                      <User className="w-5 h-5 mr-2" />
+                      My Profile
                     </Link>
                   )}
                 </div>
@@ -473,26 +483,29 @@ export default function Navbar() {
                     window.location.href = "/";
                   }
                 }}
-                className="block w-full py-3 px-4 mt-3 rounded-xl bg-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 font-semibold border border-red-500/20 hover:border-red-500/40 transition-all duration-200 text-center"
+                className="flex items-center justify-center w-full py-3.5 px-4 mt-3 rounded-xl bg-white/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 font-semibold border border-red-500/20 hover:border-red-500/40 transition-all duration-200 group"
               >
+                <LogOut className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
                 Logout ({user.email})
               </button>
-            </>
+            </div>
           ) : (
             <div className="space-y-3 pt-2">
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold border border-white/10 hover:border-white/30 transition-all duration-200 text-center hover:scale-[1.02]"
+                className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold border border-white/10 hover:border-white/30 transition-all duration-200 hover:scale-[1.02] group"
               >
+                <LogIn className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
                 Login
               </Link>
               <Link
                 to="/signup"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-900/40 transform hover:-translate-y-0.5 transition-all duration-200 text-center border border-white/10"
+                className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg shadow-blue-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
               >
-                🚀 Sign Up Free
+                <UserPlus className="w-5 h-5 mr-2" />
+                Sign Up Free
               </Link>
             </div>
           )}
