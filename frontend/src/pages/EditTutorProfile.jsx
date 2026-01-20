@@ -10,6 +10,7 @@ export default function EditTutorProfile() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -134,8 +135,11 @@ export default function EditTutorProfile() {
       });
 
       if (response.success) {
-        alert("Profile updated successfully!");
-        navigate("/profile");
+        setSuccess(true);
+        // Redirect after 1 second to show the success state briefly
+        setTimeout(() => {
+          navigate("/profile");
+        }, 1000);
       } else {
         setError(response.message || "Failed to update profile");
       }
@@ -163,6 +167,12 @@ export default function EditTutorProfile() {
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 animate-pulse">
+              ✓ Profile updated successfully! Redirecting...
             </div>
           )}
 
