@@ -226,7 +226,7 @@ export default function Navbar() {
                   </div>
                 )}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-black/95 border border-cyan-500/30 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none group-hover:pointer-events-auto">
-                  <div className="px-4 py-3 text-sm text-white border-b border-cyan-500/20">
+                  <div className="px-4 py-3 text-sm text-white border-b border-cyan-500/20 truncate">
                     {user.email}
                   </div>
                   <div className="px-4 py-2 text-xs text-white/60 border-b border-cyan-500/20">
