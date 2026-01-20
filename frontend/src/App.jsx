@@ -12,6 +12,7 @@ import SetPassword from "./pages/SetPassword";
 import ChangePassword from "./pages/ChangePassword";
 import FindTutor from "./pages/FindTutor";
 import CompleteProfile from "./pages/CompleteProfile";
+import EditTutorProfile from "./pages/EditTutorProfile";
 import ApplyAsTutor from "./pages/ApplyAsTutor";
 import TutorProfile from "./pages/TutorProfile";
 import AdminLogin from "./pages/AdminLogin";
@@ -103,7 +104,7 @@ function AppContent() {
   // Handle route changes (but skip for pages that handle their own loading)
   useEffect(() => {
     // Don't show loading for pages that handle their own redirects
-    const pagesWithOwnLoading = ['/apply-tutor', '/complete-profile', '/admin/dashboard', '/profile'];
+    const pagesWithOwnLoading = ['/apply-tutor', '/complete-profile', '/admin/dashboard', '/profile', '/edit-profile'];
     if (pagesWithOwnLoading.includes(location.pathname)) {
       setIsNavigating(false);
       return;
@@ -154,6 +155,7 @@ function AppContent() {
                 {/* Protected pages */}
                 <Route path="/find-tutor" element={<FindTutor />} />
                 <Route path="/complete-profile" element={<CompleteProfile />} />
+                <Route path="/edit-profile" element={<EditTutorProfile />} />
                 <Route path="/apply-tutor" element={<ApplyAsTutor />} />
                 <Route path="/profile" element={<TutorProfile />} />
               </Routes>

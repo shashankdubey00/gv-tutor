@@ -238,7 +238,7 @@ export default function TutorProfile() {
           {/* Action Buttons */}
           <div className="mt-8 pt-6 border-t border-cyan-500/30 flex gap-4 flex-wrap">
             <button
-              onClick={() => navigate("/complete-profile", { state: { from: '/profile', allowEdit: true } })}
+              onClick={() => navigate("/edit-profile")}
               className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 rounded-lg font-semibold text-white transition"
             >
               Edit Profile
