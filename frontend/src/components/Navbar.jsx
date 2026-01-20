@@ -7,7 +7,7 @@ import {
   Home, Info, GraduationCap, Library, Phone,
   Search, BookOpen, User, LogIn, LogOut,
   LayoutDashboard, ChevronDown, UserPlus, Sparkles,
-  Menu, X
+  Menu, X, UserCircle
 } from "lucide-react";
 
 // Navbar component with logout functionality
