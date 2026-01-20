@@ -78,16 +78,20 @@ export default function CompleteProfile() {
           return;
         }
         
-        // If user is already a tutor with complete profile, redirect to apply page
+        // If user is already a tutor with complete profile, check if they're coming from profile page
+        // If so, allow editing; otherwise redirect to apply page
         if (authData.user.role === "tutor" && authData.user.isTutorProfileComplete) {
-          if (isMounted && shouldRedirect(location.pathname, "/apply-tutor")) {
-            setIsRedirectingState(true);
-            setRedirecting("/apply-tutor");
-            setTimeout(() => {
-              navigate("/apply-tutor", { replace: true });
-            }, 500);
+          // Allow editing from profile page, but redirect if accessing directly from other pages
+          if (location.state?.from !== '/profile' && !location.state?.allowEdit) {
+            if (isMounted && shouldRedirect(location.pathname, "/apply-tutor")) {
+              setIsRedirectingState(true);
+              setRedirecting("/apply-tutor");
+              setTimeout(() => {
+                navigate("/apply-tutor", { replace: true });
+              }, 500);
+            }
+            return;
           }
-          return;
         }
         
         // Check if profile already exists
