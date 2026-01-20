@@ -109,6 +109,7 @@ export default function CompleteProfile() {
               }
               return;
             }
+          }
           // If profile exists but incomplete, load existing data
           if (profileData.success && profileData.profile && isMounted) {
             const profile = profileData.profile;
