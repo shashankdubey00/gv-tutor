@@ -27,7 +27,6 @@ function AppContent() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [isNavigating, setIsNavigating] = useState(false);
   const [isOAuthProcessing, setIsOAuthProcessing] = useState(false);
 
   // Preload auth background image on component mount
@@ -101,23 +100,6 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle route changes (but skip for pages that handle their own loading)
-  useEffect(() => {
-    // Don't show loading for pages that handle their own redirects
-    const pagesWithOwnLoading = ['/apply-tutor', '/complete-profile', '/admin/dashboard', '/profile', '/edit-profile'];
-    if (pagesWithOwnLoading.includes(location.pathname)) {
-      setIsNavigating(false);
-      return;
-    }
-    
-    setIsNavigating(true);
-    const timer = setTimeout(() => {
-      setIsNavigating(false);
-    }, 80); // Minimal delay for route transitions
-
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
-
   // BLOCK rendering if OAuth is processing - show loading spinner instead
   if (isOAuthProcessing) {
     return <LoadingSpinner />;
@@ -125,7 +107,7 @@ function AppContent() {
 
   return (
     <>
-      {(loading || isNavigating) && <LoadingSpinner />}
+      {loading && <LoadingSpinner />}
       <Routes>
         {/* Admin routes without Navbar */}
         <Route path="/admin/login" element={<AdminLogin />} />
