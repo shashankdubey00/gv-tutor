@@ -454,16 +454,14 @@ export default function Navbar() {
                     <Sparkles className="w-5 h-5 mr-2 group-hover:spin-slow" />
                     Apply as Tutor
                   </Link>
-                  {profile && (
-                    <Link
-                      to="/profile"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
-                    >
-                      <User className="w-5 h-5 mr-2" />
-                      My Profile
-                    </Link>
-                  )}
+                  <Link
+                    to="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-900/40 transform hover:-translate-y-0.5 transition-all duration-200 border border-white/10 group"
+                  >
+                    <UserCircle className="w-5 h-5 mr-2 group-hover:scale-110" />
+                    My Profile
+                  </Link>
                 </div>
               )}
               <button
