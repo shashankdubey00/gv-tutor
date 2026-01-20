@@ -225,17 +225,17 @@ export default function Navbar() {
                     {user.email[0].toUpperCase()}
                   </div>
                 )}
-                <div className="absolute right-0 mt-2 w-40 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
-                  <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
+                <div className="absolute right-0 mt-2 w-48 bg-black/95 border border-cyan-500/30 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none group-hover:pointer-events-auto">
+                  <div className="px-4 py-3 text-sm text-white border-b border-cyan-500/20">
                     {user.email}
                   </div>
-                  <div className="px-4 py-2 text-xs text-white/50 border-b border-white/10">
+                  <div className="px-4 py-2 text-xs text-white/60 border-b border-cyan-500/20">
                     {user.role === "tutor" ? "Tutor" : "User"}
                   </div>
                   {user.role === "tutor" && profile && (
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                      className="block px-4 py-2 text-white hover:bg-cyan-500/10 border-b border-cyan-500/20 transition-colors"
                     >
                       View Profile
                     </Link>
@@ -246,7 +246,7 @@ export default function Navbar() {
                     !user.hasPassword && (
                       <Link
                         to="/set-password"
-                        className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                        className="block px-4 py-2 text-white hover:bg-cyan-500/10 border-b border-cyan-500/20 transition-colors"
                       >
                         Set Password
                       </Link>
@@ -255,7 +255,7 @@ export default function Navbar() {
                   {user.hasPassword && (
                     <Link
                       to="/change-password"
-                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
+                      className="block px-4 py-2 text-white hover:bg-cyan-500/10 border-b border-cyan-500/20 transition-colors"
                     >
                       Change Password
                     </Link>
