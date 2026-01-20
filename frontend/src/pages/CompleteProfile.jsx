@@ -98,16 +98,17 @@ export default function CompleteProfile() {
         try {
           const profileData = await getTutorProfile();
           if (profileData.success && profileData.profile.isProfileComplete) {
-            // Profile already complete, redirect to apply page
-            if (isMounted && shouldRedirect(location.pathname, "/apply-tutor")) {
-              setIsRedirectingState(true);
-              setRedirecting("/apply-tutor");
-              setTimeout(() => {
-                navigate("/apply-tutor", { replace: true });
-              }, 500);
+            // Profile already complete, redirect to apply page - but NOT if user is editing
+            if (!location.state?.allowEdit && !location.state?.from) {
+              if (isMounted && shouldRedirect(location.pathname, "/apply-tutor")) {
+                setIsRedirectingState(true);
+                setRedirecting("/apply-tutor");
+                setTimeout(() => {
+                  navigate("/apply-tutor", { replace: true });
+                }, 500);
+              }
+              return;
             }
-            return;
-          }
           // If profile exists but incomplete, load existing data
           if (profileData.success && profileData.profile && isMounted) {
             const profile = profileData.profile;
