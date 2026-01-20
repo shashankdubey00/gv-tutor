@@ -121,7 +121,7 @@ export default function EditTutorProfile() {
       const response = await createOrUpdateTutorProfile({
         fullName: formData.fullName,
         phone: formData.phone,
-        gender: formData.gender,
+        gender: formData.gender.toLowerCase(),
         address: formData.address,
         experience: parseInt(formData.experience),
         subjects: formData.subjects,
@@ -196,9 +196,9 @@ export default function EditTutorProfile() {
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 mb-4"
               >
                 <option value="">Select Gender *</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
               </select>
               <input
                 type="text"
