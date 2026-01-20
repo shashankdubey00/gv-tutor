@@ -6,7 +6,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function TutorProfile() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start as false for instant page display
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);

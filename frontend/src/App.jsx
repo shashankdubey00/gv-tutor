@@ -103,7 +103,7 @@ function AppContent() {
   // Handle route changes (but skip for pages that handle their own loading)
   useEffect(() => {
     // Don't show loading for pages that handle their own redirects
-    const pagesWithOwnLoading = ['/apply-tutor', '/complete-profile', '/admin/dashboard'];
+    const pagesWithOwnLoading = ['/apply-tutor', '/complete-profile', '/admin/dashboard', '/profile'];
     if (pagesWithOwnLoading.includes(location.pathname)) {
       setIsNavigating(false);
       return;
