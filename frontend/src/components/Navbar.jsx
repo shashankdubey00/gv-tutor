@@ -74,9 +74,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-semibold tracking-wide flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-400" />
-          GV Tutor
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo} alt="GV Tutor" className="h-12 w-auto object-contain" />
         </Link>
 
         {/* Desktop Menu */}
