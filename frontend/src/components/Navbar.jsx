@@ -9,6 +9,7 @@ import {
   LayoutDashboard, ChevronDown, UserPlus, Sparkles,
   Menu, X, UserCircle
 } from "lucide-react";
+import logo from "../assets/logo.png";
 
 // Navbar component with logout functionality
 
@@ -75,8 +76,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="text-white text-2xl font-semibold tracking-wide flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-400" />
-          GV Tutor
+          <img src={logo} alt="Goodwill Logo" className="h-10 w-auto logo-white" />
         </Link>
 
         {/* Desktop Menu */}
