@@ -18,6 +18,13 @@ export const createTutorRequest = async (req, res) => {
       additionalRequirements,
     } = req.body;
 
+    console.log(
+      "📩 createTutorRequest received teacherExperience:",
+      teacherExperience,
+      "type:",
+      typeof teacherExperience
+    );
+
     // Validate required fields (email is now optional)
     if (
       !name ||
@@ -39,6 +46,13 @@ export const createTutorRequest = async (req, res) => {
     }
 
     const parsedTeacherExperience = parseInt(teacherExperience, 10);
+
+    console.log(
+      "🧮 createTutorRequest parsed teacherExperience:",
+      parsedTeacherExperience,
+      "isNaN:",
+      Number.isNaN(parsedTeacherExperience)
+    );
     if (
       Number.isNaN(parsedTeacherExperience) ||
       parsedTeacherExperience < 0 ||
@@ -92,6 +106,11 @@ export const createTutorRequest = async (req, res) => {
         additionalRequirements: true,
       },
     });
+
+    console.log(
+      "💾 createTutorRequest saved teacherExperience:",
+      tutorRequest.teacherExperience
+    );
 
     return res.status(201).json({
       success: true,

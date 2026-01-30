@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTutorRequest } from "../services/tutorService";
 
 export default function FindTutor() {
@@ -21,6 +21,12 @@ export default function FindTutor() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (!success) return;
+    const timer = setTimeout(() => setSuccess(false), 3000);
+    return () => clearTimeout(timer);
+  }, [success]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -57,7 +63,13 @@ export default function FindTutor() {
     }
 
     try {
-      await createTutorRequest(formData);
+      const dataToSend = {
+        ...formData,
+        teacherExperience: parseInt(formData.teacherExperience, 10),
+      };
+
+      console.log("📤 FindTutor submit payload:", dataToSend);
+      await createTutorRequest(dataToSend);
       setSuccess(true);
       // Reset form
       setFormData({
@@ -94,8 +106,13 @@ export default function FindTutor() {
           </p>
 
           {success && (
-            <div className="bg-cyan-500/20 border border-cyan-500 text-cyan-300 p-4 rounded-lg mb-4">
-              ✅ Request submitted successfully! Admin will review and contact you soon.
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+              <div className="w-full max-w-md bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 rounded-xl p-6 text-center">
+                <p className="text-xl font-bold text-white mb-2">Request Submitted</p>
+                <p className="text-white/80">
+                  Your request has been submitted successfully. Admin will review and contact you soon.
+                </p>
+              </div>
             </div>
           )}
 
@@ -116,9 +133,10 @@ export default function FindTutor() {
               <input
                 type="email"
                 name="email"
-                placeholder="Your Email (Optional)"
+                placeholder="Your Email *"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               />
               <input
@@ -204,11 +222,12 @@ export default function FindTutor() {
             </div>
 
             {/* Frequency, Budget, Teacher Experience & Gender Preference */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <select
                 name="frequency"
                 value={formData.frequency}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               >
                 <option value="daily">Daily</option>
@@ -240,6 +259,7 @@ export default function FindTutor() {
                 name="preferredTutorGender"
                 value={formData.preferredTutorGender}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               >
                 <option value="any">Any Gender</option>
@@ -251,10 +271,11 @@ export default function FindTutor() {
             {/* Additional Requirements */}
             <textarea
               name="additionalRequirements"
-              placeholder="Additional Requirements (Optional)"
+              placeholder="Additional Requirements *"
               value={formData.additionalRequirements}
               onChange={handleChange}
               rows="3"
+              required
               className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
             />
 
