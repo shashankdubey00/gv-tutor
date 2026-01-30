@@ -72,6 +72,20 @@ const userSchema = new mongoose.Schema(
       default: [],
       maxlength: 3, // Only keep last 3 passwords
     },
+
+    // Notification System Fields
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    notificationEnabled: {
+      type: Boolean,
+      default: true,
+    },
+    lastNotificationSent: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

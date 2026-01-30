@@ -116,6 +116,7 @@ export const createTutorRequest = async (req, res) => {
       success: true,
       message: "Tutor request submitted successfully. Admin will review it soon.",
       requestId: tutorRequest._id,
+      teacherExperience: tutorRequest.teacherExperience,
     });
   } catch (error) {
     console.error("Create tutor request error:", error);

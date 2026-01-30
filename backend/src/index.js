@@ -43,10 +43,12 @@ app.use("/api/auth", authRoutes);
 import tutorRequestRoutes from "./routes/tutorRequestRoutes.js";
 import tutorProfileRoutes from "./routes/tutorProfileRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import notificationRoutes from "../routes/notifications.js";
 
 app.use("/api/tutor-requests", tutorRequestRoutes);
 app.use("/api/tutor-profile", tutorProfileRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api", notificationRoutes);
 
 // Health check endpoint (required for Render)
 app.get("/health", (req, res) => {

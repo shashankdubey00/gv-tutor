@@ -222,13 +222,13 @@ export default function FindTutor() {
             </div>
 
             {/* Frequency, Budget, Teacher Experience & Gender Preference */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <select
                 name="frequency"
                 value={formData.frequency}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -242,7 +242,7 @@ export default function FindTutor() {
                 value={formData.budget}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
               />
               <input
                 type="number"
@@ -253,14 +253,14 @@ export default function FindTutor() {
                 min="0"
                 max="50"
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
               />
               <select
                 name="preferredTutorGender"
                 value={formData.preferredTutorGender}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
               >
                 <option value="any">Any Gender</option>
                 <option value="male">Male Tutor</option>

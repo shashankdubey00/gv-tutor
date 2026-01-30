@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import TutorRequest from "../models/TutorRequest.js";
 import TutorProfile from "../models/TutorProfile.js";
+import { notificationService } from "../../notifications/index.js";
 
 /* ---------------- ADMIN LOGIN ---------------- */
 export const adminLogin = async (req, res) => {
@@ -375,6 +376,29 @@ export const postTutorRequest = async (req, res) => {
         success: false,
         message: "Request not found",
       });
+    }
+
+    // ✅ Send notifications to all tutors
+    try {
+      await notificationService.notifyAllTutors({
+        type: 'new_job',
+        title: `New Tutor Request: ${request.subjects.join(', ')}`,
+        message: `A new tutoring request for ${request.subjects.join(', ')} in ${request.preferredLocation} has been posted.`,
+        relatedId: request._id,
+        relatedCollection: 'tutorrequests',
+        createdBy: req.user._id,
+        templateData: {
+          jobId: request._id,
+          jobTitle: `Tutor needed for ${request.subjects.join(', ')}`,
+          subject: request.subjects.join(', '),
+          location: request.preferredLocation,
+          budget: request.budget,
+          jobDetails: request.additionalRequirements || `Grade: ${request.studentGrade}, Timing: ${request.preferredTiming}, Frequency: ${request.frequency}`
+        }
+      });
+      console.log('✅ Notifications sent to all tutors for new request');
+    } catch (notifError) {
+      console.error('⚠️ Notification failed (request still posted):', notifError);
     }
 
     return res.status(200).json({
