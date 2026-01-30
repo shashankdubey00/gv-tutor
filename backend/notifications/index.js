@@ -2,17 +2,17 @@
 // This file exports all notification models and services for easy importing
 
 // Models
-const Notification = require('./models/Notification');
-const NotificationDelivery = require('./models/NotificationDelivery');
-const EmailQueue = require('./models/EmailQueue');
+import Notification from './models/Notification.js';
+import NotificationDelivery from './models/NotificationDelivery.js';
+import EmailQueue from './models/EmailQueue.js';
 
 // Services
-const notificationService = require('./services/notificationService');
-const unifiedEmailService = require('./services/unifiedEmailService');
-const emailTemplates = require('./services/emailTemplates');
-const emailQueue = require('./services/notificationQueue');
+import notificationService from './services/notificationService.js';
+import unifiedEmailService from './services/unifiedEmailService.js';
+import emailTemplates from './services/emailTemplates.js';
+import emailQueue from './services/notificationQueue.js';
 
-module.exports = {
+export {
     // Models
     Notification,
     NotificationDelivery,
