@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import TutorRequest from "../models/TutorRequest.js";
 import TutorProfile from "../models/TutorProfile.js";
-import { notificationService } from "../../notifications/index.js";
+import { notificationService } from '../../../notifications/index.js';
 
 /* ---------------- ADMIN LOGIN ---------------- */
 export const adminLogin = async (req, res) => {
