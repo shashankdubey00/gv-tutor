@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 const router = express.Router();
-import { notificationService } from '../../notifications/index.js';
+import { notificationService } from '../notifications/index.js';
 
 // NOTE: Replace 'tutorAuth' with your actual tutor authentication middleware
 // const { tutorAuth } = require('../middleware/auth'); // Adjust path as needed
