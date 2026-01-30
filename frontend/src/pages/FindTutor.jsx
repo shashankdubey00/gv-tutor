@@ -30,24 +30,24 @@ export default function FindTutor() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleAddSubject() {
     if (formData.subjectInput.trim()) {
-      setFormData({
-        ...formData,
-        subjects: [...formData.subjects, formData.subjectInput.trim()],
+      setFormData((prev) => ({
+        ...prev,
+        subjects: [...prev.subjects, prev.subjectInput.trim()],
         subjectInput: "",
-      });
+      }));
     }
   }
 
   function handleRemoveSubject(index) {
-    setFormData({
-      ...formData,
-      subjects: formData.subjects.filter((_, i) => i !== index),
-    });
+    setFormData((prev) => ({
+      ...prev,
+      subjects: prev.subjects.filter((_, i) => i !== index),
+    }));
   }
 
   async function handleSubmit(e) {
