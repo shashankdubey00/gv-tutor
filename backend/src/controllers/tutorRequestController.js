@@ -14,6 +14,7 @@ export const createTutorRequest = async (req, res) => {
       frequency,
       budget,
       preferredTutorGender,
+      teacherExperience,
       additionalRequirements,
     } = req.body;
 
@@ -26,11 +27,26 @@ export const createTutorRequest = async (req, res) => {
       !preferredLocation ||
       !preferredTiming ||
       !frequency ||
-      !budget
+      !budget ||
+      teacherExperience === undefined ||
+      teacherExperience === null ||
+      teacherExperience === ""
     ) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be filled",
+      });
+    }
+
+    const parsedTeacherExperience = parseInt(teacherExperience, 10);
+    if (
+      Number.isNaN(parsedTeacherExperience) ||
+      parsedTeacherExperience < 0 ||
+      parsedTeacherExperience > 50
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Teacher experience must be a number between 0 and 50",
       });
     }
 
@@ -57,6 +73,7 @@ export const createTutorRequest = async (req, res) => {
       frequency,
       budget,
       preferredTutorGender: preferredTutorGender || "any",
+      teacherExperience: parsedTeacherExperience,
       additionalRequirements: additionalRequirements || "",
       status: "pending",
       // Default field visibility - all fields visible by default
@@ -71,6 +88,7 @@ export const createTutorRequest = async (req, res) => {
         frequency: true,
         budget: true,
         preferredTutorGender: true,
+        teacherExperience: true,
         additionalRequirements: true,
       },
     });
@@ -120,6 +138,7 @@ export const getPostedTutorRequests = async (req, res) => {
       if (!visibility.frequency) delete filtered.frequency;
       if (!visibility.budget) delete filtered.budget;
       if (!visibility.preferredTutorGender) delete filtered.preferredTutorGender;
+      if (!visibility.teacherExperience) delete filtered.teacherExperience;
       if (!visibility.additionalRequirements) delete filtered.additionalRequirements;
       
       // Remove visibility object from response

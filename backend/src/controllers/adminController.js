@@ -297,6 +297,7 @@ export const updateTutorRequest = async (req, res) => {
       frequency,
       budget,
       preferredTutorGender,
+      teacherExperience,
       additionalRequirements,
       fieldVisibility,
     } = req.body;
@@ -320,6 +321,20 @@ export const updateTutorRequest = async (req, res) => {
     if (frequency !== undefined) request.frequency = frequency;
     if (budget !== undefined) request.budget = budget;
     if (preferredTutorGender !== undefined) request.preferredTutorGender = preferredTutorGender;
+    if (teacherExperience !== undefined) {
+      const parsedTeacherExperience = parseInt(teacherExperience, 10);
+      if (
+        Number.isNaN(parsedTeacherExperience) ||
+        parsedTeacherExperience < 0 ||
+        parsedTeacherExperience > 50
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Teacher experience must be a number between 0 and 50",
+        });
+      }
+      request.teacherExperience = parsedTeacherExperience;
+    }
     if (additionalRequirements !== undefined) request.additionalRequirements = additionalRequirements;
     if (fieldVisibility !== undefined) {
       request.fieldVisibility = {

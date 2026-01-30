@@ -137,6 +137,10 @@ export default function AdminDashboard() {
       frequency: request.frequency || "weekly",
       budget: request.budget || "",
       preferredTutorGender: request.preferredTutorGender || "any",
+      teacherExperience:
+        request.teacherExperience === undefined || request.teacherExperience === null
+          ? 0
+          : request.teacherExperience,
       additionalRequirements: request.additionalRequirements || "",
       fieldVisibility: request.fieldVisibility || {},
     });
@@ -491,6 +495,11 @@ export default function AdminDashboard() {
                                   : request.subjects}
                                 {Array.isArray(request.subjects) && request.subjects.length > 2 && "..."}
                               </p>
+                              {request.teacherExperience !== undefined && request.teacherExperience !== null && (
+                                <p className="text-sm text-gray-700">
+                                  <span className="font-semibold text-cyan-600">Teacher Experience:</span> {request.teacherExperience} years
+                                </p>
+                              )}
                               {request.appliedTutors && request.appliedTutors.length > 0 && (
                                 <div className="mt-2 pt-2 border-t border-gray-200">
                                   <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
@@ -743,6 +752,11 @@ export default function AdminDashboard() {
                           <p className="text-sm text-gray-700 mb-2">
                             <span className="text-cyan-600 font-semibold">Location:</span> {request.preferredLocation}
                           </p>
+                          {request.teacherExperience !== undefined && request.teacherExperience !== null && (
+                            <p className="text-sm text-gray-700 mb-2">
+                              <span className="text-cyan-600 font-semibold">Teacher Experience:</span> {request.teacherExperience} years
+                            </p>
+                          )}
                           {request.appliedTutors && request.appliedTutors.length > 0 && (
                             <div className="mb-2 pt-2 border-t border-gray-200">
                               <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
@@ -1279,8 +1293,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Frequency, Budget & Gender */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Frequency, Budget, Teacher Experience & Gender */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-white/80 mb-2">Frequency *</label>
                   <select
@@ -1300,6 +1314,17 @@ export default function AdminDashboard() {
                     type="text"
                     value={editFormData.budget}
                     onChange={(e) => handleEditChange("budget", e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/80 mb-2">Teacher Experience (years) *</label>
+                  <input
+                    type="number"
+                    value={editFormData.teacherExperience}
+                    onChange={(e) => handleEditChange("teacherExperience", e.target.value)}
+                    min="0"
+                    max="50"
                     className="w-full px-4 py-2 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
                 </div>
@@ -1413,6 +1438,7 @@ export default function AdminDashboard() {
                     { key: "frequency", label: "Frequency" },
                     { key: "budget", label: "Budget" },
                     { key: "preferredTutorGender", label: "Tutor Gender" },
+                    { key: "teacherExperience", label: "Teacher Experience" },
                     { key: "additionalRequirements", label: "Requirements" },
                   ].map((field) => (
                     <label

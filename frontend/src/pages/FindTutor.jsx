@@ -14,6 +14,7 @@ export default function FindTutor() {
     frequency: "weekly",
     budget: "",
     preferredTutorGender: "any",
+    teacherExperience: "",
     additionalRequirements: "",
   });
 
@@ -71,6 +72,7 @@ export default function FindTutor() {
         frequency: "weekly",
         budget: "",
         preferredTutorGender: "any",
+        teacherExperience: "",
         additionalRequirements: "",
       });
     } catch (err) {
@@ -201,8 +203,8 @@ export default function FindTutor() {
               />
             </div>
 
-            {/* Frequency, Budget & Gender Preference */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Frequency, Budget, Teacher Experience & Gender Preference */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <select
                 name="frequency"
                 value={formData.frequency}
@@ -220,6 +222,17 @@ export default function FindTutor() {
                 placeholder="Budget (e.g., ₹2000/month) *"
                 value={formData.budget}
                 onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+              />
+              <input
+                type="number"
+                name="teacherExperience"
+                placeholder="Teacher Experience (years) *"
+                value={formData.teacherExperience}
+                onChange={handleChange}
+                min="0"
+                max="50"
                 required
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               />

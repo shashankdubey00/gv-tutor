@@ -60,6 +60,13 @@ const tutorRequestSchema = new mongoose.Schema(
       enum: ["male", "female", "any"],
       default: "any",
     },
+    teacherExperience: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+      max: 50,
+    },
     
     // Additional Requirements
     additionalRequirements: {
@@ -87,6 +94,7 @@ const tutorRequestSchema = new mongoose.Schema(
       frequency: { type: Boolean, default: true },
       budget: { type: Boolean, default: true },
       preferredTutorGender: { type: Boolean, default: true },
+      teacherExperience: { type: Boolean, default: true },
       additionalRequirements: { type: Boolean, default: true },
     },
     
