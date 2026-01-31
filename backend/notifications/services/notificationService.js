@@ -4,6 +4,7 @@ import EmailQueue from '../models/EmailQueue.js';
 import emailQueue from './notificationQueue.js';
 import emailTemplates from './emailTemplates.js';
 import mongoose from 'mongoose';
+import User from '../../src/models/User.js';
 
 class NotificationService {
     async notifyAllTutors({ type, title, message, relatedId = null, relatedCollection = null, createdBy, templateData }) {
@@ -20,9 +21,8 @@ class NotificationService {
             });
 
             // 2. Get all active tutors
-            const Tutor = mongoose.model('Tutor');
-            
-            const tutors = await Tutor.find({
+            const tutors = await User.find({
+                role: 'tutor',
                 email: { $exists: true, $ne: null },
                 isActive: true
             }).select('_id name email');
