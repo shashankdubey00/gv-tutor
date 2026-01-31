@@ -208,8 +208,12 @@ export default function AdminDashboard() {
       <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="text-white text-xl sm:text-2xl font-semibold hover:text-cyan-400 transition cursor-pointer">
-            GV Tutor
+          <Link to="/" className="flex items-center gap-3">
+            <img 
+              src="/logo.png" 
+              alt="GV Tutor Logo" 
+              className="h-12 w-auto object-contain hover:scale-105 transition-transform duration-300"
+            />
           </Link>
 
           {/* Center Navigation - Desktop */}
@@ -315,7 +319,14 @@ export default function AdminDashboard() {
             <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
               {/* Close button */}
               <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
-                <h2 className="text-cyan-400 text-2xl font-bold">GV Tutor</h2>
+                <div className="flex items-center gap-2">
+                  <img 
+                    src="/logo.png" 
+                    alt="GV Tutor Logo" 
+                    className="h-8 w-auto object-contain"
+                  />
+                  <h2 className="text-cyan-400 text-2xl font-bold">GV Tutor</h2>
+                </div>
                 <button
                   onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))}
                   className="text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
