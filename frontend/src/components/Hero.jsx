@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Mail, Phone, CheckCircle } from 'lucide-react';
 import { handleApplyAsTutor } from '../utils/authHelper';
+import { submitContactForm } from '../services/contactService';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ const Hero = () => {
     email: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -19,10 +23,24 @@ const Hero = () => {
     transition: { duration: 0.6 }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // Navigate to contact page or handle form submission
-    navigate('/contact', { state: { formData } });
+    setLoading(true);
+    setError('');
+    setSuccess(false);
+
+    try {
+      await submitContactForm(formData);
+      setSuccess(true);
+      setFormData({ name: '', email: '', message: '' });
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError(err.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -131,33 +149,62 @@ const Hero = () => {
         <div className="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden grid md:grid-cols-2">
           <div className="p-12">
             <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
+            
+            {/* Success Message */}
+            {success && (
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl text-green-300">
+                ✅ Your message has been sent successfully! We'll get back to you soon.
+              </div>
+            )}
+            
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300">
+                ❌ {error}
+              </div>
+            )}
+            
             <form onSubmit={handleFormSubmit} className="space-y-6">
               <input 
                 type="text" 
-                placeholder="Full Name" 
+                placeholder="Full Name *" 
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400" 
+                required
+                disabled={loading}
+                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400 disabled:opacity-50" 
               />
               <input 
                 type="email" 
-                placeholder="Email Address" 
+                placeholder="Email Address *" 
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400" 
+                required
+                disabled={loading}
+                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400 disabled:opacity-50" 
               />
               <textarea 
-                placeholder="Your Message" 
+                placeholder="Your Message *" 
                 rows="4" 
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400"
+                required
+                disabled={loading}
+                className="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:ring-2 ring-blue-500 outline-none transition-all text-white placeholder-gray-400 disabled:opacity-50 resize-none"
               ></textarea>
               <button 
                 type="submit"
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition-all"
+                disabled={loading}
+                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-xl font-bold transition-all flex items-center justify-center gap-2"
               >
-                Send Message
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Sending...
+                  </>
+                ) : (
+                  'Send Message'
+                )}
               </button>
             </form>
           </div>
