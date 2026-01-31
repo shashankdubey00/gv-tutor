@@ -264,7 +264,7 @@ export default function FindTutor() {
               {/* Teacher Experience */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Teacher Experience (years) *
+                  Teacher Experience (yr) *
                 </label>
                 <input
                   type="number"
