@@ -221,10 +221,13 @@ export default function FindTutor() {
               />
             </div>
 
-            {/* Frequency and Budget - Side by side */}
-            <div className="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="form-group">
-                <label className="block text-white/80 mb-2 text-sm font-medium">Frequency *</label>
+            {/* Row 1: Frequency + Budget */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* Frequency */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Frequency *
+                </label>
                 <select
                   name="frequency"
                   value={formData.frequency}
@@ -238,13 +241,16 @@ export default function FindTutor() {
                   <option value="monthly">Monthly</option>
                 </select>
               </div>
-              
-              <div className="form-group">
-                <label className="block text-white/80 mb-2 text-sm font-medium">Budget *</label>
+
+              {/* Budget */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Budget *
+                </label>
                 <input
                   type="text"
                   name="budget"
-                  placeholder="e.g., ₹5000"
+                  placeholder="e.g., ₹2000/month"
                   value={formData.budget}
                   onChange={handleChange}
                   required
@@ -253,10 +259,13 @@ export default function FindTutor() {
               </div>
             </div>
 
-            {/* Teacher Experience and Tutor Gender - Side by side */}
-            <div className="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="form-group">
-                <label className="block text-white/80 mb-2 text-sm font-medium">Teacher Experience (years) *</label>
+            {/* Row 2: Teacher Experience + Gender Preference */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4">
+              {/* Teacher Experience */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Teacher Experience (years) *
+                </label>
                 <input
                   type="number"
                   name="teacherExperience"
@@ -269,9 +278,12 @@ export default function FindTutor() {
                   className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
                 />
               </div>
-              
-              <div className="form-group">
-                <label className="block text-white/80 mb-2 text-sm font-medium">Tutor Gender</label>
+
+              {/* Gender Preference */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Tutor Gender
+                </label>
                 <select
                   name="preferredTutorGender"
                   value={formData.preferredTutorGender}
@@ -280,8 +292,8 @@ export default function FindTutor() {
                   className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
                 >
                   <option value="any">Any Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="male">Male Tutor</option>
+                  <option value="female">Female Tutor</option>
                 </select>
               </div>
             </div>
