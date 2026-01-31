@@ -484,22 +484,33 @@ export default function AdminDashboard() {
                                 📞 {request.parentPhone}
                               </p>
                             </div>
-                            <div className="space-y-2 mb-3">
-                              <p className="text-sm text-gray-700">
-                                <span className="font-semibold text-cyan-600">Grade:</span> {request.studentGrade}
-                              </p>
-                              <p className="text-sm text-gray-700">
-                                <span className="font-semibold text-cyan-600">Subjects:</span>{" "}
-                                {Array.isArray(request.subjects)
-                                  ? request.subjects.slice(0, 2).join(", ")
-                                  : request.subjects}
-                                {Array.isArray(request.subjects) && request.subjects.length > 2 && "..."}
-                              </p>
-                              {request.teacherExperience !== undefined && request.teacherExperience !== null && (
+                            <div className="space-y-3 mb-3">
+                              <div className="grid grid-cols-1 gap-2">
                                 <p className="text-sm text-gray-700">
-                                  <span className="font-semibold text-cyan-600">Teacher Experience:</span> {request.teacherExperience} years
+                                  <span className="font-semibold text-cyan-600">Grade:</span> {request.studentGrade}
                                 </p>
-                              )}
+                                <p className="text-sm text-gray-700">
+                                  <span className="font-semibold text-cyan-600">Subjects:</span>{" "}
+                                  {Array.isArray(request.subjects)
+                                    ? request.subjects.slice(0, 2).join(", ")
+                                    : request.subjects}
+                                  {Array.isArray(request.subjects) && request.subjects.length > 2 && "..."}
+                                </p>
+                                {request.teacherExperience !== undefined && request.teacherExperience !== null && (
+                                  <p className="text-sm text-gray-700">
+                                    <span className="font-semibold text-cyan-600">Teacher Experience:</span> {request.teacherExperience} years
+                                  </p>
+                                )}
+                                <p className="text-sm text-gray-700">
+                                  <span className="font-semibold text-cyan-600">Location:</span> {request.preferredLocation}
+                                </p>
+                                <p className="text-sm text-gray-700">
+                                  <span className="font-semibold text-cyan-600">Budget:</span> {request.budget}
+                                </p>
+                                <p className="text-sm text-gray-700">
+                                  <span className="font-semibold text-cyan-600">Frequency:</span> {request.frequency}
+                                </p>
+                              </div>
                               {request.appliedTutors && request.appliedTutors.length > 0 && (
                                 <div className="mt-2 pt-2 border-t border-gray-200">
                                   <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">
@@ -739,24 +750,32 @@ export default function AdminDashboard() {
                           <p className="text-sm text-gray-600 mb-2">
                             📞 {request.parentPhone}
                           </p>
-                          <p className="text-sm text-gray-700 mb-2">
-                            <span className="text-cyan-600 font-semibold">Grade:</span> {request.studentGrade}
-                          </p>
-                          <p className="text-sm text-gray-700 mb-2">
-                            <span className="text-cyan-600 font-semibold">Subjects:</span>{" "}
-                            {Array.isArray(request.subjects)
-                              ? request.subjects.slice(0, 2).join(", ")
-                              : request.subjects}
-                            {Array.isArray(request.subjects) && request.subjects.length > 2 && "..."}
-                          </p>
-                          <p className="text-sm text-gray-700 mb-2">
-                            <span className="text-cyan-600 font-semibold">Location:</span> {request.preferredLocation}
-                          </p>
-                          {request.teacherExperience !== undefined && request.teacherExperience !== null && (
-                            <p className="text-sm text-gray-700 mb-2">
-                              <span className="text-cyan-600 font-semibold">Teacher Experience:</span> {request.teacherExperience} years
+                          <div className="grid grid-cols-1 gap-2 mb-3">
+                            <p className="text-sm text-gray-700">
+                              <span className="text-cyan-600 font-semibold">Grade:</span> {request.studentGrade}
                             </p>
-                          )}
+                            <p className="text-sm text-gray-700">
+                              <span className="text-cyan-600 font-semibold">Subjects:</span>{" "}
+                              {Array.isArray(request.subjects)
+                                ? request.subjects.slice(0, 2).join(", ")
+                                : request.subjects}
+                              {Array.isArray(request.subjects) && request.subjects.length > 2 && "..."}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              <span className="text-cyan-600 font-semibold">Location:</span> {request.preferredLocation}
+                            </p>
+                            {request.teacherExperience !== undefined && request.teacherExperience !== null && (
+                              <p className="text-sm text-gray-700">
+                                <span className="text-cyan-600 font-semibold">Teacher Experience:</span> {request.teacherExperience} years
+                              </p>
+                            )}
+                            <p className="text-sm text-gray-700">
+                              <span className="text-cyan-600 font-semibold">Budget:</span> {request.budget}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              <span className="text-cyan-600 font-semibold">Frequency:</span> {request.frequency}
+                            </p>
+                          </div>
                           {request.appliedTutors && request.appliedTutors.length > 0 && (
                             <div className="mb-2 pt-2 border-t border-gray-200">
                               <p className="text-xs font-semibold text-purple-600 mb-1 flex items-center gap-1">

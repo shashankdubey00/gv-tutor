@@ -21,6 +21,18 @@ export default function Navbar() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tutorMenuOpen && !event.target.closest('.tutor-dropdown')) {
+        setTutorMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [tutorMenuOpen]);
+
   // Check if user is logged in
   useEffect(() => {
     // If logout query param is present, clear state immediately and remove param
@@ -88,7 +100,7 @@ export default function Navbar() {
           <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
           {/* Home Tutor Dropdown */}
-          <li className="relative select-none">
+          <li className="relative select-none tutor-dropdown">
             <span
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
               className="hover:text-cyan-400 cursor-pointer flex items-center gap-1"
