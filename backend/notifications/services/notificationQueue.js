@@ -18,14 +18,23 @@ const emailQueue = new Queue('email-notifications', {
         },
         removeOnComplete: true,
         removeOnFail: false
+    },
+    // ✅ ADD RATE LIMITING - 2 emails per second
+    limiter: {
+        max: 2,
+        duration: 1000
     }
 });
 
-emailQueue.process(async (job) => {
+// ✅ Process jobs one at a time with delay
+emailQueue.process(1, async (job) => {
     const { tutorId, notificationId, emailData } = job.data;
 
     try {
-        const result = await unifiedEmailService.sendWithResend(emailData);
+        // Add delay between emails to avoid spam flags
+        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+
+        const result = await unifiedEmailService.sendWithGmail(emailData);
 
         await EmailQueue.findOneAndUpdate(
             { tutorId, notificationId },

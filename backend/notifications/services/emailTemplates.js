@@ -19,7 +19,7 @@ class EmailTemplates {
             <h1>🎓 New Tutoring Opportunity!</h1>
         </div>
         <div class="content">
-            <p>Hi ${tutorName},</p>
+            <p>Hi ${tutorName || 'there'},</p>
             <p>A new tutoring job has been posted!</p>
             
             <div class="job-details">
