@@ -258,7 +258,7 @@ export default function AdminDashboard() {
             />
           </Link>
 
-          {/* Center Navigation - Desktop */}
+          {/* Center Navigation - Desktop Only */}
           <div className="hidden md:flex gap-2 lg:gap-4 items-center">
             <button
               onClick={() => setActiveTab("dashboard")}
@@ -297,6 +297,20 @@ export default function AdminDashboard() {
               Messages
             </button>
           </div>
+
+          {/* Hamburger Menu Button - Mobile Only (Right Side) */}
+          <button
+            onClick={() => {
+              setExpandedItems(prev => ({
+                ...prev,
+                mobileMenu: !prev.mobileMenu
+              }));
+            }}
+            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
+            aria-label="Toggle menu"
+          >
+            {expandedItems.mobileMenu ? "✕" : "☰"}
+          </button>
 
           {/* Profile Icon - Desktop Only */}
           <div className="hidden md:flex items-center">
@@ -348,20 +362,6 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-
-          {/* Hamburger Menu Button - Mobile Only */}
-          <button
-            onClick={() => {
-              setExpandedItems(prev => ({
-                ...prev,
-                mobileMenu: !prev.mobileMenu
-              }));
-            }}
-            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
-            aria-label="Toggle menu"
-          >
-            {expandedItems.mobileMenu ? "✕" : "☰"}
-          </button>
         </div>
 
         {/* Hamburger Menu - Styled like the image (mobile only) */}
