@@ -11,7 +11,20 @@ export const submitContactForm = async (formData) => {
       body: JSON.stringify(formData),
     });
 
-    const data = await response.json();
+    console.log("🔍 Contact form response status:", response.status);
+    console.log("🔍 Contact form response headers:", response.headers.get("content-type"));
+    
+    const responseText = await response.text();
+    console.log("🔍 Contact form response text:", responseText);
+
+    // Try to parse as JSON
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("❌ Failed to parse response as JSON:", parseError);
+      throw new Error(`Server returned non-JSON response: ${responseText.substring(0, 200)}...`);
+    }
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to submit contact form");
