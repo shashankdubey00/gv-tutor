@@ -509,7 +509,7 @@ export default function AdminDashboard() {
                                 </p>
                                 {request.teacherExperience !== undefined && request.teacherExperience !== null && (
                                   <p className="text-sm text-gray-700">
-                                    <span className="font-semibold text-cyan-600">Teacher Experience:</span> {request.teacherExperience} years
+                                    <span className="font-semibold text-cyan-600">Teacher Experience:</span> {request.teacherExperience} yr
                                   </p>
                                 )}
                                 <p className="text-sm text-gray-700">
@@ -777,7 +777,7 @@ export default function AdminDashboard() {
                             </p>
                             {request.teacherExperience !== undefined && request.teacherExperience !== null && (
                               <p className="text-sm text-gray-700">
-                                <span className="text-cyan-600 font-semibold">Teacher Experience:</span> {request.teacherExperience} years
+                                <span className="text-cyan-600 font-semibold">Teacher Experience:</span> {request.teacherExperience} yr
                               </p>
                             )}
                             <p className="text-sm text-gray-700">
@@ -1348,7 +1348,7 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-white/80 mb-2">Teacher Experience (years) *</label>
+                  <label className="block text-white/80 mb-2">Teacher Experience (yr) *</label>
                   <input
                     type="number"
                     value={editFormData.teacherExperience}
