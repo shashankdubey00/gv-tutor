@@ -80,11 +80,14 @@ export default function AdminDashboard() {
   // Load contact messages
   async function loadContactMessages() {
     try {
+      console.log("🔍 Loading messages with filter:", messageStatusFilter);
       const response = await getContactMessages({
         page: messagePage,
         limit: 10,
-        status: messageStatusFilter === "all" ? undefined : messageStatusFilter
+        status: messageStatusFilter === "all" ? "" : messageStatusFilter
       });
+      
+      console.log("🔍 Messages response:", response);
       
       if (response.success) {
         setContactMessages(response.data.messages);
@@ -105,11 +108,21 @@ export default function AdminDashboard() {
   // Handle message status update
   async function handleMessageStatusUpdate(messageId, newStatus) {
     try {
+      console.log(`🔄 Updating message ${messageId} to status: ${newStatus}`);
       await updateMessageStatus(messageId, newStatus);
-      loadContactMessages(); // Refresh messages
+      console.log("✅ Status updated successfully, refreshing data...");
+      
+      // Refresh messages and stats
+      await loadContactMessages();
+      
+      // If we're filtering by a specific status and the message no longer matches,
+      // switch to "all" to show the updated message
+      if (messageStatusFilter !== "all") {
+        setMessageStatusFilter("all");
+      }
     } catch (error) {
       console.error("Error updating message status:", error);
-      alert("Failed to update message status");
+      alert("Failed to update message status: " + (error.message || "Unknown error"));
     }
   }
 
@@ -120,10 +133,13 @@ export default function AdminDashboard() {
       if (!confirmed) return;
       
       await deleteContactMessage(messageId);
-      loadContactMessages(); // Refresh messages
+      console.log("✅ Message deleted successfully, refreshing data...");
+      
+      // Refresh messages and stats
+      await loadContactMessages();
     } catch (error) {
       console.error("Error deleting message:", error);
-      alert("Failed to delete message");
+      alert("Failed to delete message: " + (error.message || "Unknown error"));
     }
   }
 

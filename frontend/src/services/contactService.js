@@ -62,6 +62,7 @@ export const getContactMessages = async (params = {}) => {
 // Update message status (Admin only)
 export const updateMessageStatus = async (messageId, status) => {
   try {
+    console.log(`🔄 Updating message ${messageId} status to: ${status}`);
     const response = await fetch(`${API_BASE_URL}/contact/${messageId}/status`, {
       method: "PATCH",
       headers: {
@@ -71,7 +72,17 @@ export const updateMessageStatus = async (messageId, status) => {
       body: JSON.stringify({ status }),
     });
 
-    const data = await response.json();
+    console.log("🔍 Update status response:", response.status);
+    const responseText = await response.text();
+    console.log("🔍 Update status response text:", responseText);
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("❌ Failed to parse update response as JSON:", parseError);
+      throw new Error(`Server returned non-JSON response: ${responseText.substring(0, 200)}...`);
+    }
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to update message status");
