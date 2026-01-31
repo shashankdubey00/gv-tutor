@@ -70,25 +70,28 @@ export default function Navbar() {
   }, [location.pathname, location.search]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-20 z-50 backdrop-blur-md bg-white/10 border-b border-white/10">
+    <nav className="fixed top-0 left-0 w-full h-20 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-semibold tracking-wide flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-400" />
-          GV Tutor
+        <Link to="/" className="flex items-center gap-2">
+          <img 
+            src="/logo.png" 
+            alt="GV Tutor Logo" 
+            className="h-12 w-auto object-contain"
+          />
         </Link>
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-8 text-white text-lg items-center">
-          <Link to="/" className="hover:text-blue-400">Home</Link>
-          <Link to="/about" className="hover:text-blue-400">About</Link>
+          <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
+          <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
           {/* Home Tutor Dropdown */}
           <li className="relative select-none">
             <span
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
-              className="hover:text-blue-400 cursor-pointer flex items-center gap-1"
+              className="hover:text-cyan-400 cursor-pointer flex items-center gap-1"
             >
               Home Tutor ▾
             </span>
@@ -118,8 +121,8 @@ export default function Navbar() {
             )}
           </li>
 
-          <Link to="/library" className="hover:text-blue-400">Library</Link>
-          <Link to="/contact" className="hover:text-blue-400">Contact</Link>
+          <Link to="/library" className="hover:text-cyan-400 transition-colors">Library</Link>
+          <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
         </ul>
 
         {/* Desktop Buttons / Profile */}
