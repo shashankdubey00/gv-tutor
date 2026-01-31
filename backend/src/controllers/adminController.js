@@ -364,6 +364,27 @@ export const updateTutorRequest = async (req, res) => {
 export const postTutorRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
+    
+    // ✅ ADD THIS: Manually extract userId from token
+    let adminId;
+    try {
+      const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        return res.status(401).json({
+          success: false,
+          message: "Authentication required"
+        });
+      }
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      adminId = decoded.userId; // This should match what's in your JWT payload
+      console.log('✅ Admin ID extracted:', adminId);
+    } catch (authError) {
+      console.error('Auth error:', authError);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token"
+      });
+    }
 
     const request = await TutorRequest.findByIdAndUpdate(
       requestId,
@@ -386,7 +407,7 @@ export const postTutorRequest = async (req, res) => {
         message: `A new tutoring request for ${request.subjects.join(', ')} in ${request.preferredLocation} has been posted.`,
         relatedId: request._id,
         relatedCollection: 'tutorrequests',
-        createdBy: req.user.userId,
+        createdBy: adminId,  // ✅ Use the manually extracted adminId
         templateData: {
           jobId: request._id,
           jobTitle: `Tutor needed for ${request.subjects.join(', ')}`,
