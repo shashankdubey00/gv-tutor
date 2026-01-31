@@ -30,6 +30,8 @@ class UnifiedEmailService {
 
             const info = await this.gmailTransporter.sendMail(mailOptions);
             
+            console.log(`✅ Gmail sent to ${to}`);  // ✅ Add this log
+            
             return { 
                 success: true, 
                 messageId: info.messageId,
