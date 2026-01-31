@@ -83,10 +83,10 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full h-24 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center">
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center relative">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 mr-8">
+        <Link to="/" className="flex items-center gap-3 z-10">
           <img 
             src="/logo.png" 
             alt="GV Tutor Logo" 
@@ -94,8 +94,8 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-8 text-white text-lg items-center flex-1">
+        {/* Desktop Menu - Centered */}
+        <ul className="hidden md:flex gap-8 text-white text-lg items-center absolute left-1/2 transform -translate-x-1/2">
           <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
           <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
@@ -137,8 +137,8 @@ export default function Navbar() {
           <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
         </ul>
 
-        {/* Desktop Buttons / Profile */}
-        <div className="hidden md:flex gap-4 items-center ml-auto">
+        {/* Desktop Buttons / Profile - Right Side */}
+        <div className="hidden md:flex gap-4 items-center ml-auto z-10">
           {loading ? (
             <div className="w-8 h-8 rounded-full bg-gray-600 animate-pulse"></div>
           ) : user && user.role === "admin" ? (
