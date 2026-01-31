@@ -386,7 +386,7 @@ export const postTutorRequest = async (req, res) => {
         message: `A new tutoring request for ${request.subjects.join(', ')} in ${request.preferredLocation} has been posted.`,
         relatedId: request._id,
         relatedCollection: 'tutorrequests',
-        createdBy: req.user._id,
+        createdBy: req.user.userId,
         templateData: {
           jobId: request._id,
           jobTitle: `Tutor needed for ${request.subjects.join(', ')}`,
