@@ -70,15 +70,15 @@ export default function Navbar() {
   }, [location.pathname, location.search]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-20 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
+    <nav className="fixed top-0 left-0 w-full h-24 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-3">
           <img 
             src="/logo.png" 
             alt="GV Tutor Logo" 
-            className="h-12 w-auto object-contain"
+            className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
           />
         </Link>
 
@@ -328,7 +328,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-80px)]">
+        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-96px)]">
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
