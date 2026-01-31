@@ -4,7 +4,7 @@ import { handleApplyAsTutor } from "../utils/authHelper";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
 import {
-  Info, GraduationCap, Library, Phone,
+  Home, Info, GraduationCap, Library, Phone,
   Search, BookOpen, User, LogIn, LogOut,
   LayoutDashboard, ChevronDown, UserPlus, Sparkles,
   Menu, X, UserCircle
@@ -83,10 +83,10 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 w-full h-24 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
-      <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 mr-8">
           <img 
             src="/logo.png" 
             alt="GV Tutor Logo" 
@@ -95,7 +95,8 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-8 text-white text-lg items-center">
+        <ul className="hidden md:flex gap-8 text-white text-lg items-center flex-1">
+          <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
           <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
           {/* Home Tutor Dropdown */}
@@ -137,7 +138,7 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop Buttons / Profile */}
-        <div className="hidden md:flex gap-4 items-center">
+        <div className="hidden md:flex gap-4 items-center ml-auto">
           {loading ? (
             <div className="w-8 h-8 rounded-full bg-gray-600 animate-pulse"></div>
           ) : user && user.role === "admin" ? (
@@ -340,6 +341,15 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       {menuOpen && (
         <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-96px)]">
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-cyan-500/20 border border-white/10 hover:border-blue-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
+          >
+            <Home className="w-5 h-5 mr-3 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-medium tracking-wide group-hover:text-blue-200 transition-colors">Home</span>
+          </Link>
+
           <Link
             to="/about"
             onClick={() => setMenuOpen(false)}
