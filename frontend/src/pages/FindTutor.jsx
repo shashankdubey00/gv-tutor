@@ -221,51 +221,69 @@ export default function FindTutor() {
               />
             </div>
 
-            {/* Frequency, Budget, Teacher Experience & Gender Preference */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <select
-                name="frequency"
-                value={formData.frequency}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
-              >
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="bi-weekly">Bi-weekly</option>
-                <option value="monthly">Monthly</option>
-              </select>
-              <input
-                type="text"
-                name="budget"
-                placeholder="Budget (e.g., ₹2000/month) *"
-                value={formData.budget}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
-              />
-              <input
-                type="number"
-                name="teacherExperience"
-                placeholder="Teacher Experience (years) *"
-                value={formData.teacherExperience}
-                onChange={handleChange}
-                min="0"
-                max="50"
-                required
-                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
-              />
-              <select
-                name="preferredTutorGender"
-                value={formData.preferredTutorGender}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
-              >
-                <option value="any">Any Gender</option>
-                <option value="male">Male Tutor</option>
-                <option value="female">Female Tutor</option>
-              </select>
+            {/* Frequency and Budget - Side by side */}
+            <div className="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="block text-white/80 mb-2 text-sm font-medium">Frequency *</label>
+                <select
+                  name="frequency"
+                  value={formData.frequency}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="bi-weekly">Bi-weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="block text-white/80 mb-2 text-sm font-medium">Budget *</label>
+                <input
+                  type="text"
+                  name="budget"
+                  placeholder="e.g., ₹5000"
+                  value={formData.budget}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
+                />
+              </div>
+            </div>
+
+            {/* Teacher Experience and Tutor Gender - Side by side */}
+            <div className="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="form-group">
+                <label className="block text-white/80 mb-2 text-sm font-medium">Teacher Experience (years) *</label>
+                <input
+                  type="number"
+                  name="teacherExperience"
+                  placeholder="e.g., 5"
+                  value={formData.teacherExperience}
+                  onChange={handleChange}
+                  min="0"
+                  max="50"
+                  required
+                  className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="block text-white/80 mb-2 text-sm font-medium">Tutor Gender</label>
+                <select
+                  name="preferredTutorGender"
+                  value={formData.preferredTutorGender}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-sm sm:text-base"
+                >
+                  <option value="any">Any Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
             </div>
 
             {/* Additional Requirements */}
