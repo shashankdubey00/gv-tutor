@@ -4,7 +4,7 @@ import { handleApplyAsTutor } from "../utils/authHelper";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
 import {
-  Home, Info, GraduationCap, Library, Phone,
+  Info, GraduationCap, Library, Phone,
   Search, BookOpen, User, LogIn, LogOut,
   LayoutDashboard, ChevronDown, UserPlus, Sparkles,
   Menu, X, UserCircle
@@ -96,7 +96,6 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-8 text-white text-lg items-center">
-          <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
           <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
           {/* Home Tutor Dropdown */}
@@ -341,15 +340,6 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       {menuOpen && (
         <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-96px)]">
-          <Link
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="group flex items-center px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-cyan-500/20 border border-white/10 hover:border-blue-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20"
-          >
-            <Home className="w-5 h-5 mr-3 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
-            <span className="font-medium tracking-wide group-hover:text-blue-200 transition-colors">Home</span>
-          </Link>
-
           <Link
             to="/about"
             onClick={() => setMenuOpen(false)}
