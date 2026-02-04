@@ -274,7 +274,7 @@ export default function Signup() {
               value={formData.email}
               onChange={handleChange}
               className={`w-full px-4 py-3 rounded-lg
-                bg-white/90 text-black
+                bg-white/95 text-black
                 focus:outline-none focus:ring-2 ${
                   emailError ? "focus:ring-red-400 border-2 border-red-400" : "focus:ring-green-400"
                 }`}
@@ -292,7 +292,7 @@ export default function Signup() {
             value={formData.password}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg
-              bg-white/90 text-black
+              bg-white/95 text-black
               focus:outline-none focus:ring-2 focus:ring-green-400"
           />
             {formData.password && formData.password.length < 10 && (
