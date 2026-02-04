@@ -61,7 +61,7 @@ export default function ApplyAsTutor() {
             // Prevent admins from accessing tutor pages
             if (authData.success && authData.user.role === "admin") {
               console.log("❌ Admin cannot access tutor pages, redirecting to admin dashboard");
-              alert("Admins cannot apply as tutors. Redirecting to admin dashboard.");
+              console.warn("Admins cannot apply as tutors. Redirecting to admin dashboard.");
               setIsRedirectingState(true);
               setRedirecting("/admin/dashboard");
               setTimeout(() => {

@@ -33,7 +33,7 @@ export async function handleApplyAsTutor(navigate) {
       // Prevent admins from applying as tutors
       if (user.role === "admin") {
         console.log("❌ Admin cannot apply as tutor");
-        alert("Admins cannot apply as tutors. Please use a regular user account.");
+        console.warn("Admins cannot apply as tutors. Please use a regular user account.");
         return;
       }
       

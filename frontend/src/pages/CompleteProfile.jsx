@@ -54,7 +54,7 @@ export default function CompleteProfile() {
         // Prevent admins from applying as tutors
         if (authData.success && authData.user.role === "admin") {
           console.log("❌ CompleteProfile: Admin cannot apply as tutor, redirecting to admin dashboard");
-          alert("Admins cannot apply as tutors. Redirecting to admin dashboard.");
+          console.warn("Admins cannot apply as tutors. Redirecting to admin dashboard.");
           if (isMounted) {
             setIsRedirectingState(true);
             setRedirecting("/admin/dashboard");
