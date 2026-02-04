@@ -10,6 +10,7 @@ apiInstance.setApiKey(
 // Send password reset email with OTP
 export const sendPasswordResetEmail = async (email, otp) => {
   try {
+    console.log('🔍 DEBUG: Using Brevo verified sender: no-reply@brevo.com');
     const sendSmtpEmail = new brevo.SendSmtpEmail();
     
     sendSmtpEmail.sender = {
