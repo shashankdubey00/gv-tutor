@@ -210,18 +210,18 @@ const Hero = () => {
           </div>
           
           <div className="relative min-h-[400px] bg-gray-900">
-            {/* Real Google Map Integration */}
+            {/* Real Google Map Integration - GW Tutor Bhopal Location */}
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3506.223391312741!2d77.06889751508011!3d28.50290968246803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMwJzEwLjUiTiA3N8KwMDQnMTYuMCJF!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin" 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.8325432673!2d77.4129!3d23.2599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c428f8e7e6e9b%3A0x5c8b9c8b9c8b9c8b!2sNeeraj+Nagar%2C+Durgesh+Vihar+JK+Road%2C+Bhopal%2C+Madhya+Pradesh+462022!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin" 
               className="absolute inset-0 w-full h-full grayscale invert opacity-50"
               style={{ border: 0 }}
               allowFullScreen="" 
               loading="lazy"
             ></iframe>
             <div className="absolute bottom-8 left-8 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl">
-              <div className="flex items-center gap-3 mb-2"><MapPin size={18} className="text-blue-500" /> <span>Knowledge City, KW 12495</span></div>
-              <div className="flex items-center gap-3 mb-2"><Phone size={18} className="text-blue-500" /> <span>+1 (555) 123-687</span></div>
-              <div className="flex items-center gap-3"><Mail size={18} className="text-blue-500" /> <span>contact@gvtutor.com</span></div>
+              <div className="flex items-center gap-3 mb-2"><MapPin size={18} className="text-blue-500" /> <span>Neeraj Nagar, Durgesh Vihar JK Road, Bhopal</span></div>
+              <div className="flex items-center gap-3 mb-2"><Phone size={18} className="text-blue-500" /> <span>+91 9691569239</span></div>
+              <div className="flex items-center gap-3"><Mail size={18} className="text-blue-500" /> <span>goodwill2404@gmail.com</span></div>
             </div>
           </div>
         </div>
