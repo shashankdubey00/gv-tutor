@@ -14,7 +14,7 @@ export const sendPasswordResetEmail = async (email, otp) => {
     
     sendSmtpEmail.sender = {
       name: 'GV Tutor',
-      email: 'no-reply@brevo.com'  // Use Brevo verified sender
+      email: 'no-reply@brevo.com'  // Use Brevo's verified sender
     };
     
     sendSmtpEmail.to = [{ email: email }];

@@ -19,7 +19,7 @@ class UnifiedEmailService {
             
             sendSmtpEmail.sender = {
                 name: process.env.SENDER_NAME || 'Goodwill Team',
-                email: process.env.SENDER_EMAIL
+                email: 'no-reply@brevo.com'  // Use Brevo's verified sender
             };
             
             sendSmtpEmail.to = [{ email: to }];
