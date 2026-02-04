@@ -128,9 +128,9 @@ export default function Contact() {
           <div className="mt-8 pt-8 border-t border-cyan-500/30">
             <h2 className="text-2xl font-semibold mb-4">Other Ways to Reach Us</h2>
             <div className="space-y-2 text-white/80">
-              <p><strong>Email:</strong> support@gvtutor.com</p>
-              <p><strong>Phone:</strong> +1 (555) 123-4567</p>
-              <p><strong>Address:</strong> 123 Education Street, Learning City, LC 12345</p>
+              <p><strong>Email:</strong> goodwill2404@gmail.com</p>
+              <p><strong>Phone:</strong> +91 9691569239</p>
+              <p><strong>Address:</strong> Neeraj Nagar, Durgesh Vihar JK Road, Bhopal, Madhya Pradesh 462022</p>
             </div>
           </div>
         </div>
