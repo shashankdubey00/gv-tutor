@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
@@ -22,11 +23,9 @@
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.0.1",
-    "nodemailer": "^7.0.13",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "redis": "^5.10.0",
-    "resend": "^6.9.1"
+    "redis": "^5.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
