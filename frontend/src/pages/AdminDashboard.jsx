@@ -14,9 +14,8 @@ export default function AdminDashboard() {
   const [tutorApplications, setTutorApplications] = useState([]);
   const [tutorMembers, setTutorMembers] = useState([]);
   const [contactMessages, setContactMessages] = useState([]);
-  const [messageStats, setMessageStats] = useState({ unread: 0, read: 0, replied: 0, total: 0 });
   const [messagePage, setMessagePage] = useState(1);
-  const [messageStatusFilter, setMessageStatusFilter] = useState("all");
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [expandedItems, setExpandedItems] = useState({});
   const [adminUser, setAdminUser] = useState(null);
   const [displayedParentApps, setDisplayedParentApps] = useState(10); // For pagination
@@ -78,40 +77,36 @@ export default function AdminDashboard() {
   }
 
   // Load contact messages
-  async function loadContactMessages() {
+  async function loadContactMessages(loadMore = false) {
     try {
+      const currentPage = loadMore ? messagePage : 1;
       const response = await getContactMessages({
-        page: messagePage,
-        limit: 10,
-        status: messageStatusFilter === "all" ? undefined : messageStatusFilter
+        page: currentPage,
+        limit: 6
       });
       
       if (response.success) {
-        setContactMessages(response.data.messages);
-        setMessageStats(response.data.stats);
+        if (loadMore) {
+          setContactMessages(prev => [...prev, ...response.data.messages]);
+        } else {
+          setContactMessages(response.data.messages);
+        }
+        setHasMoreMessages(response.data.messages.length === 6);
+        if (!loadMore) {
+          setMessagePage(1);
+        }
       }
     } catch (error) {
       console.error("Error loading contact messages:", error);
     }
   }
 
-  // Load messages when tab changes or page/filter changes
+  // Load messages when tab changes or page changes
   useEffect(() => {
     if (activeTab === "messages") {
       loadContactMessages();
     }
-  }, [activeTab, messagePage, messageStatusFilter]);
-
-  // Handle message status update
-  async function handleMessageStatusUpdate(messageId, newStatus) {
-    try {
-      await updateMessageStatus(messageId, newStatus);
-      loadContactMessages(); // Refresh messages
-    } catch (error) {
-      console.error("Error updating message status:", error);
-      alert("Failed to update message status");
-    }
-  }
+  }, [activeTab]);
 
   // Handle message deletion
   async function handleMessageDelete(messageId) {
@@ -125,6 +120,12 @@ export default function AdminDashboard() {
       console.error("Error deleting message:", error);
       alert("Failed to delete message");
     }
+  }
+
+  // Load more messages
+  function loadMoreMessages() {
+    setMessagePage(prev => prev + 1);
+    loadContactMessages(true);
   }
 
   function toggleExpand(type, id) {
@@ -302,17 +303,12 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("messages")}
-              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base relative ${activeTab === "messages"
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "messages"
                   ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                   : "bg-gray-800 text-white/70 hover:text-white"
                 }`}
             >
               Messages
-              {messageStats.unread > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {messageStats.unread > 9 ? '9+' : messageStats.unread}
-                </span>
-              )}
             </button>
           </div>
 
@@ -466,17 +462,12 @@ export default function AdminDashboard() {
                     setActiveTab("messages");
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
-                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left relative ${activeTab === "messages"
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "messages"
                       ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                       : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
                     }`}
                 >
                   Messages
-                  {messageStats.unread > 0 && (
-                    <span className="absolute top-2 right-4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {messageStats.unread > 9 ? '9+' : messageStats.unread}
-                    </span>
-                  )}
                 </button>
               </div>
 
@@ -822,100 +813,40 @@ export default function AdminDashboard() {
           <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Contact Messages</h2>
 
-            {/* Message Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <div className="text-2xl font-bold text-blue-600">{messageStats.total}</div>
-                <div className="text-sm text-gray-600">Total Messages</div>
-              </div>
-              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                <div className="text-2xl font-bold text-red-600">{messageStats.unread}</div>
-                <div className="text-sm text-gray-600">Unread</div>
-              </div>
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <div className="text-2xl font-bold text-yellow-600">{messageStats.read}</div>
-                <div className="text-sm text-gray-600">Read</div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <div className="text-2xl font-bold text-green-600">{messageStats.replied}</div>
-                <div className="text-sm text-gray-600">Replied</div>
-              </div>
-            </div>
-
-            {/* Filter Controls */}
-            <div className="flex flex-wrap gap-4 mb-6">
-              <select
-                value={messageStatusFilter}
-                onChange={(e) => setMessageStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
-              >
-                <option value="all">All Messages</option>
-                <option value="unread">Unread</option>
-                <option value="read">Read</option>
-                <option value="replied">Replied</option>
-              </select>
-            </div>
-
             {/* Messages List */}
             <div className="space-y-4">
               {contactMessages.length > 0 ? (
                 contactMessages.map((message) => (
                   <div
                     key={message._id}
-                    className={`p-4 rounded-lg border ${
-                      message.status === 'unread' 
-                        ? 'bg-red-50 border-red-200' 
-                        : message.status === 'read'
-                        ? 'bg-yellow-50 border-yellow-200'
-                        : 'bg-green-50 border-green-200'
-                    }`}
+                    className="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-300"
                   >
-                    <div className="flex justify-between items-start mb-3">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-lg">{message.name}</h3>
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            message.status === 'unread' 
-                              ? 'bg-red-100 text-red-700' 
-                              : message.status === 'read'
-                              ? 'bg-yellow-100 text-yellow-700'
-                              : 'bg-green-100 text-green-700'
-                          }`}>
-                            {message.status}
-                          </span>
+                        <div className="mb-3">
+                          <h3 className="font-semibold text-lg sm:text-xl text-gray-900 mb-2">{message.name}</h3>
+                          <p className="text-sm text-gray-600 mb-1">{message.email}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(message.createdAt).toLocaleString()}
+                          </p>
                         </div>
-                        <p className="text-sm text-gray-600 mb-1">{message.email}</p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(message.createdAt).toLocaleString()}
-                        </p>
+                        <div className="bg-white p-4 rounded-lg border border-gray-200">
+                          <p className="text-gray-800 whitespace-pre-wrap text-sm sm:text-base leading-relaxed">
+                            {message.message}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex gap-2">
-                        {message.status === 'unread' && (
-                          <button
-                            onClick={() => handleMessageStatusUpdate(message._id, 'read')}
-                            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition"
-                          >
-                            Mark as Read
-                          </button>
-                        )}
-                        {message.status === 'read' && (
-                          <button
-                            onClick={() => handleMessageStatusUpdate(message._id, 'replied')}
-                            className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition"
-                          >
-                            Mark as Replied
-                          </button>
-                        )}
+                      <div className="flex sm:flex-col gap-2 sm:gap-3">
                         <button
                           onClick={() => handleMessageDelete(message._id)}
-                          className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition"
+                          className="px-3 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center gap-2 shadow-sm"
                         >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                           Delete
                         </button>
                       </div>
-                    </div>
-                    <div className="bg-white p-3 rounded border border-gray-200">
-                      <p className="text-gray-800 whitespace-pre-wrap">{message.message}</p>
                     </div>
                   </div>
                 ))
@@ -923,14 +854,26 @@ export default function AdminDashboard() {
                 <div className="text-center py-12">
                   <div className="text-gray-500 text-lg">No messages found</div>
                   <div className="text-gray-400 text-sm mt-2">
-                    {messageStatusFilter === 'all' 
-                      ? 'No contact messages have been submitted yet.'
-                      : `No ${messageStatusFilter} messages found.`
-                    }
+                    No contact messages have been submitted yet.
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Load More Button */}
+            {hasMoreMessages && contactMessages.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={loadMoreMessages}
+                  className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Load More Messages
+                </button>
+              </div>
+            )}
           </div>
         )}
 
