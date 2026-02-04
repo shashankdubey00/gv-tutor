@@ -4,6 +4,9 @@ import { verifyAuth, logoutUser } from "../services/authService";
 import { apiRequest } from "../services/api";
 import { getContactMessages, updateMessageStatus, deleteContactMessage } from "../services/contactService";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useToast } from "../components/Toast";
+import ToastContainer from "../components/Toast";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -22,6 +25,9 @@ export default function AdminDashboard() {
   const [selectedRequest, setSelectedRequest] = useState(null); // For modal
   const [editFormData, setEditFormData] = useState(null); // For editing request
   const [selectedTutorProfile, setSelectedTutorProfile] = useState(null); // For tutor profile modal
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, messageId: null });
+  const { toasts, addToast, removeToast, success, error, warning, info } = useToast();
 
   // Check authentication
   useEffect(() => {
@@ -79,6 +85,7 @@ export default function AdminDashboard() {
   // Load contact messages
   async function loadContactMessages(loadMore = false) {
     try {
+      setLoadingMessages(true);
       const currentPage = loadMore ? messagePage : 1;
       const response = await getContactMessages({
         page: currentPage,
@@ -95,9 +102,14 @@ export default function AdminDashboard() {
         if (!loadMore) {
           setMessagePage(1);
         }
+      } else {
+        error('Failed to load messages');
       }
-    } catch (error) {
-      console.error("Error loading contact messages:", error);
+    } catch (err) {
+      console.error('Error loading contact messages:', err);
+      error('Failed to load messages');
+    } finally {
+      setLoadingMessages(false);
     }
   }
 
@@ -111,15 +123,26 @@ export default function AdminDashboard() {
   // Handle message deletion
   async function handleMessageDelete(messageId) {
     try {
-      const confirmed = window.confirm("Are you sure you want to delete this message?");
-      if (!confirmed) return;
-      
       await deleteContactMessage(messageId);
+      success('Message deleted successfully');
       loadContactMessages(); // Refresh messages
-    } catch (error) {
-      console.error("Error deleting message:", error);
-      alert("Failed to delete message");
+    } catch (err) {
+      console.error('Error deleting message:', err);
+      error('Failed to delete message');
     }
+  }
+
+  // Confirm delete
+  function confirmDelete(messageId) {
+    setDeleteConfirm({ isOpen: true, messageId });
+  }
+
+  // Handle confirmed delete
+  function handleConfirmedDelete() {
+    if (deleteConfirm.messageId) {
+      handleMessageDelete(deleteConfirm.messageId);
+    }
+    setDeleteConfirm({ isOpen: false, messageId: null });
   }
 
   // Load more messages
@@ -141,9 +164,10 @@ export default function AdminDashboard() {
         method: "PUT",
         body: JSON.stringify({ status: newStatus }),
       });
+      success('Status updated successfully');
       loadData();
-    } catch (error) {
-      alert("Failed to update status: " + error.message);
+    } catch (err) {
+      error('Failed to update status: ' + err.message);
     }
   }
 
@@ -155,28 +179,24 @@ export default function AdminDashboard() {
           fieldVisibility: { [fieldName]: isVisible },
         }),
       });
+      success('Field visibility updated successfully');
       loadData();
-    } catch (error) {
-      alert("Failed to update field visibility: " + error.message);
+    } catch (err) {
+      error('Failed to update field visibility: ' + err.message);
     }
   }
 
   async function handlePostRequest(requestId) {
     try {
-      const confirmed = window.confirm(
-        "Are you sure you want to post this request? It will be visible to all tutors."
-      );
-      if (!confirmed) return;
-
       await apiRequest(`/api/admin/tutor-requests/${requestId}/post`, {
         method: "POST",
       });
-      alert("Request posted successfully! It is now visible to tutors.");
+      success('Request posted successfully! It is now visible to tutors.');
       setSelectedRequest(null);
       setEditFormData(null);
       loadData();
-    } catch (error) {
-      alert("Failed to post request: " + error.message);
+    } catch (err) {
+      error('Failed to post request: ' + err.message);
     }
   }
 
@@ -233,12 +253,12 @@ export default function AdminDashboard() {
         method: "PUT",
         body: JSON.stringify(dataToSend),
       });
-      alert("Request updated successfully!");
+      success('Request updated successfully!');
       setSelectedRequest(null);
       setEditFormData(null);
       loadData();
-    } catch (error) {
-      alert("Failed to update request: " + error.message);
+    } catch (err) {
+      error('Failed to update request: ' + err.message);
     }
   }
 
@@ -815,7 +835,11 @@ export default function AdminDashboard() {
 
             {/* Messages List */}
             <div className="space-y-4">
-              {contactMessages.length > 0 ? (
+              {loadingMessages && contactMessages.length === 0 ? (
+                <div className="flex items-center justify-center py-12">
+                  <LoadingSpinner />
+                </div>
+              ) : contactMessages.length > 0 ? (
                 contactMessages.map((message) => (
                   <div
                     key={message._id}
@@ -838,7 +862,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex sm:flex-col gap-2 sm:gap-3">
                         <button
-                          onClick={() => handleMessageDelete(message._id)}
+                          onClick={() => confirmDelete(message._id)}
                           className="px-3 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center gap-2 shadow-sm"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -865,12 +889,22 @@ export default function AdminDashboard() {
               <div className="flex justify-center mt-8">
                 <button
                   onClick={loadMoreMessages}
-                  className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                  disabled={loadingMessages}
+                  className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 disabled:from-gray-400 disabled:to-gray-500 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Load More Messages
+                  {loadingMessages ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Load More Messages
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -1667,6 +1701,21 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, messageId: null })}
+        onConfirm={handleConfirmedDelete}
+        title="Delete Message"
+        message="Are you sure you want to delete this message? This action cannot be undone."
+        confirmText="Delete Message"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }
