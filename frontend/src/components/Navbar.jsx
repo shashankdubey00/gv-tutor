@@ -329,9 +329,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon */}
+        {/* Mobile Menu Icon - Right Side */}
         <div
-          className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors"
+          className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors ml-auto"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
