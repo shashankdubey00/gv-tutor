@@ -359,7 +359,7 @@ export default function Navbar() {
             <span className="font-medium tracking-wide group-hover:text-purple-200 transition-colors">About</span>
           </Link>
 
-          <div>
+          <div className="tutor-dropdown">
             <button
               className="w-full text-left px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-500/20 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20 flex items-center justify-between group"
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
