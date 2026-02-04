@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { signup, login, forgotPassword, verifyOTP, resetPassword, setPassword, changePassword, calculatePasswordStrength } from "../controllers/authController.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { testBrevoDirectly } from "../controllers/testBrevoController.js";
 import User from "../models/User.js";
 import UserProfile from "../models/UserProfile.js";
 
@@ -28,6 +29,9 @@ router.post("/check-password-strength", (req, res) => {
     });
   }
 });
+
+// Test Brevo email endpoint
+router.get("/test-brevo", testBrevoDirectly);
 
 // Auth routes (CSRF removed for better user experience)
 router.post("/signup", authRateLimit, signup);
