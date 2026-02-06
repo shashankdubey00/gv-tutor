@@ -1,0 +1,3 @@
+# Deployment Trigger
+This file is used to trigger Vercel deployment after revert.
+Last updated: 2026-02-06
