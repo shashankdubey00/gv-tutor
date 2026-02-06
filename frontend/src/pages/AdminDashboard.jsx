@@ -91,7 +91,7 @@ export default function AdminDashboard() {
         page: currentPage,
         limit: 6
       });
-      
+
       if (response.success) {
         if (loadMore) {
           setContactMessages(prev => [...prev, ...response.data.messages]);
@@ -125,10 +125,10 @@ export default function AdminDashboard() {
     const handleClickOutside = (event) => {
       if (expandedItems.mobileMenu) {
         const mobileMenu = document.querySelector('.mobile-menu-panel');
-        const hamburgerButton = document.querySelector('[aria-label="Toggle menu"]');
-        
-        if (mobileMenu && !mobileMenu.contains(event.target) && 
-            hamburgerButton && !hamburgerButton.contains(event.target)) {
+        const hamburgerButton = document.querySelector('[aria-label="Toggle mobile menu"]');
+
+        if (mobileMenu && !mobileMenu.contains(event.target) &&
+          hamburgerButton && !hamburgerButton.contains(event.target)) {
           setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
         }
       }
@@ -303,9 +303,9 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img 
-              src="/logo.png" 
-              alt="GV Tutor Logo" 
+            <img
+              src="/logo.png"
+              alt="GV Tutor Logo"
               className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
             />
           </Link>
@@ -315,8 +315,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("dashboard")}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "dashboard"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-800 text-white/70 hover:text-white"
+                ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                : "bg-gray-800 text-white/70 hover:text-white"
                 }`}
             >
               Dashboard
@@ -324,8 +324,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("parent")}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "parent"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-800 text-white/70 hover:text-white"
+                ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                : "bg-gray-800 text-white/70 hover:text-white"
                 }`}
             >
               Parent
@@ -333,8 +333,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("tutor")}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "tutor"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-800 text-white/70 hover:text-white"
+                ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                : "bg-gray-800 text-white/70 hover:text-white"
                 }`}
             >
               Tutor
@@ -342,8 +342,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("messages")}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "messages"
-                  ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                  : "bg-gray-800 text-white/70 hover:text-white"
+                ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                : "bg-gray-800 text-white/70 hover:text-white"
                 }`}
             >
               Messages
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
             }}
             className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold p-3 bg-gray-800 rounded-lg"
             aria-label="Toggle mobile menu"
-            style={{ 
+            style={{
               touchAction: 'manipulation',
               cursor: 'pointer',
               zIndex: 9999
@@ -422,20 +422,6 @@ export default function AdminDashboard() {
             {expandedItems.mobileMenu ? "✕" : "☰"}
           </button>
 
-          {/* Debug Button - Always visible for testing */}
-          <button
-            onClick={() => {
-              console.log("🔧 Debug button clicked! Forcing menu toggle");
-              setExpandedItems(prev => ({
-                ...prev,
-                mobileMenu: !prev.mobileMenu
-              }));
-            }}
-            className="md:hidden bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold ml-2"
-            type="button"
-          >
-            MENU
-          </button>
         </div>
 
         {/* Hamburger Menu - Styled like the image (mobile only) */}
@@ -443,15 +429,7 @@ export default function AdminDashboard() {
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden mobile-menu-panel">
             <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
               {/* Close button */}
-              <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
-                <div className="flex items-center gap-2">
-                  <img 
-                    src="/logo.png" 
-                    alt="GV Tutor Logo" 
-                    className="h-12 w-auto object-contain"
-                  />
-                  <h2 className="text-cyan-400 text-2xl font-bold">GV Tutor</h2>
-                </div>
+              <div className="flex justify-end items-center p-6 border-b border-cyan-500/30">
                 <button
                   onClick={() => setExpandedItems(prev => ({ ...prev, mobileMenu: false }))}
                   className="text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
@@ -487,8 +465,8 @@ export default function AdminDashboard() {
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
                   className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "dashboard"
-                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                    : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
                     }`}
                 >
                   Dashboard
@@ -499,8 +477,8 @@ export default function AdminDashboard() {
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
                   className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "parent"
-                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                    : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
                     }`}
                 >
                   Parent
@@ -511,8 +489,8 @@ export default function AdminDashboard() {
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
                   className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "tutor"
-                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                    : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
                     }`}
                 >
                   Tutor
@@ -523,8 +501,8 @@ export default function AdminDashboard() {
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}
                   className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "messages"
-                      ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
-                      : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                    : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
                     }`}
                 >
                   Messages
@@ -687,10 +665,10 @@ export default function AdminDashboard() {
                             <div className="pt-3 border-t border-gray-200">
                               <span
                                 className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
-                                    ? "bg-green-100 text-green-700 border border-green-300"
-                                    : request.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                      : "bg-blue-100 text-blue-700 border border-blue-300"
+                                  ? "bg-green-100 text-green-700 border border-green-300"
+                                  : request.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                    : "bg-blue-100 text-blue-700 border border-blue-300"
                                   }`}
                               >
                                 {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -789,8 +767,8 @@ export default function AdminDashboard() {
                               <div className="pt-3 border-t border-gray-200">
                                 <span
                                   className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${profile.isProfileComplete
-                                      ? "bg-green-100 text-green-700 border border-green-300"
-                                      : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                    ? "bg-green-100 text-green-700 border border-green-300"
+                                    : "bg-yellow-100 text-yellow-700 border border-yellow-300"
                                     }`}
                                 >
                                   {profile.isProfileComplete ? "Complete" : "Incomplete"}
@@ -1036,10 +1014,10 @@ export default function AdminDashboard() {
                           <div className="pt-2 border-t border-gray-200">
                             <span
                               className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
-                                  ? "bg-green-100 text-green-700 border border-green-300"
-                                  : request.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                    : "bg-blue-100 text-blue-700 border border-blue-300"
+                                ? "bg-green-100 text-green-700 border border-green-300"
+                                : request.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                  : "bg-blue-100 text-blue-700 border border-blue-300"
                                 }`}
                             >
                               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -1154,8 +1132,8 @@ export default function AdminDashboard() {
                         <div className="pt-3 border-t border-gray-200">
                           <span
                             className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${profile.isProfileComplete
-                                ? "bg-green-100 text-green-700 border border-green-300"
-                                : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                              ? "bg-green-100 text-green-700 border border-green-300"
+                              : "bg-yellow-100 text-yellow-700 border border-yellow-300"
                               }`}
                           >
                             {profile.isProfileComplete ? "Complete" : "Incomplete"}
@@ -1390,10 +1368,10 @@ export default function AdminDashboard() {
                             </div>
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-semibold ${post.status === "posted"
-                                  ? "bg-green-100 text-green-700 border border-green-300"
-                                  : post.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                    : "bg-gray-100 text-gray-700 border border-gray-300"
+                                ? "bg-green-100 text-green-700 border border-green-300"
+                                : post.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                  : "bg-gray-100 text-gray-700 border border-gray-300"
                                 }`}
                             >
                               {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
@@ -1651,10 +1629,10 @@ export default function AdminDashboard() {
                           <div className="text-right">
                             <span
                               className={`inline-block px-2 py-1 rounded text-xs font-semibold ${applied.status === "accepted"
-                                  ? "bg-green-500/20 text-green-300 border border-green-500/30"
-                                  : applied.status === "rejected"
-                                    ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                                    : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                                ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                                : applied.status === "rejected"
+                                  ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                                  : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
                                 }`}
                             >
                               {applied.status?.charAt(0).toUpperCase() + applied.status?.slice(1) || "Pending"}
