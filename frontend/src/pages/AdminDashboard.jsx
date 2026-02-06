@@ -299,7 +299,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4 relative z-40">
+      <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
@@ -403,25 +403,38 @@ export default function AdminDashboard() {
 
           {/* Hamburger Menu Button - Mobile Only */}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("Hamburger clicked, current state:", expandedItems.mobileMenu);
+            onClick={() => {
+              console.log("🍔 Hamburger clicked! Current state:", expandedItems.mobileMenu);
               setExpandedItems(prev => ({
                 ...prev,
                 mobileMenu: !prev.mobileMenu
               }));
             }}
-            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition p-3 rounded-lg hover:bg-gray-800 z-[60] relative"
-            aria-label="Toggle menu"
+            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold p-3 bg-gray-800 rounded-lg"
+            aria-label="Toggle mobile menu"
             style={{ 
               touchAction: 'manipulation',
-              pointerEvents: 'auto',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              zIndex: 9999
             }}
             type="button"
           >
             {expandedItems.mobileMenu ? "✕" : "☰"}
+          </button>
+
+          {/* Debug Button - Always visible for testing */}
+          <button
+            onClick={() => {
+              console.log("🔧 Debug button clicked! Forcing menu toggle");
+              setExpandedItems(prev => ({
+                ...prev,
+                mobileMenu: !prev.mobileMenu
+              }));
+            }}
+            className="md:hidden bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-bold ml-2"
+            type="button"
+          >
+            MENU
           </button>
         </div>
 
