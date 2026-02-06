@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const [contactMessages, setContactMessages] = useState([]);
   const [messagePage, setMessagePage] = useState(1);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
-  const [expandedItems, setExpandedItems] = useState({});
+  const [expandedItems, setExpandedItems] = useState({ mobileMenu: false });
   const [adminUser, setAdminUser] = useState(null);
   const [displayedParentApps, setDisplayedParentApps] = useState(10); // For pagination
   const [selectedRequest, setSelectedRequest] = useState(null); // For modal
