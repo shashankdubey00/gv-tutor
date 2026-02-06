@@ -299,7 +299,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-black">
       {/* Navbar */}
-      <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4">
+      <nav className="bg-gray-900 border-b border-cyan-500/30 px-4 sm:px-6 py-4 relative z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
@@ -403,16 +403,23 @@ export default function AdminDashboard() {
 
           {/* Hamburger Menu Button - Mobile Only */}
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               console.log("Hamburger clicked, current state:", expandedItems.mobileMenu);
               setExpandedItems(prev => ({
                 ...prev,
                 mobileMenu: !prev.mobileMenu
               }));
             }}
-            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition p-2 rounded-lg hover:bg-gray-800 z-50 relative"
+            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition p-3 rounded-lg hover:bg-gray-800 z-[60] relative"
             aria-label="Toggle menu"
-            style={{ touchAction: 'manipulation' }}
+            style={{ 
+              touchAction: 'manipulation',
+              pointerEvents: 'auto',
+              cursor: 'pointer'
+            }}
+            type="button"
           >
             {expandedItems.mobileMenu ? "✕" : "☰"}
           </button>
