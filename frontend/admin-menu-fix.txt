@@ -1,0 +1,5 @@
+# Admin Dashboard Hamburger Menu Fix
+Fixed: mobileMenu state initialization
+Date: 2026-02-06
+Issue: Hamburger menu not working in admin dashboard
+Solution: Initialize expandedItems with mobileMenu: false

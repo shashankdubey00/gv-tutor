@@ -120,6 +120,24 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (expandedItems.mobileMenu) {
+        const mobileMenu = document.querySelector('.mobile-menu-panel');
+        const hamburgerButton = document.querySelector('[aria-label="Toggle menu"]');
+        
+        if (mobileMenu && !mobileMenu.contains(event.target) && 
+            hamburgerButton && !hamburgerButton.contains(event.target)) {
+          setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [expandedItems.mobileMenu]);
+
   // Handle message deletion
   async function handleMessageDelete(messageId) {
     try {
@@ -386,13 +404,15 @@ export default function AdminDashboard() {
           {/* Hamburger Menu Button - Mobile Only */}
           <button
             onClick={() => {
+              console.log("Hamburger clicked, current state:", expandedItems.mobileMenu);
               setExpandedItems(prev => ({
                 ...prev,
                 mobileMenu: !prev.mobileMenu
               }));
             }}
-            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition"
+            className="md:hidden text-cyan-400 hover:text-cyan-300 text-3xl font-bold transition p-2 rounded-lg hover:bg-gray-800 z-50 relative"
             aria-label="Toggle menu"
+            style={{ touchAction: 'manipulation' }}
           >
             {expandedItems.mobileMenu ? "✕" : "☰"}
           </button>
@@ -400,7 +420,7 @@ export default function AdminDashboard() {
 
         {/* Hamburger Menu - Styled like the image (mobile only) */}
         {expandedItems.mobileMenu && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden mobile-menu-panel">
             <div className="absolute right-0 top-0 h-full w-80 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-l-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/20 overflow-y-auto">
               {/* Close button */}
               <div className="flex justify-between items-center p-6 border-b border-cyan-500/30">
