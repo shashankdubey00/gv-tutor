@@ -340,7 +340,10 @@ export default function AdminDashboard() {
               Tutor
             </button>
             <button
-              onClick={() => setActiveTab("messages")}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab("messages");
+              }}
               className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "messages"
                 ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
                 : "bg-gray-800 text-white/70 hover:text-white"
@@ -496,7 +499,8 @@ export default function AdminDashboard() {
                   Tutor
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     setActiveTab("messages");
                     setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
                   }}

@@ -21,18 +21,6 @@ export default function Navbar() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (tutorMenuOpen && !event.target.closest('.tutor-dropdown')) {
-        setTutorMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [tutorMenuOpen]);
-
   // Check if user is logged in
   useEffect(() => {
     // If logout query param is present, clear state immediately and remove param
@@ -82,28 +70,25 @@ export default function Navbar() {
   }, [location.pathname, location.search]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full h-24 z-50 backdrop-blur-md bg-slate-900/95 border-b border-slate-700/50">
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center relative">
+    <nav className="fixed top-0 left-0 w-full h-20 z-50 backdrop-blur-md bg-white/10 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 z-10">
-          <img 
-            src="/logo.png" 
-            alt="GV Tutor Logo" 
-            className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
-          />
+        <Link to="/" className="text-white text-2xl font-semibold tracking-wide flex items-center gap-2">
+          <GraduationCap className="w-8 h-8 text-blue-400" />
+          GV Tutor
         </Link>
 
-        {/* Desktop Menu - Centered */}
-        <ul className="hidden md:flex gap-8 text-white text-lg items-center absolute left-1/2 transform -translate-x-1/2">
-          <Link to="/" className="hover:text-cyan-400 transition-colors">Home</Link>
-          <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
+        {/* Desktop Menu */}
+        <ul className="hidden md:flex gap-8 text-white text-lg items-center">
+          <Link to="/" className="hover:text-blue-400">Home</Link>
+          <Link to="/about" className="hover:text-blue-400">About</Link>
 
           {/* Home Tutor Dropdown */}
-          <li className="relative select-none tutor-dropdown">
+          <li className="relative select-none">
             <span
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
-              className="hover:text-cyan-400 cursor-pointer flex items-center gap-1"
+              className="hover:text-blue-400 cursor-pointer flex items-center gap-1"
             >
               Home Tutor ▾
             </span>
@@ -133,12 +118,12 @@ export default function Navbar() {
             )}
           </li>
 
-          <Link to="/library" className="hover:text-cyan-400 transition-colors">Library</Link>
-          <Link to="/contact" className="hover:text-cyan-400 transition-colors">Contact</Link>
+          <Link to="/library" className="hover:text-blue-400">Library</Link>
+          <Link to="/contact" className="hover:text-blue-400">Contact</Link>
         </ul>
 
-        {/* Desktop Buttons / Profile - Right Side */}
-        <div className="hidden md:flex gap-4 items-center ml-auto z-10">
+        {/* Desktop Buttons / Profile */}
+        <div className="hidden md:flex gap-4 items-center">
           {loading ? (
             <div className="w-8 h-8 rounded-full bg-gray-600 animate-pulse"></div>
           ) : user && user.role === "admin" ? (
@@ -329,9 +314,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Icon - Right Side */}
+        {/* Mobile Menu Icon */}
         <div
-          className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors ml-auto"
+          className="md:hidden text-white/90 hover:text-white cursor-pointer transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
@@ -340,7 +325,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Panel */}
       {menuOpen && (
-        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-96px)]">
+        <div className="md:hidden bg-gradient-to-b from-slate-900/95 to-black/95 backdrop-blur-3xl text-white p-5 space-y-3 border-t border-white/10 animate-in fade-in slide-in-from-top-2 duration-300 shadow-2xl h-[calc(100vh-80px)]">
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
@@ -359,7 +344,7 @@ export default function Navbar() {
             <span className="font-medium tracking-wide group-hover:text-purple-200 transition-colors">About</span>
           </Link>
 
-          <div className="tutor-dropdown">
+          <div>
             <button
               className="w-full text-left px-4 py-3.5 rounded-xl bg-white/5 hover:bg-gradient-to-r hover:from-emerald-600/20 hover:to-teal-500/20 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 transform active:scale-95 shadow-lg shadow-black/20 flex items-center justify-between group"
               onClick={() => setTutorMenuOpen(!tutorMenuOpen)}
