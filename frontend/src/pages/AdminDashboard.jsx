@@ -142,9 +142,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (expandedItems.profileDropdown) {
-        const profileIcon = event.target.closest('.group');
+        const profileContainer = event.target.closest('.relative');
         
-        if (!profileIcon) {
+        if (!profileContainer) {
           setExpandedItems(prev => ({
             ...prev,
             profileDropdown: false
@@ -371,9 +371,15 @@ export default function AdminDashboard() {
 
           {/* Profile Icon - Desktop Only */}
           <div className="hidden md:flex items-center">
-            <div className="relative group">
+            <div className="relative">
               <div 
                 className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
+                onMouseEnter={() => {
+                  setExpandedItems(prev => ({
+                    ...prev,
+                    profileDropdown: true
+                  }));
+                }}
                 onClick={() => {
                   setExpandedItems(prev => ({
                     ...prev,
@@ -386,7 +392,13 @@ export default function AdminDashboard() {
               <div 
                 className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 z-[60] pointer-events-auto ${
                   expandedItems.profileDropdown ? 'opacity-100 visible' : 'opacity-0 invisible'
-                } group-hover:opacity-100 group-hover:visible`}
+                }`}
+                onMouseLeave={() => {
+                  setExpandedItems(prev => ({
+                    ...prev,
+                    profileDropdown: false
+                  }));
+                }}
                 style={{ 
                   top: '100%',
                   right: '0',
