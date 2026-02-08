@@ -369,7 +369,7 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          {/* Profile Icon - Desktop Only - FIXED VERSION */}
+          {/* Profile Icon - Desktop Only - WORKING VERSION */}
           <div 
             className="hidden md:block"
             style={{ 
@@ -383,25 +383,18 @@ export default function AdminDashboard() {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("🔴 PROFILE CLICKED!", expandedItems.profileDropdown);
-                  setExpandedItems(prev => {
-                    const newState = {
-                      ...prev,
-                      profileDropdown: !prev.profileDropdown
-                    };
-                    console.log("🔴 NEW STATE:", newState);
-                    return newState;
-                  });
+                  console.log("🔴 PROFILE CLICKED!");
+                  setExpandedItems(prev => ({
+                    ...prev,
+                    profileDropdown: !prev.profileDropdown
+                  }));
                 }}
                 type="button"
                 style={{
                   cursor: 'pointer',
                   position: 'relative',
                   zIndex: 100001,
-                  pointerEvents: 'auto',
-                  border: 'none',
-                  outline: 'none',
-                  display: 'flex'
+                  pointerEvents: 'auto'
                 }}
               >
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
@@ -418,7 +411,6 @@ export default function AdminDashboard() {
                     zIndex: 100002,
                     pointerEvents: 'auto'
                   }}
-                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="px-4 py-2 text-sm text-white/80 border-b border-white/10">
                     {adminUser?.email || "admin@example.com"}
@@ -430,8 +422,14 @@ export default function AdminDashboard() {
                     <Link
                       to="/change-password"
                       className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10 transition-colors"
-                      onClick={() => {
+                      onClick={(e) => {
+                        console.log("🔵 CHANGE PASSWORD CLICKED");
                         setExpandedItems(prev => ({ ...prev, profileDropdown: false }));
+                      }}
+                      style={{ 
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        pointerEvents: 'auto'
                       }}
                     >
                       Change Password
@@ -442,7 +440,10 @@ export default function AdminDashboard() {
                     onClick={async (e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      console.log("🔴 LOGOUT CLICKED");
                       setExpandedItems(prev => ({ ...prev, profileDropdown: false }));
+                      
+                      // Real logout logic
                       try {
                         await logoutUser();
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -462,8 +463,13 @@ export default function AdminDashboard() {
                         window.location.replace("/?logout=true");
                       }
                     }}
-                    className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
-                    style={{ cursor: 'pointer' }}
+                    className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors rounded-b-lg"
+                    style={{ 
+                      cursor: 'pointer',
+                      pointerEvents: 'auto',
+                      border: 'none',
+                      outline: 'none'
+                    }}
                   >
                     Logout
                   </button>
