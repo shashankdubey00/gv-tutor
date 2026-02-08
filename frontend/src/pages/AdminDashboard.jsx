@@ -385,8 +385,8 @@ export default function AdminDashboard() {
               </div>
               <div 
                 className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 z-[60] pointer-events-auto ${
-                  expandedItems.profileDropdown ? 'opacity-100 visible' : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'
-                }`}
+                  expandedItems.profileDropdown ? 'opacity-100 visible' : 'opacity-0 invisible'
+                } group-hover:opacity-100 group-hover:visible`}
                 style={{ 
                   top: '100%',
                   right: '0',
