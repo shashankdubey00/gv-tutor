@@ -932,8 +932,9 @@ export default function AdminDashboard() {
             {/* Messages List */}
             <div className="space-y-4">
               {loadingMessages && contactMessages.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
-                  <LoadingSpinner />
+                <div className="flex items-center justify-center py-12 text-gray-600">
+                  <div className="w-8 h-8 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+                  <span className="ml-3 text-sm sm:text-base">Loading messages...</span>
                 </div>
               ) : contactMessages.length > 0 ? (
                 contactMessages.map((message) => (
