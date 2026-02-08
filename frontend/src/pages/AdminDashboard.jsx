@@ -371,16 +371,18 @@ export default function AdminDashboard() {
 
           {/* Profile Icon - Desktop Only */}
           <div className="hidden md:flex items-center">
-            <div className="relative">
+            <div className="relative" style={{ zIndex: 9999 }}>
               <div 
                 className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
                 onMouseEnter={() => {
+                  console.log("🖱️ Mouse enter profile");
                   setExpandedItems(prev => ({
                     ...prev,
                     profileDropdown: true
                   }));
                 }}
                 onClick={() => {
+                  console.log("🖱️ Click profile, current state:", expandedItems.profileDropdown);
                   setExpandedItems(prev => ({
                     ...prev,
                     profileDropdown: !prev.profileDropdown
@@ -390,10 +392,11 @@ export default function AdminDashboard() {
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
               </div>
               <div 
-                className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 z-[60] pointer-events-auto ${
+                className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 pointer-events-auto ${
                   expandedItems.profileDropdown ? 'opacity-100 visible' : 'opacity-0 invisible'
                 }`}
                 onMouseLeave={() => {
+                  console.log("🖱️ Mouse leave dropdown");
                   setExpandedItems(prev => ({
                     ...prev,
                     profileDropdown: false
@@ -402,7 +405,9 @@ export default function AdminDashboard() {
                 style={{ 
                   top: '100%',
                   right: '0',
-                  marginTop: '8px'
+                  marginTop: '8px',
+                  zIndex: 9998,
+                  position: 'absolute'
                 }}
               >
                 <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
