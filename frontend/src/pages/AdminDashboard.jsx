@@ -370,11 +370,14 @@ export default function AdminDashboard() {
           </div>
 
           {/* Profile Icon - Desktop Only */}
-          <div className="hidden md:flex items-center">
-            <div className="relative">
+          <div className="hidden md:flex items-center" style={{border: '2px solid red'}}>
+            <div className="relative" style={{border: '2px solid yellow'}}>
               <button
+                style={{border: '2px solid green'}}
                 className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30 border-0"
                 onClick={() => {
+                  console.log("🔴 PROFILE BUTTON CLICKED!");
+                  console.log("Current state:", expandedItems);
                   setExpandedItems(prev => ({
                     ...prev,
                     profileDropdown: !prev.profileDropdown
@@ -391,7 +394,8 @@ export default function AdminDashboard() {
                   style={{ 
                     top: '100%',
                     right: '0',
-                    zIndex: 9999
+                    zIndex: 9999,
+                    border: '3px solid red' // Debug border
                   }}
                 >
                   <div className="px-4 py-2 text-sm text-white/80 border-b border-white/10">
