@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const [contactMessages, setContactMessages] = useState([]);
   const [messagePage, setMessagePage] = useState(1);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
-  const [expandedItems, setExpandedItems] = useState({ mobileMenu: false });
+  const [expandedItems, setExpandedItems] = useState({ mobileMenu: false, profileDropdown: false });
   const [adminUser, setAdminUser] = useState(null);
   const [displayedParentApps, setDisplayedParentApps] = useState(10); // For pagination
   const [selectedRequest, setSelectedRequest] = useState(null); // For modal
@@ -141,18 +141,21 @@ export default function AdminDashboard() {
   // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      const profileDropdown = document.getElementById('profile-dropdown');
-      const profileIcon = event.target.closest('.group');
-      
-      if (profileDropdown && profileIcon && !profileIcon.contains(event.target)) {
-        profileDropdown.classList.remove('opacity-100', 'visible');
-        profileDropdown.classList.add('opacity-0', 'invisible');
+      if (expandedItems.profileDropdown) {
+        const profileIcon = event.target.closest('.group');
+        
+        if (!profileIcon) {
+          setExpandedItems(prev => ({
+            ...prev,
+            profileDropdown: false
+          }));
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [expandedItems.profileDropdown]);
 
   // Handle message deletion
   async function handleMessageDelete(messageId) {
@@ -372,21 +375,18 @@ export default function AdminDashboard() {
               <div 
                 className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
                 onClick={() => {
-                  // Toggle dropdown on click for better UX
-                  const dropdown = document.getElementById('profile-dropdown');
-                  if (dropdown) {
-                    dropdown.classList.toggle('opacity-100');
-                    dropdown.classList.toggle('visible');
-                    dropdown.classList.toggle('opacity-0');
-                    dropdown.classList.toggle('invisible');
-                  }
+                  setExpandedItems(prev => ({
+                    ...prev,
+                    profileDropdown: !prev.profileDropdown
+                  }));
                 }}
               >
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
               </div>
               <div 
-                id="profile-dropdown"
-                className="absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] pointer-events-auto"
+                className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 z-[60] pointer-events-auto ${
+                  expandedItems.profileDropdown || 'group-hover' ? 'opacity-100 visible' : 'opacity-0 invisible'
+                }`}
                 style={{ 
                   top: '100%',
                   right: '0',
