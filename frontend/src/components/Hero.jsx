@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MapPin, Mail, Phone, CheckCircle } from 'lucide-react';
@@ -7,6 +7,12 @@ import { submitContactForm } from '../services/contactService';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const sliderImages = [
+    { src: '/photogood.jpeg', position: 'center' },
+    { src: '/photogood1.jpeg', position: 'center' },
+    { src: '/photogood2.jpeg', position: 'center' },
+    { src: '/photogood3.jpeg', position: 'top' }
+  ];
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,6 +21,43 @@ const Hero = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [activePolicy, setActivePolicy] = useState(null);
+
+  const policyContent = {
+    privacy: {
+      title: 'Privacy Policy',
+      body: [
+        'We collect only the information needed to provide tutoring services and respond to inquiries.',
+        'Your contact details are used to communicate about classes, schedules, and support.',
+        'We do not sell your personal information to third parties.'
+      ]
+    },
+    terms: {
+      title: 'Terms of Service',
+      body: [
+        'By using our platform, you agree to provide accurate information and follow our community guidelines.',
+        'Tutoring sessions are subject to availability and scheduling confirmation.',
+        'We may update services or policies to improve quality and compliance.'
+      ]
+    },
+    cookies: {
+      title: 'Cookie Policy',
+      body: [
+        'We use cookies to remember your preferences and improve site performance.',
+        'You can control or delete cookies through your browser settings.',
+        'Disabling cookies may affect some features of the website.'
+      ]
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % sliderImages.length);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [sliderImages.length]);
 
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -134,12 +177,19 @@ const Hero = () => {
             </div>
           </motion.div>
           <motion.div {...fadeIn} className="relative">
-             <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full" />
-             <img 
-               src="https://images.unsplash.com/photo-1577896851231-70ef1460371e" 
-               className="rounded-3xl relative z-10 border border-white/10 shadow-2xl" 
-               alt="Tutor"
-             />
+            <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full" />
+            <div className="relative z-10 rounded-3xl border border-white/10 shadow-2xl overflow-hidden aspect-[4/3] w-full max-w-xl mx-auto">
+              <motion.img
+                key={sliderImages[activeSlide].src}
+                src={sliderImages[activeSlide].src}
+                alt="Home tuition"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: sliderImages[activeSlide].position }}
+                initial={{ opacity: 0, scale: 1.02 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+              />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -212,14 +262,14 @@ const Hero = () => {
           <div className="relative min-h-[400px] bg-gray-900">
             {/* Real Google Map Integration - GW Tutor Bhopal Location */}
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.8325432673!2d77.4129!3d23.2599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c428f8e7e6e9b%3A0x5c8b9c8b9c8b9c8b!2sNeeraj+Nagar%2C+Durgesh+Vihar+JK+Road%2C+Bhopal%2C+Madhya+Pradesh+462022!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin" 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.8325432673!2d77.4129!3d23.2599!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c428f8e7e6e9b%3A0x5c8b9c8b9c8b9c8b!2sNeerja+Nagar%2C+Durgesh+Vihar+JK+Road%2C+Bhopal%2C+Madhya+Pradesh+462022!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin" 
               className="absolute inset-0 w-full h-full grayscale invert opacity-50"
               style={{ border: 0 }}
               allowFullScreen="" 
               loading="lazy"
             ></iframe>
             <div className="absolute bottom-8 left-8 p-6 bg-black/80 backdrop-blur-md border border-white/10 rounded-2xl">
-              <div className="flex items-center gap-3 mb-2"><MapPin size={18} className="text-blue-500" /> <span>Neeraj Nagar, Durgesh Vihar JK Road, Bhopal</span></div>
+              <div className="flex items-center gap-3 mb-2"><MapPin size={18} className="text-blue-500" /> <span>Neerja Nagar, Durgesh Vihar JK Road, Bhopal</span></div>
               <div className="flex items-center gap-3 mb-2"><Phone size={18} className="text-blue-500" /> <span>+91 9691569239</span></div>
               <div className="flex items-center gap-3"><Mail size={18} className="text-blue-500" /> <span>goodwill2404@gmail.com</span></div>
             </div>
@@ -238,7 +288,7 @@ const Hero = () => {
                 <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-green-500 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">GW</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white">GW Tutor</h3>
+                <h3 className="text-2xl font-bold text-white">Goodwill Group of Education</h3>
               </div>
               <p className="text-gray-400 mb-4 leading-relaxed">
                 Empowering students with quality education and personalized learning experiences. 
@@ -246,7 +296,7 @@ const Hero = () => {
               </p>
               <div className="flex space-x-4">
                 <a 
-                  href="https://www.instagram.com" 
+                  href="https://www.instagram.com/gv.library.as_/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-300 shadow-lg"
@@ -257,7 +307,7 @@ const Hero = () => {
                   </svg>
                 </a>
                 <a 
-                  href="https://www.facebook.com" 
+                  href="https://www.facebook.com/amit.sahu.71513#" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-300 shadow-lg"
@@ -329,17 +379,56 @@ const Hero = () => {
           <div className="mt-12 pt-8 border-t border-gray-800">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 text-sm mb-4 md:mb-0">
-                © 2025 GW Tutor. All rights reserved.
+                &copy; 2026 Goodwill Group of Education. All rights reserved.
               </p>
               <div className="flex space-x-6">
-                <a href="#" className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300">Privacy Policy</a>
-                <a href="#" className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300">Terms of Service</a>
-                <a href="#" className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300">Cookie Policy</a>
+                <button
+                  type="button"
+                  onClick={() => setActivePolicy('privacy')}
+                  className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300"
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePolicy('terms')}
+                  className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300"
+                >
+                  Terms of Service
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePolicy('cookies')}
+                  className="text-gray-400 hover:text-cyan-400 text-sm transition-colors duration-300"
+                >
+                  Cookie Policy
+                </button>
               </div>
             </div>
           </div>
         </div>
       </footer>
+
+      {activePolicy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-6 bg-black/70 backdrop-blur-sm">
+          <div className="max-w-xl w-full bg-gray-900 border border-white/10 rounded-2xl p-8 relative">
+            <button
+              type="button"
+              onClick={() => setActivePolicy(null)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
+              aria-label="Close policy"
+            >
+              X
+            </button>
+            <h3 className="text-2xl font-bold mb-4">{policyContent[activePolicy].title}</h3>
+            <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+              {policyContent[activePolicy].body.map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
