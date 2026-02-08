@@ -371,86 +371,72 @@ export default function AdminDashboard() {
 
           {/* Profile Icon - Desktop Only */}
           <div className="hidden md:flex items-center">
-            <div className="relative" style={{ zIndex: 9999 }}>
-              <div 
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
-                onMouseEnter={() => {
-                  console.log("🖱️ Mouse enter profile");
-                  setExpandedItems(prev => ({
-                    ...prev,
-                    profileDropdown: true
-                  }));
-                }}
+            <div className="relative">
+              <button
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30 border-0"
                 onClick={() => {
-                  console.log("🖱️ Click profile, current state:", expandedItems.profileDropdown);
                   setExpandedItems(prev => ({
                     ...prev,
                     profileDropdown: !prev.profileDropdown
                   }));
                 }}
+                type="button"
               >
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
-              </div>
-              <div 
-                className={`absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg transition-all duration-200 pointer-events-auto ${
-                  expandedItems.profileDropdown ? 'opacity-100 visible' : 'opacity-0 invisible'
-                }`}
-                onMouseLeave={() => {
-                  console.log("🖱️ Mouse leave dropdown");
-                  setExpandedItems(prev => ({
-                    ...prev,
-                    profileDropdown: false
-                  }));
-                }}
-                style={{ 
-                  top: '100%',
-                  right: '0',
-                  marginTop: '8px',
-                  zIndex: 9998,
-                  position: 'absolute'
-                }}
-              >
-                <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
-                  {adminUser?.email || "admin@example.com"}
-                </div>
-                <div className="px-4 py-2 text-xs text-white/50 border-b border-white/10">
-                  Administrator
-                </div>
-                {adminUser?.hasPassword && (
-                  <Link
-                    to="/change-password"
-                    className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10"
-                  >
-                    Change Password
-                  </Link>
-                )}
-                <button
-                  type="button"
-                  onClick={async () => {
-                    try {
-                      await logoutUser();
-                      await new Promise(resolve => setTimeout(resolve, 100));
-                    } catch (err) {
-                      console.error("Logout error:", err);
-                    } finally {
-                      const domain = window.location.hostname;
-                      const cookies = [
-                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
-                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
-                        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
-                        `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-                      ];
-                      cookies.forEach(cookie => {
-                        document.cookie = cookie;
-                      });
-                      window.location.replace("/?logout=true");
-                    }
+              </button>
+              
+              {expandedItems.profileDropdown && (
+                <div 
+                  className="absolute right-0 mt-2 w-48 bg-black/95 border border-white/20 rounded-lg shadow-xl"
+                  style={{ 
+                    top: '100%',
+                    right: '0',
+                    zIndex: 9999
                   }}
-                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg cursor-pointer"
                 >
-                  Logout
-                </button>
-              </div>
+                  <div className="px-4 py-2 text-sm text-white/80 border-b border-white/10">
+                    {adminUser?.email || "admin@example.com"}
+                  </div>
+                  <div className="px-4 py-2 text-xs text-white/60 border-b border-white/10">
+                    Administrator
+                  </div>
+                  {adminUser?.hasPassword && (
+                    <Link
+                      to="/change-password"
+                      className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10 transition-colors"
+                    >
+                      Change Password
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setExpandedItems(prev => ({ ...prev, profileDropdown: false }));
+                      try {
+                        await logoutUser();
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                      } catch (err) {
+                        console.error("Logout error:", err);
+                      } finally {
+                        const domain = window.location.hostname;
+                        const cookies = [
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax",
+                          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=None; Secure",
+                          `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+                        ];
+                        cookies.forEach(cookie => {
+                          document.cookie = cookie;
+                        });
+                        window.location.replace("/?logout=true");
+                      }
+                    }}
+                    className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
