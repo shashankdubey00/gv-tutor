@@ -142,7 +142,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (expandedItems.profileDropdown) {
-        const profileContainer = event.target.closest('.relative');
+        const profileContainer = event.target.closest('[data-profile-dropdown="admin"]');
         
         if (!profileContainer) {
           setExpandedItems(prev => ({
@@ -376,6 +376,7 @@ export default function AdminDashboard() {
               position: 'relative',
               zIndex: 100000
             }}
+            data-profile-dropdown="admin"
           >
             <div style={{ position: 'relative' }}>
               <button
