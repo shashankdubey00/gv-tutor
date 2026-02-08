@@ -369,34 +369,56 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          {/* Profile Icon - Desktop Only */}
-          <div className="hidden md:flex items-center" style={{border: '2px solid red'}}>
-            <div className="relative" style={{border: '2px solid yellow'}}>
+          {/* Profile Icon - Desktop Only - FIXED VERSION */}
+          <div 
+            className="hidden md:block"
+            style={{ 
+              position: 'relative',
+              zIndex: 100000
+            }}
+          >
+            <div style={{ position: 'relative' }}>
               <button
-                style={{border: '2px solid green'}}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30 border-0"
-                onClick={() => {
-                  console.log("🔴 PROFILE BUTTON CLICKED!");
-                  console.log("Current state:", expandedItems);
-                  setExpandedItems(prev => ({
-                    ...prev,
-                    profileDropdown: !prev.profileDropdown
-                  }));
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("🔴 PROFILE CLICKED!", expandedItems.profileDropdown);
+                  setExpandedItems(prev => {
+                    const newState = {
+                      ...prev,
+                      profileDropdown: !prev.profileDropdown
+                    };
+                    console.log("🔴 NEW STATE:", newState);
+                    return newState;
+                  });
                 }}
                 type="button"
+                style={{
+                  cursor: 'pointer',
+                  position: 'relative',
+                  zIndex: 100001,
+                  pointerEvents: 'auto',
+                  border: 'none',
+                  outline: 'none',
+                  display: 'flex'
+                }}
               >
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
               </button>
               
               {expandedItems.profileDropdown && (
                 <div 
-                  className="absolute right-0 mt-2 w-48 bg-black/95 border border-white/20 rounded-lg shadow-xl"
+                  className="bg-black/95 border border-white/20 rounded-lg shadow-xl"
                   style={{ 
-                    top: '100%',
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
                     right: '0',
-                    zIndex: 9999,
-                    border: '3px solid red' // Debug border
+                    width: '192px',
+                    zIndex: 100002,
+                    pointerEvents: 'auto'
                   }}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="px-4 py-2 text-sm text-white/80 border-b border-white/10">
                     {adminUser?.email || "admin@example.com"}
@@ -408,13 +430,18 @@ export default function AdminDashboard() {
                     <Link
                       to="/change-password"
                       className="block px-4 py-2 text-white hover:bg-white/10 border-b border-white/10 transition-colors"
+                      onClick={() => {
+                        setExpandedItems(prev => ({ ...prev, profileDropdown: false }));
+                      }}
                     >
                       Change Password
                     </Link>
                   )}
                   <button
                     type="button"
-                    onClick={async () => {
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       setExpandedItems(prev => ({ ...prev, profileDropdown: false }));
                       try {
                         await logoutUser();
@@ -436,6 +463,7 @@ export default function AdminDashboard() {
                       }
                     }}
                     className="w-full px-4 py-2 text-left text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors"
+                    style={{ cursor: 'pointer' }}
                   >
                     Logout
                   </button>
