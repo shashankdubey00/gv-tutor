@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { apiRequest } from "../services/api";
@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard", "parent", "tutor", "messages"
+  const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard", "parent", "tutor", "messages", "poster"
   const [parentApplications, setParentApplications] = useState([]);
   const [tutorApplications, setTutorApplications] = useState([]);
   const [tutorMembers, setTutorMembers] = useState([]);
@@ -27,6 +27,16 @@ export default function AdminDashboard() {
   const [selectedTutorProfile, setSelectedTutorProfile] = useState(null); // For tutor profile modal
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, messageId: null });
+  const [logoDataUrl, setLogoDataUrl] = useState("");
+  const [posterFields, setPosterFields] = useState({
+    classLevel: "",
+    board: "",
+    subjects: "",
+    time: "",
+    teacher: "",
+    location: ""
+  });
+  const posterRef = useRef(null);
   const { toasts, addToast, removeToast, success, error, warning, info } = useToast();
 
   // Check authentication
@@ -119,6 +129,140 @@ export default function AdminDashboard() {
       loadContactMessages();
     }
   }, [activeTab]);
+
+  // Load logo as data URL for SVG export
+  useEffect(() => {
+    let isMounted = true;
+    async function loadLogo() {
+      try {
+        const response = await fetch("/logo.png");
+        const blob = await response.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (isMounted) {
+            setLogoDataUrl(reader.result || "");
+          }
+        };
+        reader.readAsDataURL(blob);
+      } catch (err) {
+        console.error("Failed to load logo for poster:", err);
+      }
+    }
+    loadLogo();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  function updatePosterField(field, value) {
+    setPosterFields(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  }
+
+  const posterData = useMemo(() => {
+    return {
+      ...posterFields,
+      contact: "9691569239"
+    };
+  }, [posterFields]);
+
+  function buildPosterSvg({ data, logoHref, mode = "export" }) {
+    const safe = (text) =>
+      String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    const line = (label, value, y) => `
+      <text x="120" y="${y}" font-family="Poppins, Arial, sans-serif" font-size="44" font-weight="700" fill="#111111">
+        ${safe(label)} -
+      </text>
+      <text x="420" y="${y}" font-family="Poppins, Arial, sans-serif" font-size="44" font-weight="600" fill="#111111">
+        ${safe(value)}
+      </text>
+    `;
+
+    const width = mode === "preview" ? "100%" : "1080";
+    const height = mode === "preview" ? "100%" : "1350";
+
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 1080 1350" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="bgAccent" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#E9FBFF"/>
+            <stop offset="1" stop-color="#E6F7FF"/>
+          </linearGradient>
+          <linearGradient id="navyFlow" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#0B1F4B"/>
+            <stop offset="0.5" stop-color="#0F2C6B"/>
+            <stop offset="1" stop-color="#133B8A"/>
+            <animate attributeName="x1" values="0;1;0" dur="10s" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="1;0;1" dur="10s" repeatCount="indefinite"/>
+          </linearGradient>
+        </defs>
+        <rect width="1080" height="1350" fill="#F4F8FF"/>
+        <path d="M980 0 C1030 120, 1080 220, 1080 360 L1080 0 Z" fill="#88E0F2"/>
+        <path d="M0 980 C120 900, 240 820, 360 820 L0 820 Z" fill="#88E0F2" opacity="0.7"/>
+        <path d="M0 1180 C160 1100, 320 1040, 520 1040 L0 1040 Z" fill="#57C9E0" opacity="0.9"/>
+        <rect x="70" y="1185" width="940" height="120" rx="28" fill="#1479B8"/>
+
+        <rect x="0" y="0" width="1080" height="200" fill="url(#navyFlow)" stroke="#0B1F4B" stroke-width="2"/>
+        <rect x="60" y="24" width="960" height="152" rx="28" fill="url(#navyFlow)" stroke="#0B1F4B" stroke-width="2"/>
+        ${logoHref ? `
+          <image href="${logoHref}" x="260" y="40" width="560" height="120" preserveAspectRatio="xMidYMid meet" />
+        ` : ""}
+
+        <text x="70" y="300" font-family="Poppins, Arial, sans-serif" font-size="76" font-weight="800" fill="#111111">WE ARE</text>
+        <text x="70" y="380" font-family="Poppins, Arial, sans-serif" font-size="100" font-weight="900" fill="#1D7BD8">HIRING</text>
+        <rect x="70" y="410" width="420" height="64" rx="32" fill="#1DA9C9"/>
+        <text x="115" y="455" font-family="Poppins, Arial, sans-serif" font-size="36" font-weight="700" fill="#FFFFFF">HOME TUTOR</text>
+
+        ${line("CLASS", data.classLevel, 570)}
+        ${line("BOARD", data.board, 650)}
+        ${line("SUBJECTS", data.subjects, 730)}
+        ${line("TIME", data.time, 810)}
+        ${line("TEACHER", data.teacher, 890)}
+
+        <rect x="70" y="955" width="620" height="64" rx="32" fill="#DFF7FF" stroke="#1DA9C9" stroke-width="3"/>
+        <text x="110" y="998" font-family="Poppins, Arial, sans-serif" font-size="34" font-weight="700" fill="#0B6EA3">
+          CONTACT - ${safe(data.contact)}
+        </text>
+
+        <text x="90" y="1260" font-family="Poppins, Arial, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF">
+          ADDRESS - ${safe(data.location)}
+        </text>
+      </svg>
+    `;
+  }
+
+  async function downloadPoster() {
+    try {
+      const svgString = buildPosterSvg({ data: posterData, logoHref: logoDataUrl, mode: "export" });
+      const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1080;
+        canvas.height = 1350;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+        URL.revokeObjectURL(url);
+        const pngUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = pngUrl;
+        link.download = "poster.png";
+        link.click();
+      };
+      image.src = url;
+    } catch (err) {
+      console.error("Failed to download poster:", err);
+      error("Failed to download poster. Please try again.");
+    }
+  }
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -367,6 +511,15 @@ export default function AdminDashboard() {
             >
               Messages
             </button>
+            <button
+              onClick={() => setActiveTab("poster")}
+              className={`px-3 lg:px-4 py-2 rounded-lg font-medium transition text-sm lg:text-base ${activeTab === "poster"
+                ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                : "bg-gray-800 text-white/70 hover:text-white"
+                }`}
+            >
+              Poster
+            </button>
           </div>
 
           {/* Profile Icon - Desktop Only - WORKING VERSION */}
@@ -584,6 +737,18 @@ export default function AdminDashboard() {
                     }`}
                 >
                   Messages
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("poster");
+                    setExpandedItems(prev => ({ ...prev, mobileMenu: false }));
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-medium transition text-left ${activeTab === "poster"
+                    ? "bg-gradient-to-r from-cyan-500 to-green-500 text-white"
+                    : "bg-gray-800/50 text-white/70 hover:bg-gray-800 hover:text-white border border-gray-700"
+                    }`}
+                >
+                  Poster
                 </button>
               </div>
 
@@ -922,6 +1087,99 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === "poster" && (
+          <div className="bg-white text-gray-900 rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-bold">Poster Generator</h2>
+                <p className="text-sm text-gray-600 mt-1">Create a hiring poster for each job post.</p>
+              </div>
+              <button
+                onClick={downloadPoster}
+                className="px-5 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 text-white rounded-lg font-semibold shadow-lg transition"
+              >
+                Download PNG
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Class</label>
+                  <input
+                    type="text"
+                    value={posterFields.classLevel}
+                    onChange={(e) => updatePosterField("classLevel", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Board</label>
+                  <input
+                    type="text"
+                    value={posterFields.board}
+                    onChange={(e) => updatePosterField("board", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Subjects</label>
+                  <input
+                    type="text"
+                    value={posterFields.subjects}
+                    onChange={(e) => updatePosterField("subjects", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Time</label>
+                  <input
+                    type="text"
+                    value={posterFields.time}
+                    onChange={(e) => updatePosterField("time", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Teacher</label>
+                  <input
+                    type="text"
+                    value={posterFields.teacher}
+                    onChange={(e) => updatePosterField("teacher", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Location</label>
+                  <textarea
+                    rows={3}
+                    value={posterFields.location}
+                    onChange={(e) => updatePosterField("location", e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-center">
+                <div className="w-full max-w-[420px] aspect-[4/5] bg-white shadow-md rounded-lg overflow-hidden">
+                  <div
+                    ref={posterRef}
+                    className="w-full h-full"
+                    style={{ transform: "scale(1)", transformOrigin: "top left" }}
+                    dangerouslySetInnerHTML={{
+                      __html: buildPosterSvg({
+                        data: posterData,
+                        logoHref: logoDataUrl || "/logo.png",
+                        mode: "preview"
+                      })
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
