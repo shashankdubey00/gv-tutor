@@ -138,6 +138,22 @@ export default function AdminDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [expandedItems.mobileMenu]);
 
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const profileDropdown = document.getElementById('profile-dropdown');
+      const profileIcon = event.target.closest('.group');
+      
+      if (profileDropdown && profileIcon && !profileIcon.contains(event.target)) {
+        profileDropdown.classList.remove('opacity-100', 'visible');
+        profileDropdown.classList.add('opacity-0', 'invisible');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Handle message deletion
   async function handleMessageDelete(messageId) {
     try {
@@ -353,10 +369,30 @@ export default function AdminDashboard() {
           {/* Profile Icon - Desktop Only */}
           <div className="hidden md:flex items-center">
             <div className="relative group">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30">
+              <div 
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-green-500 flex items-center justify-center text-white font-semibold cursor-pointer hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30"
+                onClick={() => {
+                  // Toggle dropdown on click for better UX
+                  const dropdown = document.getElementById('profile-dropdown');
+                  if (dropdown) {
+                    dropdown.classList.toggle('opacity-100');
+                    dropdown.classList.toggle('visible');
+                    dropdown.classList.toggle('opacity-0');
+                    dropdown.classList.toggle('invisible');
+                  }
+                }}
+              >
                 {adminUser?.email?.[0]?.toUpperCase() || "A"}
               </div>
-              <div className="absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-auto">
+              <div 
+                id="profile-dropdown"
+                className="absolute right-0 mt-2 w-48 bg-black/90 border border-white/30 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] pointer-events-auto"
+                style={{ 
+                  top: '100%',
+                  right: '0',
+                  marginTop: '8px'
+                }}
+              >
                 <div className="px-4 py-2 text-sm text-white/70 border-b border-white/10">
                   {adminUser?.email || "admin@example.com"}
                 </div>
