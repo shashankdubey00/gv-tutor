@@ -436,6 +436,32 @@ export const postTutorRequest = async (req, res) => {
   }
 };
 
+/* ---------------- DELETE TUTOR REQUEST ---------------- */
+export const deleteTutorRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const deleted = await TutorRequest.findByIdAndDelete(requestId);
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete request error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 
 
 

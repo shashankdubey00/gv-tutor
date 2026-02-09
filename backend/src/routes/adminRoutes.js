@@ -8,6 +8,7 @@ import {
   updateFieldVisibility,
   updateTutorRequest,
   postTutorRequest,
+  deleteTutorRequest,
 } from "../controllers/adminController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
@@ -51,6 +52,6 @@ router.put("/tutor-requests/:requestId/status", updateTutorRequestStatus);
 router.put("/tutor-requests/:requestId/visibility", updateFieldVisibility);
 router.put("/tutor-requests/:requestId", updateTutorRequest);
 router.post("/tutor-requests/:requestId/post", postTutorRequest);
+router.delete("/tutor-requests/:requestId", deleteTutorRequest);
 
 export default router;
-

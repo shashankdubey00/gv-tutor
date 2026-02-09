@@ -41,6 +41,11 @@ export default function Navbar() {
       setUser(null);
       setProfile(null);
       setLoading(false);
+      try {
+        sessionStorage.removeItem("auth_user");
+      } catch (err) {
+        // Ignore storage errors
+      }
       // Remove logout param from URL without reload
       window.history.replaceState({}, "", "/");
       return;
@@ -51,6 +56,11 @@ export default function Navbar() {
         const authData = await verifyAuth();
         if (authData.success) {
           setUser(authData.user);
+          try {
+            sessionStorage.setItem("auth_user", JSON.stringify(authData.user));
+          } catch (err) {
+            // Ignore storage errors
+          }
           // If tutor, get profile
           if (authData.user.role === "tutor") {
             try {
@@ -194,6 +204,11 @@ export default function Navbar() {
                         cookies.forEach(cookie => {
                           document.cookie = cookie;
                         });
+                        try {
+                          sessionStorage.removeItem("auth_user");
+                        } catch (err) {
+                          // Ignore storage errors
+                        }
                         // Force full page reload with cache bypass
                         window.location.replace("/?logout=true");
                       }
@@ -300,6 +315,11 @@ export default function Navbar() {
                         cookies.forEach(cookie => {
                           document.cookie = cookie;
                         });
+                        try {
+                          sessionStorage.removeItem("auth_user");
+                        } catch (err) {
+                          // Ignore storage errors
+                        }
                         // Force full page reload with cache bypass
                         window.location.replace("/?logout=true");
                       }
@@ -447,6 +467,11 @@ export default function Navbar() {
                     if (window.location.protocol === "https:") {
                       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
                     }
+                    try {
+                      sessionStorage.removeItem("auth_user");
+                    } catch (err) {
+                      // Ignore storage errors
+                    }
                     window.location.href = "/";
                   }
                 }}
@@ -493,6 +518,11 @@ export default function Navbar() {
                     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
                     if (window.location.protocol === "https:") {
                       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+                    }
+                    try {
+                      sessionStorage.removeItem("auth_user");
+                    } catch (err) {
+                      // Ignore storage errors
                     }
                     window.location.href = "/";
                   }

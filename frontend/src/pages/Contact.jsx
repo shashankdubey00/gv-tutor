@@ -130,7 +130,7 @@ export default function Contact() {
             <div className="space-y-2 text-white/80">
               <p><strong>Email:</strong> goodwill2404@gmail.com</p>
               <p><strong>Phone:</strong> +91 9691569239</p>
-              <p><strong>Address:</strong> Neeraj Nagar, Durgesh Vihar JK Road, Bhopal, Madhya Pradesh 462022</p>
+              <p><strong>Address:</strong> Neerja Nagar, Durgesh Vihar JK Road, Bhopal, Madhya Pradesh 462022</p>
             </div>
           </div>
         </div>

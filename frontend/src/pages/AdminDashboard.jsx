@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   const [selectedTutorProfile, setSelectedTutorProfile] = useState(null); // For tutor profile modal
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, messageId: null });
+  const [requestDeleteConfirm, setRequestDeleteConfirm] = useState({ isOpen: false, requestId: null });
   const [logoDataUrl, setLogoDataUrl] = useState("");
   const [posterFields, setPosterFields] = useState({
     classLevel: "",
@@ -324,6 +325,46 @@ export default function AdminDashboard() {
       handleMessageDelete(deleteConfirm.messageId);
     }
     setDeleteConfirm({ isOpen: false, messageId: null });
+  }
+
+  // Confirm tutor request delete
+  function confirmRequestDelete(requestId) {
+    setRequestDeleteConfirm({ isOpen: true, requestId });
+  }
+
+  async function handleRequestDelete(requestId) {
+    try {
+      await apiRequest(`/api/admin/tutor-requests/${requestId}`, {
+        method: "DELETE",
+      });
+      success("Request deleted successfully");
+      setSelectedRequest(null);
+      setEditFormData(null);
+      setParentApplications((prev) => prev.filter((req) => req._id !== requestId));
+      setTutorApplications((prev) =>
+        prev.map((profile) => ({
+          ...profile,
+          appliedPosts: (profile.appliedPosts || []).filter((post) => post._id !== requestId),
+        }))
+      );
+      setSelectedTutorProfile((prev) =>
+        prev
+          ? {
+              ...prev,
+              appliedPosts: (prev.appliedPosts || []).filter((post) => post._id !== requestId),
+            }
+          : prev
+      );
+    } catch (err) {
+      error("Failed to delete request: " + err.message);
+    }
+  }
+
+  function handleConfirmedRequestDelete() {
+    if (requestDeleteConfirm.requestId) {
+      handleRequestDelete(requestDeleteConfirm.requestId);
+    }
+    setRequestDeleteConfirm({ isOpen: false, requestId: null });
   }
 
   // Load more messages
@@ -905,7 +946,7 @@ export default function AdminDashboard() {
                                 </div>
                               )}
                             </div>
-                            <div className="pt-3 border-t border-gray-200">
+                            <div className="pt-3 border-t border-gray-200 flex items-center justify-between gap-3">
                               <span
                                 className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
                                   ? "bg-green-100 text-green-700 border border-green-300"
@@ -916,6 +957,15 @@ export default function AdminDashboard() {
                               >
                                 {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                               </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  confirmRequestDelete(request._id);
+                                }}
+                                className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 transition-colors"
+                              >
+                                Delete
+                              </button>
                             </div>
                           </div>
                         ))
@@ -1348,7 +1398,7 @@ export default function AdminDashboard() {
                           <p className="text-sm text-gray-500 mb-3">
                             Submitted: {new Date(request.createdAt).toLocaleDateString()}
                           </p>
-                          <div className="pt-2 border-t border-gray-200">
+                          <div className="pt-2 border-t border-gray-200 flex items-center justify-between gap-3">
                             <span
                               className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${request.status === "posted"
                                 ? "bg-green-100 text-green-700 border border-green-300"
@@ -1359,6 +1409,15 @@ export default function AdminDashboard() {
                             >
                               {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                             </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmRequestDelete(request._id);
+                              }}
+                              className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 transition-colors"
+                            >
+                              Delete
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -1690,7 +1749,7 @@ export default function AdminDashboard() {
                           key={post._id}
                           className="p-4 bg-purple-50 border border-purple-200 rounded-lg"
                         >
-                          <div className="flex items-start justify-between">
+                          <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="font-semibold text-gray-900 mb-1">
                                 {post.parentName} - Grade {post.studentGrade}
@@ -1703,16 +1762,24 @@ export default function AdminDashboard() {
                                 Applied: {new Date(post.createdAt).toLocaleDateString()}
                               </p>
                             </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold ${post.status === "posted"
-                                ? "bg-green-100 text-green-700 border border-green-300"
-                                : post.status === "pending"
-                                  ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
-                                  : "bg-gray-100 text-gray-700 border border-gray-300"
-                                }`}
-                            >
-                              {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
-                            </span>
+                            <div className="flex flex-col items-end gap-2">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-semibold ${post.status === "posted"
+                                  ? "bg-green-100 text-green-700 border border-green-300"
+                                  : post.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                                    : "bg-gray-100 text-gray-700 border border-gray-300"
+                                  }`}
+                              >
+                                {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
+                              </span>
+                              <button
+                                onClick={() => confirmRequestDelete(post._id)}
+                                className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 transition-colors"
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -2043,6 +2110,12 @@ export default function AdminDashboard() {
                   </button>
                 )}
                 <button
+                  onClick={() => confirmRequestDelete(selectedRequest._id)}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg font-semibold text-white"
+                >
+                  Delete Post
+                </button>
+                <button
                   onClick={() => {
                     setSelectedRequest(null);
                     setEditFormData(null);
@@ -2068,6 +2141,17 @@ export default function AdminDashboard() {
         title="Delete Message"
         message="Are you sure you want to delete this message? This action cannot be undone."
         confirmText="Delete Message"
+        cancelText="Cancel"
+        type="danger"
+      />
+
+      <ConfirmDialog
+        isOpen={requestDeleteConfirm.isOpen}
+        onClose={() => setRequestDeleteConfirm({ isOpen: false, requestId: null })}
+        onConfirm={handleConfirmedRequestDelete}
+        title="Delete Tutor Request"
+        message="Are you sure you want to delete this tutor request? It will be removed from the tutor dashboard."
+        confirmText="Delete Request"
         cancelText="Cancel"
         type="danger"
       />

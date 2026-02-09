@@ -121,8 +121,11 @@ const Hero = () => {
             </motion.div>
             <motion.div whileHover={{ y: -5 }} className="p-8 rounded-3xl bg-white/5 border border-pink-500/20 backdrop-blur-xl">
               <h3 className="text-xl font-bold mb-4">Become a home tutor</h3>
-              <button 
-                onClick={() => handleApplyAsTutor(navigate)}
+              <button
+                type="button"
+                onClick={async () => {
+                  await handleApplyAsTutor(navigate);
+                }}
                 className="w-full py-4 bg-pink-600 hover:bg-pink-700 rounded-xl font-semibold transition-all shadow-lg shadow-pink-600/20"
               >
                 Apply as Tutor
