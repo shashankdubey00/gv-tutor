@@ -2,6 +2,7 @@ import Notification from '../models/Notification.js';
 import NotificationDelivery from '../models/NotificationDelivery.js';
 import EmailQueue from '../models/EmailQueue.js';
 import emailQueue from './notificationQueue.js';
+import unifiedEmailService from './unifiedEmailService.js';
 import emailTemplates from './emailTemplates.js';
 import mongoose from 'mongoose';
 import User from '../../src/models/User.js';
@@ -30,6 +31,7 @@ class NotificationService {
             console.log(`📧 Sending notification to ${tutors.length} tutors...`);
 
             // 3. Create deliveries and queue emails
+            const redisConfigured = Boolean(process.env.REDIS_HOST && process.env.REDIS_PORT);
             const deliveryPromises = tutors.map(async (tutor) => {
                 await NotificationDelivery.create({
                     notificationId: notification._id,
@@ -51,6 +53,35 @@ class NotificationService {
                         message: message,
                         ...templateData
                     });
+                }
+
+                if (!redisConfigured) {
+                    const result = await unifiedEmailService.sendWithBrevo({
+                        to: tutor.email,
+                        subject: emailContent.subject,
+                        html: emailContent.html
+                    });
+
+                    await EmailQueue.create({
+                        tutorId: tutor._id,
+                        notificationId: notification._id,
+                        emailTo: tutor.email,
+                        subject: emailContent.subject,
+                        status: result.success ? 'sent' : 'failed',
+                        sentAt: result.success ? new Date() : null,
+                        errorMessage: result.success ? null : result.error
+                    });
+
+                    if (result.success) {
+                        await NotificationDelivery.findOneAndUpdate(
+                            { tutorId: tutor._id, notificationId: notification._id },
+                            {
+                                emailSent: true,
+                                emailSentAt: new Date()
+                            }
+                        );
+                    }
+                    return;
                 }
 
                 await EmailQueue.create({

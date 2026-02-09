@@ -2,20 +2,26 @@ import * as brevo from '@getbrevo/brevo';
 
 // Initialize Brevo API
 const apiInstance = new brevo.TransactionalEmailsApi();
-apiInstance.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(
+    brevo.TransactionalEmailsApiApiKeys.apiKey,
+    process.env.BREVO_API_KEY
+  );
+}
 
 // Send password reset email with OTP
 export const sendPasswordResetEmail = async (email, otp) => {
   try {
+    if (!process.env.BREVO_API_KEY) {
+      console.warn("BREVO_API_KEY is not set. Skipping email send.");
+      return { success: false, messageId: null };
+    }
     console.log('🔍 DEBUG: Using Brevo verified sender: no-reply@brevo.com');
     const sendSmtpEmail = new brevo.SendSmtpEmail();
     
     sendSmtpEmail.sender = {
-      name: 'GV Tutor',
-      email: 'no-reply@brevo.com'  // Use Brevo's verified sender
+      name: process.env.SENDER_NAME || 'GV Tutor',
+      email: process.env.SENDER_EMAIL || 'no-reply@brevo.com'  // Use Brevo's verified sender
     };
     
     sendSmtpEmail.to = [{ email: email }];
@@ -98,4 +104,3 @@ export const sendPasswordResetEmail = async (email, otp) => {
     throw new Error("Failed to send password reset email");
   }
 };
-
