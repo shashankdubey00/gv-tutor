@@ -19,6 +19,8 @@ router.get("/posted", protect, checkProfileComplete, getPostedTutorRequests);
 
 // Apply to a tutor request (auth required + profile complete - for tutors)
 router.post("/:requestId/apply", protect, checkProfileComplete, applyToTutorRequest);
+// Hide a tutor request for the current tutor (support POST for hosting/proxy compatibility)
+router.post("/:requestId/hide", protect, checkProfileComplete, hideTutorRequestForTutor);
 router.delete("/:requestId/hide", protect, checkProfileComplete, hideTutorRequestForTutor);
 
 export default router;

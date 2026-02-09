@@ -49,9 +49,8 @@ export function applyToTutorRequest(requestId) {
 
 export function hideTutorRequest(requestId) {
   return apiRequest(`/api/tutor-requests/${requestId}/hide`, {
-    method: "DELETE",
+    method: "POST",
   });
 }
-
 
 
