@@ -43,12 +43,12 @@ export default function ForgotPassword() {
   return (
     <div className="auth-bg pt-28 px-4 flex items-center justify-center">
       <div className="glass-card w-full max-w-md p-8 sm:p-10 text-white">
-        <h2 className="text-3xl font-bold text-center">Forgot Password</h2>
+        <h2 className="text-3xl font-bold text-center text-white">Forgot Password</h2>
         <p className="text-center text-white/80 mt-1">
           Enter your email to receive an OTP
         </p>
 
-        {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
+        {error && <p className="text-red-300 text-sm mt-3">{error}</p>}
         
         {success && (
           <div className="mt-3 space-y-3">
@@ -91,14 +91,14 @@ export default function ForgotPassword() {
         )}
 
         <div className="mt-6 text-center">
-          <Link to="/login" className="text-green-300 hover:underline text-sm">
+          <Link to="/login" className="text-emerald-300 hover:underline text-sm">
             Back to Login
           </Link>
         </div>
 
         <p className="text-center text-sm mt-5 text-white/80">
           Don't have an account?
-          <Link to="/signup" className="text-green-300 hover:underline ml-1">
+          <Link to="/signup" className="text-emerald-300 hover:underline ml-1">
             Sign up
           </Link>
         </p>
