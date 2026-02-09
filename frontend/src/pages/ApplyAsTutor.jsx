@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getPostedTutorRequests, applyToTutorRequest } from "../services/tutorService";
+import { getPostedTutorRequests, applyToTutorRequest, hideTutorRequest } from "../services/tutorService";
 import { verifyAuth, logoutUser } from "../services/authService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { setRedirecting, isRedirecting, shouldRedirect, clearRedirecting } from "../utils/redirectGuard";
@@ -18,6 +18,7 @@ export default function ApplyAsTutor() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [displayCount, setDisplayCount] = useState(10);
+  const [hidingRequestId, setHidingRequestId] = useState(null);
 
   // Check authentication and profile completion
   useEffect(() => {
@@ -224,6 +225,25 @@ export default function ApplyAsTutor() {
     }
   };
 
+  const handleHideRequest = async (requestId) => {
+    if (hidingRequestId) return;
+    setHidingRequestId(requestId);
+    setError("");
+
+    try {
+      await hideTutorRequest(requestId);
+      setRequests((prev) => prev.filter((req) => req._id !== requestId));
+      if (selectedRequest && selectedRequest._id === requestId) {
+        setShowModal(false);
+        setSelectedRequest(null);
+      }
+    } catch (err) {
+      setError(err.message || "Failed to remove this post. Please try again.");
+    } finally {
+      setHidingRequestId(null);
+    }
+  };
+
   const handleSeeMore = () => {
     setDisplayCount(prev => prev + 10);
   };
@@ -386,7 +406,7 @@ export default function ApplyAsTutor() {
                     )}
                   </div>
 
-                  <div className="border-t border-gray-200 pt-2 mt-2">
+                  <div className="border-t border-gray-200 pt-2 mt-2 space-y-2">
                     <p className="text-gray-500 text-[10px] mb-2 text-center">
                       {new Date(request.createdAt).toLocaleDateString()}
                     </p>
@@ -402,6 +422,16 @@ export default function ApplyAsTutor() {
                         }`}
                     >
                       {request.hasApplied ? "Applied" : "View & Apply"}
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleHideRequest(request._id);
+                      }}
+                      disabled={hidingRequestId === request._id}
+                      className="w-full py-1.5 rounded text-xs font-semibold text-red-700 bg-red-100 border border-red-300 hover:bg-red-200 transition-all disabled:opacity-60"
+                    >
+                      {hidingRequestId === request._id ? "Removing..." : "Delete"}
                     </button>
                   </div>
                 </div>
@@ -520,7 +550,7 @@ export default function ApplyAsTutor() {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 pt-4">
+                <div className="border-t border-gray-200 pt-4 space-y-2">
                   <button
                     onClick={() => handleApply(selectedRequest._id)}
                     disabled={selectedRequest.hasApplied || applyingTo === selectedRequest._id}
@@ -536,6 +566,13 @@ export default function ApplyAsTutor() {
                       : selectedRequest.hasApplied
                         ? "Already Applied"
                         : "Apply Now"}
+                  </button>
+                  <button
+                    onClick={() => handleHideRequest(selectedRequest._id)}
+                    disabled={hidingRequestId === selectedRequest._id}
+                    className="w-full py-3 rounded-lg font-semibold text-red-700 bg-red-100 border border-red-300 hover:bg-red-200 transition-all disabled:opacity-60"
+                  >
+                    {hidingRequestId === selectedRequest._id ? "Removing..." : "Delete"}
                   </button>
                 </div>
               </div>

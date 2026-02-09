@@ -133,7 +133,10 @@ export const getPostedTutorRequests = async (req, res) => {
     const tutorId = req.user.userId; // JWT token has userId, not _id
 
     // Only get requests with status "posted" (posted by admin)
-    const requests = await TutorRequest.find({ status: "posted" })
+    const requests = await TutorRequest.find({ 
+      status: "posted",
+      hiddenByTutors: { $ne: tutorId },
+    })
       .sort({ createdAt: -1 })
       .select("-adminNotes");
 
@@ -174,6 +177,42 @@ export const getPostedTutorRequests = async (req, res) => {
     });
   } catch (error) {
     console.error("Get posted requests error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- HIDE TUTOR REQUEST (Tutor hides from dashboard) ---------------- */
+export const hideTutorRequestForTutor = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const tutorId = req.user.userId;
+
+    const request = await TutorRequest.findById(requestId);
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: "Tutor request not found",
+      });
+    }
+
+    if (!request.hiddenByTutors) {
+      request.hiddenByTutors = [];
+    }
+
+    if (!request.hiddenByTutors.some((id) => id.toString() === tutorId.toString())) {
+      request.hiddenByTutors.push(tutorId);
+      await request.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request removed from your dashboard",
+    });
+  } catch (error) {
+    console.error("Hide tutor request error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

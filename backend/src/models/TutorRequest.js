@@ -128,6 +128,12 @@ const tutorRequestSchema = new mongoose.Schema(
         default: "pending",
       },
     }],
+
+    // Tutors who have hidden this request from their dashboard
+    hiddenByTutors: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    }],
   },
   {
     timestamps: true,

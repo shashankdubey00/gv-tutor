@@ -3,6 +3,7 @@ import {
   createTutorRequest,
   getPostedTutorRequests,
   applyToTutorRequest,
+  hideTutorRequestForTutor,
 } from "../controllers/tutorRequestController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { checkProfileComplete } from "../middleware/checkProfileComplete.js";
@@ -18,6 +19,6 @@ router.get("/posted", protect, checkProfileComplete, getPostedTutorRequests);
 
 // Apply to a tutor request (auth required + profile complete - for tutors)
 router.post("/:requestId/apply", protect, checkProfileComplete, applyToTutorRequest);
+router.delete("/:requestId/hide", protect, checkProfileComplete, hideTutorRequestForTutor);
 
 export default router;
-
