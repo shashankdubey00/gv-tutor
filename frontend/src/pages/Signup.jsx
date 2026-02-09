@@ -235,12 +235,12 @@ export default function Signup() {
     <div className="auth-bg pt-28 px-4 flex items-center justify-center">
       <div className="glass-card w-full max-w-md p-8 sm:p-10 text-white">
 
-        <h2 className="text-3xl font-bold text-center text-gray-900">Sign Up</h2>
-        <p className="text-center text-gray-800 mt-1">
+        <h2 className="text-3xl font-bold text-center text-white">Sign Up</h2>
+        <p className="text-center text-white/80 mt-1">
           Create your account here
         </p>
 
-        {error && <p className="text-red-600 text-sm mt-3 font-medium">{error}</p>}
+        {error && <p className="text-red-300 text-sm mt-3 font-medium">{error}</p>}
         
         {showBraveNotice && (
           <div className="mt-4 p-4 bg-yellow-500/10 border-2 border-yellow-500/50 rounded-lg">
@@ -296,7 +296,7 @@ export default function Signup() {
               focus:outline-none focus:ring-2 focus:ring-green-400"
           />
             {formData.password && formData.password.length < 10 && (
-              <p className="text-xs mt-1 text-gray-700">
+              <p className="text-xs mt-1 text-white/80">
                 Password must be at least 10 characters
               </p>
             )}
@@ -316,9 +316,9 @@ export default function Signup() {
         </form>
 
         <div className="flex items-center gap-2 my-5">
-          <div className="flex-1 h-px bg-gray-400"></div>
-          <span className="text-sm text-gray-700">or</span>
-          <div className="flex-1 h-px bg-gray-400"></div>
+          <div className="flex-1 h-px bg-white/30"></div>
+          <span className="text-sm text-white/70">or</span>
+          <div className="flex-1 h-px bg-white/30"></div>
         </div>
 
         <button 
@@ -333,9 +333,9 @@ export default function Signup() {
             Sign up with Google
         </button>
 
-        <p className="text-center text-sm mt-5 text-gray-800">
+        <p className="text-center text-sm mt-5 text-white/80">
           Already have an account?
-          <Link to="/login" className="text-green-600 hover:text-green-700 font-medium ml-1">
+          <Link to="/login" className="text-emerald-300 hover:text-emerald-200 font-medium ml-1">
             Login
           </Link>
         </p>
