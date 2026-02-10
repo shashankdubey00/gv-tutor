@@ -230,9 +230,18 @@ export default function AdminDashboard() {
           CONTACT - ${safe(data.contact)}
         </text>
 
-        <text x="90" y="1260" font-family="Poppins, Arial, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF">
-          ADDRESS - ${safe(data.location)}
+        <text x="90" y="1120" font-family="Poppins, Arial, sans-serif" font-size="30" font-weight="700" fill="#0B1F4B">
+          ADDRESS - ${safe(data.location).toUpperCase()}
         </text>
+
+        <a href="https://www.goodwilledu.in" target="_blank">
+          <text x="90" y="1260" font-family="Poppins, Arial, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">
+            APPLY IN OUR WEBSITE:
+          </text>
+          <text x="520" y="1260" font-family="Poppins, Arial, sans-serif" font-size="30" font-weight="700" fill="#FFE082" text-decoration="underline">
+            www.goodwilledu.in
+          </text>
+        </a>
       </svg>
     `;
   }

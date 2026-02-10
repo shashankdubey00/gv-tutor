@@ -45,6 +45,8 @@ import tutorProfileRoutes from "./routes/tutorProfileRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import notificationRoutes from "../routes/notifications.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import unifiedEmailService from "../notifications/services/unifiedEmailService.js";
+import emailQueue from "../notifications/services/notificationQueue.js";
 
 app.use("/api/tutor-requests", tutorRequestRoutes);
 app.use("/api/tutor-profile", tutorProfileRoutes);
@@ -55,6 +57,47 @@ app.use("/api/contact", contactRoutes);
 // Health check endpoint (required for Render)
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Email/Notification health check (Brevo + Redis/queue)
+app.get("/health/email", async (req, res) => {
+  try {
+    const brevoOk = await unifiedEmailService.verifyBrevoConnection();
+    const redisConfigured = Boolean(process.env.REDIS_HOST && process.env.REDIS_PORT);
+    let redisOk = false;
+    let queueStats = null;
+
+    if (redisConfigured) {
+      try {
+        await emailQueue.client.ping();
+        redisOk = true;
+        queueStats = {
+          waiting: await emailQueue.getWaitingCount(),
+          active: await emailQueue.getActiveCount(),
+          failed: await emailQueue.getFailedCount(),
+          delayed: await emailQueue.getDelayedCount(),
+        };
+      } catch (err) {
+        redisOk = false;
+      }
+    }
+
+    res.status(200).json({
+      brevoOk,
+      redisConfigured,
+      redisOk,
+      queueStats,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(500).json({
+      brevoOk: false,
+      redisConfigured: Boolean(process.env.REDIS_HOST && process.env.REDIS_PORT),
+      redisOk: false,
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
