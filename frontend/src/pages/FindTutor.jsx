@@ -142,9 +142,11 @@ export default function FindTutor() {
               <input
                 type="tel"
                 name="phone"
-                placeholder="Your Phone *"
+                placeholder="Your Phone (10 digits) *"
                 value={formData.phone}
                 onChange={handleChange}
+                pattern="[0-9]{10}"
+                maxLength={10}
                 required
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               />

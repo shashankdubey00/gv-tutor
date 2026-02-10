@@ -1265,7 +1265,7 @@ export default function AdminDashboard() {
                           <h3 className="font-semibold text-lg sm:text-xl text-gray-900 mb-2">{message.name}</h3>
                           <p className="text-sm text-gray-600 mb-1">{message.email}</p>
                           <p className="text-xs text-gray-500">
-                            {new Date(message.createdAt).toLocaleString()}
+                            {new Date(message.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
                           </p>
                         </div>
                         <div className="bg-white p-4 rounded-lg border border-gray-200">
@@ -1405,7 +1405,7 @@ export default function AdminDashboard() {
                             </div>
                           )}
                           <p className="text-sm text-gray-500 mb-3">
-                            Submitted: {new Date(request.createdAt).toLocaleDateString()}
+                            Submitted: {new Date(request.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
                           </p>
                           <div className="pt-2 border-t border-gray-200 flex items-center justify-between gap-3">
                             <span
@@ -1768,7 +1768,7 @@ export default function AdminDashboard() {
                                 {Array.isArray(post.subjects) ? post.subjects.join(", ") : post.subjects}
                               </p>
                               <p className="text-xs text-gray-500">
-                                Applied: {new Date(post.createdAt).toLocaleDateString()}
+                                Applied: {new Date(post.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
                               </p>
                             </div>
                             <div className="flex flex-col items-end gap-2">
@@ -2052,7 +2052,7 @@ export default function AdminDashboard() {
                             </span>
                             {applied.appliedAt && (
                               <p className="text-xs text-white/50 mt-1">
-                                Applied: {new Date(applied.appliedAt).toLocaleDateString()}
+                                Applied: {new Date(applied.appliedAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
                               </p>
                             )}
                           </div>

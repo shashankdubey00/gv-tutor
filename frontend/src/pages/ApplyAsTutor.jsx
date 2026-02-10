@@ -408,7 +408,7 @@ export default function ApplyAsTutor() {
 
                   <div className="border-t border-gray-200 pt-2 mt-2 space-y-2">
                     <p className="text-gray-500 text-[10px] mb-2 text-center">
-                      {new Date(request.createdAt).toLocaleDateString()}
+                      {new Date(request.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}
                     </p>
                     <button
                       onClick={(e) => {
@@ -546,7 +546,7 @@ export default function ApplyAsTutor() {
 
                   <div>
                     <p className="text-gray-600 text-sm font-semibold mb-1">Posted:</p>
-                    <p className="text-gray-500 text-sm">{new Date(selectedRequest.createdAt).toLocaleDateString()}</p>
+                    <p className="text-gray-500 text-sm">{new Date(selectedRequest.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
                   </div>
                 </div>
 
