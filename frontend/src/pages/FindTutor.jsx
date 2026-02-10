@@ -301,11 +301,10 @@ export default function FindTutor() {
             {/* Additional Requirements */}
             <textarea
               name="additionalRequirements"
-              placeholder="Additional Requirements *"
+              placeholder="Additional Requirements (optional)"
               value={formData.additionalRequirements}
               onChange={handleChange}
               rows="3"
-              required
               className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
             />
 
