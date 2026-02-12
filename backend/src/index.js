@@ -22,6 +22,31 @@ app.set("trust proxy", 1);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+const expandOriginVariants = (origin) => {
+  const trimmed = String(origin || "").trim();
+  if (!trimmed) return [];
+
+  try {
+    const url = new URL(trimmed);
+    const host = url.hostname.toLowerCase();
+
+    // Local/dev origins should not be transformed.
+    if (host === "localhost" || host === "127.0.0.1") {
+      return [url.origin];
+    }
+
+    const withoutWww = host.replace(/^www\./, "");
+    const withWww = host.startsWith("www.") ? host : `www.${host}`;
+
+    return [
+      `${url.protocol}//${withoutWww}${url.port ? `:${url.port}` : ""}`,
+      `${url.protocol}//${withWww}${url.port ? `:${url.port}` : ""}`,
+    ];
+  } catch {
+    return [trimmed];
+  }
+};
+
 const configuredOrigins = [
   process.env.CLIENT_URL,
   process.env.APP_URL,
@@ -30,6 +55,7 @@ const configuredOrigins = [
 ]
   .filter(Boolean)
   .flatMap((entry) => entry.split(","))
+  .flatMap((origin) => expandOriginVariants(origin))
   .map((origin) => origin.trim())
   .filter(Boolean);
 
@@ -48,7 +74,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token", "X-CSRF-Token"],
   })
 );
 
