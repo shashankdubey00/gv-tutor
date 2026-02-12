@@ -4,6 +4,7 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import UserProfile from "../models/UserProfile.js";
 import { sendPasswordResetEmail } from "../utils/emailService.js";
+import { getTokenCookieOptions } from "../utils/cookieOptions.js";
 
 // Enhanced email validation
 const isValidEmail = (email) => {
@@ -192,19 +193,7 @@ export const signup = async (req, res) => {
       console.log("🔐 Auto-login cookie set for new user");
     }
 
-    // Set cookie with explicit settings for cross-origin (same as login)
-    const cookieOptions = {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      path: "/",
-    };
-    
-    if (process.env.NODE_ENV === "production") {
-      cookieOptions.domain = undefined;
-    }
-    
+    const cookieOptions = getTokenCookieOptions(24 * 60 * 60 * 1000);
     res.cookie("token", token, cookieOptions);
 
     return res.status(201).json({
@@ -337,20 +326,9 @@ export const login = async (req, res) => {
       console.log("🔐 Login successful");
     }
 
-    // Set cookie with explicit settings for cross-origin
-    const cookieOptions = {
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" for cross-origin in production
-      secure: process.env.NODE_ENV === "production", // true in production with HTTPS
-      maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 1 day if not rememberMe
-      path: "/", // Important: Set path so cookie is accessible across all routes
-    };
-    
-    // In development, don't set domain (allows localhost)
-    if (process.env.NODE_ENV === "production") {
-      cookieOptions.domain = undefined; // Let browser set domain automatically
-    }
-    
+    const cookieOptions = getTokenCookieOptions(
+      rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000
+    );
     res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({

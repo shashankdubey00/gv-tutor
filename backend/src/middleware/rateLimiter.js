@@ -1,19 +1,19 @@
 // Simple in-memory rate limiter (no external dependencies)
 // Perfect for small-scale applications
 
-const requestCounts = new Map();
-
-// Clean up old entries every 15 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of requestCounts.entries()) {
-    if (now - value.resetTime > 15 * 60 * 1000) {
-      requestCounts.delete(key);
-    }
-  }
-}, 15 * 60 * 1000);
-
 export const rateLimiter = (maxRequests = 10, windowMs = 15 * 60 * 1000) => {
+  const requestCounts = new Map();
+
+  // Clean up old entries for this limiter instance.
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of requestCounts.entries()) {
+      if (now > value.resetTime) {
+        requestCounts.delete(key);
+      }
+    }
+  }, Math.max(60 * 1000, Math.min(windowMs, 15 * 60 * 1000)));
+
   return (req, res, next) => {
     // In development, be more lenient (skip rate limiting if NODE_ENV is development)
     if (process.env.NODE_ENV === "development") {

@@ -7,32 +7,75 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import passport from "./config/passport.js";
+import { csrfOriginGuard } from "./middleware/csrfOriginGuard.js";
+import { csrfTokenGuard } from "./middleware/csrfTokenGuard.js";
+import { httpMethodSafetyGuard } from "./middleware/httpMethodSafetyGuard.js";
+import { securityHeaders } from "./middleware/securityHeaders.js";
+import { rateLimiter } from "./middleware/rateLimiter.js";
 
 connectDB();
 
 const app = express();
-
-// Simple security headers (no external dependency needed)
-app.use((req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  next();
-});
+app.set("trust proxy", 1);
 
 // Security: Request body size limit (prevent DoS)
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  exposedHeaders: ["Set-Cookie"],
-}));
+const configuredOrigins = [
+  process.env.CLIENT_URL,
+  process.env.APP_URL,
+  process.env.CORS_ORIGINS,
+  "http://localhost:5173",
+]
+  .filter(Boolean)
+  .flatMap((entry) => entry.split(","))
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowedOrigins = Array.from(new Set(configuredOrigins));
+
+app.use(securityHeaders(allowedOrigins));
+app.use(httpMethodSafetyGuard);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server requests and health checks without an Origin header.
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(cookieParser());
+const globalRateLimit = rateLimiter(
+  Number(process.env.GLOBAL_RATE_LIMIT_MAX || 400),
+  Number(process.env.GLOBAL_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000)
+);
+const writeRateLimit = rateLimiter(
+  Number(process.env.WRITE_RATE_LIMIT_MAX || 120),
+  Number(process.env.WRITE_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000)
+);
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/health")) return next();
+  if (req.method === "OPTIONS") return next();
+  return globalRateLimit(req, res, next);
+});
+
+app.use((req, res, next) => {
+  if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return next();
+  if (req.path.startsWith("/health")) return next();
+  return writeRateLimit(req, res, next);
+});
+
+app.use(csrfOriginGuard(allowedOrigins));
+app.use(csrfTokenGuard);
 app.use(passport.initialize());
 
 // Mount auth routes at both /auth and /api/auth (for Google OAuth compatibility)

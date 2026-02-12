@@ -1,6 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { loginUser, verifyAuth } from "../services/authService";
+import { BACKEND_BASE_URL } from "../services/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ export default function Login() {
   }
 
   function handleGoogleLogin() {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = BACKEND_BASE_URL;
     
     // Standard OAuth flow: Full-page redirect (like most websites do)
     // This ensures single tab experience and proper session handling

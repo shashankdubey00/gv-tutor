@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { signupUser, verifyAuth } from "../services/authService";
 import PasswordStrength from "../components/PasswordStrength";
+import { BACKEND_BASE_URL } from "../services/api";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function Signup() {
   }
 
   function handleGoogleLogin() {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = BACKEND_BASE_URL;
     const googleAuthUrl = `${backendUrl}/auth/google?popup=1`;
     const popup = window.open(
       googleAuthUrl,

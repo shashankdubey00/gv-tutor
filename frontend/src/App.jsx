@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { verifyAuth } from "./services/authService";
 
@@ -23,11 +23,27 @@ import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 function AppContent() {
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isOAuthProcessing, setIsOAuthProcessing] = useState(false);
+
+  const verifyAuthWithRetry = async (attempts = 4, delayMs = 350) => {
+    let lastError = null;
+
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        return await verifyAuth();
+      } catch (error) {
+        lastError = error;
+        if (i < attempts - 1) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
+    }
+
+    throw lastError || new Error("Authentication verification failed");
+  };
 
   // Preload auth background image on component mount
   useEffect(() => {
@@ -51,7 +67,7 @@ function AppContent() {
       console.log("🔵 OAuth processing - redirecting to correct page");
       
       // Verify immediately
-      verifyAuth()
+      verifyAuthWithRetry()
         .then((data) => {
           console.log("✅ Auth verified:", data.user.role);
           

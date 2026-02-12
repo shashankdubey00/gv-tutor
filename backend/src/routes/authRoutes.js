@@ -7,6 +7,8 @@ import { protect } from "../middleware/authMiddleware.js";
 import { testBrevoDirectly } from "../controllers/testBrevoController.js";
 import User from "../models/User.js";
 import UserProfile from "../models/UserProfile.js";
+import { getTokenCookieOptions, getTokenCookieClearOptions } from "../utils/cookieOptions.js";
+import { issueCsrfToken } from "../middleware/csrfTokenGuard.js";
 
 const router = express.Router();
 
@@ -32,6 +34,15 @@ router.post("/check-password-strength", (req, res) => {
 
 // Test Brevo email endpoint
 router.get("/test-brevo", testBrevoDirectly);
+
+// Optional CSRF token endpoint (used only when CSRF_MODE=token)
+router.get("/csrf-token", (req, res) => {
+  const token = issueCsrfToken(res);
+  return res.status(200).json({
+    success: true,
+    csrfToken: token,
+  });
+});
 
 // Auth routes (CSRF removed for better user experience)
 router.post("/signup", authRateLimit, signup);
@@ -103,29 +114,9 @@ router.get(
 
 // Logout endpoint
 router.post("/logout", (req, res) => {
-  // Clear cookie with all possible configurations to ensure it's deleted
-  const cookieOptions = {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 0, // Expire immediately
-    path: "/",
-    expires: new Date(0), // Set expiration to epoch time
-  };
-  
-  // Clear cookie multiple ways to ensure it works
+  const cookieOptions = getTokenCookieClearOptions();
   res.cookie("token", "", cookieOptions);
   res.clearCookie("token", cookieOptions);
-  
-  // Also try with different SameSite values
-  res.cookie("token", "", { ...cookieOptions, sameSite: "none", secure: true });
-  res.clearCookie("token", { ...cookieOptions, sameSite: "none", secure: true });
-  
-  // Try without secure flag for HTTP
-  if (process.env.NODE_ENV !== "production") {
-    res.cookie("token", "", { ...cookieOptions, secure: false });
-    res.clearCookie("token", { ...cookieOptions, secure: false });
-  }
   
   return res.status(200).json({
     success: true,
@@ -206,20 +197,7 @@ router.get(
       );
       console.log("   - JWT token created (length:", token.length, "chars)");
 
-      // Set cookie with explicit settings for cross-origin (EXACT same as login endpoint)
-      // FORCE sameSite: "none" for cross-origin deployment (Vercel -> Render)
-      const cookieOptions = {
-        httpOnly: true,
-        sameSite: "none", // FORCED to "none" for cross-origin (Vercel frontend + Render backend)
-        secure: true, // REQUIRED when sameSite is "none"
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-        path: "/", // Important: Set path so cookie is accessible across all routes
-      };
-      
-      // In development, don't set domain (allows localhost) - same as login endpoint
-      if (process.env.NODE_ENV === "production") {
-        cookieOptions.domain = undefined; // Let browser set domain automatically
-      }
+      const cookieOptions = getTokenCookieOptions(24 * 60 * 60 * 1000);
       
       console.log("   - Cookie options:", {
         httpOnly: cookieOptions.httpOnly,

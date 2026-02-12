@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import TutorRequest from "../models/TutorRequest.js";
 import TutorProfile from "../models/TutorProfile.js";
 import { notificationService } from '../../notifications/index.js';
+import { getTokenCookieOptions } from "../utils/cookieOptions.js";
 
 /* ---------------- ADMIN LOGIN ---------------- */
 export const adminLogin = async (req, res) => {
@@ -55,13 +56,7 @@ export const adminLogin = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000,
-      path: "/",
-    });
+    res.cookie("token", token, getTokenCookieOptions(24 * 60 * 60 * 1000));
 
     return res.status(200).json({
       success: true,
