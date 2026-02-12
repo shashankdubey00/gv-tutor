@@ -99,7 +99,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-3 z-10">
           <img 
             src="/logo.png" 
-            alt="GV Tutor Logo" 
+            alt="Good Will Tutor Logo" 
             className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-300"
           />
         </Link>

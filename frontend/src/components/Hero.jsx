@@ -138,7 +138,7 @@ const Hero = () => {
       {/* SECTION 2: ABOUT MISSION */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <motion.div {...fadeIn} className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Our GV Ready & Mission</h2>
+          <h2 className="text-4xl font-bold mb-4">Our Good Will Ready & Mission</h2>
           <p className="text-gray-400 max-w-xl mx-auto">Providing quiet spaces for focused reading and connecting the brightest minds through personalized tutoring.</p>
         </motion.div>
 
