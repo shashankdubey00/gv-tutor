@@ -37,6 +37,7 @@ export default function AdminDashboard() {
     teacher: "",
     location: ""
   });
+  const [postingPoster, setPostingPoster] = useState(false);
   const posterRef = useRef(null);
   const { toasts, addToast, removeToast, success, error, warning, info } = useToast();
 
@@ -271,6 +272,41 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("Failed to download poster:", err);
       error("Failed to download poster. Please try again.");
+    }
+  }
+
+  async function postPosterJob() {
+    if (postingPoster) return;
+
+    if (!posterFields.classLevel.trim() || !posterFields.subjects.trim() || !posterFields.time.trim() || !posterFields.location.trim()) {
+      error("Please fill Class, Subjects, Time and Location before posting.");
+      return;
+    }
+
+    setPostingPoster(true);
+    try {
+      const response = await apiRequest("/api/admin/poster-job", {
+        method: "POST",
+        body: JSON.stringify({
+          classLevel: posterFields.classLevel.trim(),
+          board: posterFields.board.trim(),
+          subjects: posterFields.subjects.trim(),
+          time: posterFields.time.trim(),
+          teacher: posterFields.teacher.trim(),
+          location: posterFields.location.trim(),
+        }),
+      });
+
+      if (response.success) {
+        success("Poster job posted successfully. It is now visible to tutors.");
+        await loadData();
+      } else {
+        error(response.message || "Failed to post poster job");
+      }
+    } catch (err) {
+      error(err.message || "Failed to post poster job");
+    } finally {
+      setPostingPoster(false);
     }
   }
 
@@ -1161,6 +1197,13 @@ export default function AdminDashboard() {
                 className="px-5 py-3 bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 text-white rounded-lg font-semibold shadow-lg transition"
               >
                 Download PNG
+              </button>
+              <button
+                onClick={postPosterJob}
+                disabled={postingPoster}
+                className="px-5 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg font-semibold shadow-lg transition disabled:opacity-60"
+              >
+                {postingPoster ? "Posting..." : "Post Job"}
               </button>
             </div>
 
