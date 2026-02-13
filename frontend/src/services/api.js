@@ -22,6 +22,7 @@ const resolveBackendBaseUrl = () => {
 };
 
 export const BACKEND_BASE_URL = resolveBackendBaseUrl();
+const isDev = import.meta.env.DEV;
 
 let csrfTokenCache = null;
 let csrfTokenPromise = null;
@@ -86,7 +87,9 @@ export async function apiRequest(endpoint, options = {}) {
   const isStateChanging = isStateChangingMethod(method);
 
   const startTime = Date.now();
-  console.log(`API Request: ${method} ${endpoint}`);
+  if (isDev) {
+    console.log(`API Request: ${method} ${endpoint}`);
+  }
 
   try {
     // FIX FOR BRAVE/PRIVACY BROWSERS: Use stored token if available (for third-party cookie blocking)
@@ -118,7 +121,7 @@ export async function apiRequest(endpoint, options = {}) {
 
     let response = await runFetch(baseHeaders);
 
-    if (endpoint.includes("/auth/login")) {
+    if (isDev && endpoint.includes("/auth/login")) {
       console.log("Login response received - cookie should be set automatically by browser");
     }
 
@@ -141,7 +144,9 @@ export async function apiRequest(endpoint, options = {}) {
 
     clearTimeout(timeoutId);
     const duration = Date.now() - startTime;
-    console.log(`API Response: ${endpoint} (${duration}ms)`);
+    if (isDev) {
+      console.log(`API Response: ${endpoint} (${duration}ms)`);
+    }
 
     if (!response.ok) {
       // Don't log 401 errors for /auth/verify (expected when not logged in)

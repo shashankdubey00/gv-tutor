@@ -18,50 +18,33 @@ export default function Login() {
   const [showBraveNotice, setShowBraveNotice] = useState(false);
 
   // Define redirect function early so it can be used in useEffect
-  const performAuthRedirect = async () => {
+  const performAuthRedirect = async (authenticatedUser = null) => {
     try {
-      console.log("🔍 Verifying authentication...");
-      const authData = await verifyAuth();
-      console.log("✅ Auth data received:", authData);
-      
-      if (authData.success) {
-        const user = authData.user;
-        console.log("✅ User verified:", {
-          role: user.role,
-          email: user.email,
-          isTutorProfileComplete: user.isTutorProfileComplete,
-        });
-        
-        // Redirect immediately based on role and profile status (no delay for instant redirect)
-        let redirectPath = "/";
-        
-        if (user.role === "admin") {
-          redirectPath = "/admin/dashboard";
-          console.log("➡️ Admin detected - redirecting to /admin/dashboard");
-        } else if (user.role === "tutor") {
-          if (!user.isTutorProfileComplete) {
-            redirectPath = "/complete-profile";
-            console.log("➡️ Tutor without profile - redirecting to /complete-profile");
-          } else {
-            redirectPath = "/apply-tutor";
-            console.log("➡️ Tutor with profile - redirecting directly to /apply-tutor (SKIP landing page)");
-          }
-        } else {
-          redirectPath = "/";
-          console.log("➡️ Regular user - redirecting to landing page /");
+      let user = authenticatedUser;
+
+      if (!user) {
+        const authData = await verifyAuth();
+        if (!authData?.success || !authData?.user) {
+          setError("Authentication verification failed. Please try again.");
+          return;
         }
-        
-        // Use replace to avoid adding to browser history
-        window.location.replace(redirectPath);
-      } else {
-        setError("Authentication verification failed. Please try again.");
+        user = authData.user;
       }
+
+      let redirectPath = "/";
+
+      if (user.role === "admin") {
+        redirectPath = "/admin/dashboard";
+      } else if (user.role === "tutor") {
+        redirectPath = user.isTutorProfileComplete ? "/apply-tutor" : "/complete-profile";
+      }
+
+      window.location.replace(redirectPath);
     } catch (err) {
       console.error("Auth verification failed:", err);
       setError("Authentication failed. Please try again.");
     }
   };
-
   // Enhanced email validation
   const validateEmail = (email) => {
     if (!email) {
@@ -136,15 +119,11 @@ export default function Login() {
     }
 
     try {
-      console.log("🔐 Attempting login for:", formData.email);
+      console.log("Attempting login for:", formData.email);
       const loginResponse = await loginUser(formData);
-      console.log("✅ Login API response:", loginResponse);
-      
-      // Longer delay to ensure cookie is set and browser processes it
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Use shared redirect function (works for both regular login and OAuth)
-      await performAuthRedirect();
+      console.log("Login API response:", loginResponse);
+      // For email/password login, use response user directly to avoid extra network call.
+      await performAuthRedirect(loginResponse?.user || null);
     } catch (err) {
       console.error("❌ Login error:", err);
       setError(err.message || "Login failed. Please check your credentials.");
@@ -273,3 +252,5 @@ export default function Login() {
     </div>
   );
 }
+
+

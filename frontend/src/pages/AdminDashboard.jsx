@@ -44,10 +44,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        console.log("🔍 AdminDashboard: Checking authentication...");
+        if (import.meta.env.DEV) { console.log("AdminDashboard: Checking authentication..."); }
 
         const authData = await verifyAuth();
-        console.log("🔍 AdminDashboard: Auth data:", authData);
+
 
         if (!authData.success || authData.user.role !== "admin") {
           console.error("❌ AdminDashboard: Not an admin, redirecting to login");
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
           return;
         }
 
-        console.log("✅ AdminDashboard: Admin verified, loading data...");
+        if (import.meta.env.DEV) { console.log("AdminDashboard: Admin verified, loading data..."); }
         setAdminUser(authData.user);
         loadData();
       } catch (err) {
