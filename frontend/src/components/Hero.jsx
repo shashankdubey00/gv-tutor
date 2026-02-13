@@ -383,11 +383,23 @@ const Hero = () => {
 
           {/* Bottom Bar */}
           <div className="mt-12 pt-8 border-t border-gray-800">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+              <p className="text-gray-400 text-sm text-center md:text-left">
                 &copy; 2026 Goodwill Group of Education. All rights reserved.
               </p>
-              <div className="flex space-x-6">
+              <p className="text-gray-400 text-sm text-center">
+                Designed & Developed by{" "}
+                <a
+                  href="https://shashankportfolio-omega.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:text-cyan-300 transition-colors duration-300 underline underline-offset-4"
+                >
+                  Shashank
+                </a>
+                .
+              </p>
+              <div className="flex items-center justify-center md:justify-end space-x-6">
                 <button
                   type="button"
                   onClick={() => setActivePolicy('privacy')}
