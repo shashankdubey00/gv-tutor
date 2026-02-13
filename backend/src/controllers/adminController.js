@@ -128,7 +128,7 @@ export const getAllParentApplications = async (req, res) => {
 export const getAllTutorApplications = async (req, res) => {
   try {
     const profiles = await TutorProfile.find()
-      .populate("userId", "email role isTutorProfileComplete")
+      .populate("userId", "email role isTutorProfileComplete createdAt updatedAt")
       .sort({ createdAt: -1 });
 
     // Get applied posts for each tutor

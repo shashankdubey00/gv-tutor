@@ -497,17 +497,30 @@ export default function AdminDashboard() {
     return <LoadingSpinner />;
   }
 
+  const getMostRecentTimestamp = (item) => {
+    const candidate =
+      item?.createdAt ||
+      item?.updatedAt ||
+      item?.userId?.createdAt ||
+      item?.userId?.updatedAt ||
+      0;
+
+    const timestamp = new Date(candidate).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+  };
+
+  const sortMostRecentFirst = (items = []) =>
+    [...items].sort(
+      (a, b) => getMostRecentTimestamp(b) - getMostRecentTimestamp(a)
+    );
+
   // Filter out rejected applications and sort by most recent first
-  const pendingParentApps = parentApplications
-    .filter((req) => req.status !== "rejected")
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const pendingParentApps = sortMostRecentFirst(
+    parentApplications.filter((req) => req.status !== "rejected")
+  );
   const recentParentApps = pendingParentApps.slice(0, 5);
-  const recentTutorApps = tutorApplications
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
-  const recentTutorMembers = tutorMembers
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
+  const recentTutorApps = sortMostRecentFirst(tutorApplications).slice(0, 5);
+  const recentTutorMembers = sortMostRecentFirst(tutorMembers).slice(0, 5);
 
   return (
     <div className="min-h-screen bg-black">
