@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { MapPin, Mail, Phone, CheckCircle } from 'lucide-react';
 import { handleApplyAsTutor } from '../utils/authHelper';
 import { submitContactForm } from '../services/contactService';
+import quietZonesImg from '../assets/quiet zones.jpeg';
+import collaborativeTablesImg from '../assets/photogood.jpeg';
+import individualPodsImg from '../assets/individual pods.jpeg';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -138,15 +141,15 @@ const Hero = () => {
       {/* SECTION 2: ABOUT MISSION */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <motion.div {...fadeIn} className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">Our Good Will Ready & Mission</h2>
+          <h2 className="text-4xl font-bold mb-4">Our Goodwill Ready & Mission</h2>
           <p className="text-gray-400 max-w-xl mx-auto">Providing quiet spaces for focused reading and connecting the brightest minds through personalized tutoring.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-12">
           {[
-            { title: "Quiet Zones", img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644" },
-            { title: "Collaborative Tables", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f" },
-            { title: "Individual Pods", img: "https://images.unsplash.com/photo-1497493292307-31c376b6e479" }
+            { title: "Quiet Zones", img: quietZonesImg },
+            { title: "Collaborative Tables", img: collaborativeTablesImg },
+            { title: "Individual Pods", img: individualPodsImg }
           ].map((item, i) => (
             <motion.div 
               key={i}
