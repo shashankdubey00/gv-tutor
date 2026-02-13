@@ -21,6 +21,7 @@ import About from "./pages/About";
 import Library from "./pages/Library";
 import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
+import LegacyJobRedirect from "./pages/LegacyJobRedirect";
 
 function AppContent() {
   const [searchParams] = useSearchParams();
@@ -141,6 +142,8 @@ function AppContent() {
                 <Route path="/about" element={<About />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/jobs/:jobId" element={<LegacyJobRedirect />} />
+                <Route path="/tutor/jobs/:jobId" element={<LegacyJobRedirect />} />
                 
                 {/* Auth pages */}
                 <Route path="/login" element={<Login />} />

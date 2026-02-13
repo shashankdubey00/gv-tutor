@@ -19,6 +19,7 @@ export default function ApplyAsTutor() {
   const [showModal, setShowModal] = useState(false);
   const [displayCount, setDisplayCount] = useState(10);
   const [hidingRequestId, setHidingRequestId] = useState(null);
+  const requestIdFromUrl = new URLSearchParams(location.search).get("requestId");
 
   // Check authentication and profile completion
   useEffect(() => {
@@ -253,6 +254,21 @@ export default function ApplyAsTutor() {
     .slice(0, displayCount);
 
   const hasMore = requests.length > displayCount;
+
+  useEffect(() => {
+    if (!requestIdFromUrl || checking || loading || requests.length === 0) {
+      return;
+    }
+
+    const matchedRequest = requests.find(
+      (request) => String(request._id) === String(requestIdFromUrl)
+    );
+
+    if (matchedRequest) {
+      setSelectedRequest(matchedRequest);
+      setShowModal(true);
+    }
+  }, [requestIdFromUrl, checking, loading, requests]);
 
   if (checking || isRedirectingState) {
     return <LoadingSpinner />;

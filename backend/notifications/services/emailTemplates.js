@@ -1,5 +1,7 @@
 class EmailTemplates {
     newJobEmail({ tutorName, jobTitle, subject, location, budget, jobId, jobDetails }) {
+        const appBaseUrl = (process.env.CLIENT_URL || process.env.APP_URL || "").replace(/\/$/, "");
+        const applyUrl = `${appBaseUrl}/apply-tutor?requestId=${encodeURIComponent(jobId)}`;
         const html = `
 <!DOCTYPE html>
 <html>
@@ -31,7 +33,7 @@ class EmailTemplates {
             </div>
             
             <center>
-                <a href="${process.env.APP_URL}/tutor/jobs/${jobId}" class="button">
+                <a href="${applyUrl}" class="button">
                     View Full Details & Apply
                 </a>
             </center>

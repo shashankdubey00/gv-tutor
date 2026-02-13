@@ -108,7 +108,8 @@ class UnifiedEmailService {
 
     // Job notification email
     async sendJobNotificationEmail({ to, jobTitle, jobDescription, jobLocation, jobSalary, jobId }) {
-        const jobUrl = `${process.env.CLIENT_URL}/jobs/${jobId}`;
+        const clientBaseUrl = (process.env.CLIENT_URL || process.env.APP_URL || "").replace(/\/$/, "");
+        const jobUrl = `${clientBaseUrl}/apply-tutor?requestId=${encodeURIComponent(jobId)}`;
         
         const html = `
         <!DOCTYPE html>
