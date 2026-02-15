@@ -6,7 +6,9 @@ import { handleApplyAsTutor } from '../utils/authHelper';
 import { submitContactForm } from '../services/contactService';
 import quietZonesImg from '../assets/quiet zones.jpeg';
 import collaborativeTablesImg from '../assets/photogood.jpeg';
-import individualPodsImg from '../assets/individual pods.jpeg';
+import individualPodsImg from '../assets/individual.jpeg';
+import premiumTuitionImg from '../assets/individual.jpeg';
+import premiumGroupImg from '../assets/WhatsApp Image 2026-02-12 at 4.41.12 PM.jpeg';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -14,7 +16,10 @@ const Hero = () => {
     { src: '/photogood.jpeg', position: 'center' },
     { src: '/photogood1.jpeg', position: 'center' },
     { src: '/photogood2.jpeg', position: 'center' },
-    { src: '/photogood3.jpeg', position: 'top' }
+    { src: '/photogood3.jpeg', position: 'top' },
+    { src: individualPodsImg, position: 'center' },
+    { src: premiumTuitionImg, position: 'center' },
+    { src: premiumGroupImg, position: 'center' }
   ];
   const [formData, setFormData] = useState({
     name: '',
@@ -54,6 +59,13 @@ const Hero = () => {
     }
   };
 
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6 }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % sliderImages.length);
@@ -61,13 +73,6 @@ const Hero = () => {
 
     return () => clearInterval(interval);
   }, [sliderImages.length]);
-
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
-  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
