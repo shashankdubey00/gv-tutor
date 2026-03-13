@@ -132,6 +132,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+app.head("/health", (req, res) => {
+  res.status(200).end();
+});
+
 // Email/Notification health check (Brevo + Redis/queue)
 app.get("/health/email", async (req, res) => {
   try {
