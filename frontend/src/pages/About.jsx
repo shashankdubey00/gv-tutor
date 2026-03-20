@@ -44,19 +44,19 @@ export default function About() {
   const activeService = serviceCards.find((card) => card.id === activeCard) || serviceCards[0];
 
   return (
-    <div className="min-h-screen bg-[#05070a] pt-28 px-4 pb-20 text-white">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#f9fbff_32%,#fef7ff_100%)] pt-28 px-4 pb-20 text-slate-900">
       <div className="max-w-7xl mx-auto space-y-10">
-        <section className="relative overflow-hidden rounded-[2rem] border border-cyan-500/25 bg-gradient-to-br from-slate-950 via-[#07111c] to-slate-950 px-6 py-12 sm:px-10 sm:py-14 shadow-[0_30px_80px_rgba(8,145,178,0.12)]">
-          <div className="absolute -top-20 right-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl" />
+        <section className="relative overflow-hidden rounded-[2rem] border border-cyan-200/70 bg-gradient-to-br from-white via-cyan-50/80 to-fuchsia-50/80 px-6 py-12 sm:px-10 sm:py-14 shadow-[0_30px_80px_rgba(14,165,233,0.10)]">
+          <div className="absolute -top-20 right-0 h-64 w-64 rounded-full bg-cyan-300/30 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-fuchsia-300/25 blur-3xl" />
           <div className="relative z-10 max-w-4xl">
-            <span className="inline-flex items-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+            <span className="inline-flex items-center rounded-full border border-cyan-300 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700">
               About GoodwillEdu
             </span>
-            <h1 className="mt-5 text-4xl sm:text-5xl font-bold tracking-tight">
+            <h1 className="mt-5 text-4xl sm:text-5xl font-bold tracking-tight text-slate-900">
               Two core education experiences, designed for different student needs.
             </h1>
-            <p className="mt-4 max-w-3xl text-white/75 text-lg leading-relaxed">
+            <p className="mt-4 max-w-3xl text-slate-600 text-lg leading-relaxed">
               We now present Goodwill Home Tutor and Goodwill Coaching as two clear offerings so visitors can immediately understand where they fit best.
             </p>
           </div>
@@ -73,18 +73,18 @@ export default function About() {
                   onClick={() => setActiveCard(card.id)}
                   className={`w-full text-left rounded-[1.6rem] border p-6 transition-all duration-300 ${
                     isActive
-                      ? "border-cyan-400/50 bg-gradient-to-br from-cyan-500/10 via-slate-900 to-slate-950 shadow-[0_20px_60px_rgba(34,211,238,0.16)]"
-                      : "border-white/10 bg-white/5 hover:border-cyan-400/30 hover:bg-white/[0.07]"
+                      ? "border-cyan-300 bg-gradient-to-br from-white via-cyan-50 to-fuchsia-50 shadow-[0_20px_60px_rgba(34,211,238,0.14)]"
+                      : "border-slate-200/80 bg-white/80 hover:border-cyan-300 hover:bg-white shadow-[0_18px_40px_rgba(15,23,42,0.05)]"
                   }`}
                 >
-                  <span className="text-xs uppercase tracking-[0.22em] text-cyan-300/90">{card.tag}</span>
-                  <h2 className="mt-3 text-2xl font-semibold">{card.title}</h2>
-                  <p className="mt-2 text-white/70 leading-relaxed">{card.subtitle}</p>
+                  <span className="text-xs uppercase tracking-[0.22em] text-cyan-700">{card.tag}</span>
+                  <h2 className="mt-3 text-2xl font-semibold text-slate-900">{card.title}</h2>
+                  <p className="mt-2 text-slate-600 leading-relaxed">{card.subtitle}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
                     {card.highlights.map((highlight) => (
                       <span
                         key={highlight}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/75"
+                        className="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-xs text-slate-700"
                       >
                         {highlight}
                       </span>
@@ -95,9 +95,9 @@ export default function About() {
             })}
           </div>
 
-          <div className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-gradient-to-br from-slate-950 via-[#0a1320] to-slate-950 shadow-[0_24px_80px_rgba(2,6,23,0.34)]">
+          <div className="overflow-hidden rounded-[1.8rem] border border-cyan-200/70 bg-gradient-to-br from-white via-cyan-50/70 to-fuchsia-50/70 shadow-[0_24px_80px_rgba(14,165,233,0.10)]">
             <div className="grid lg:grid-cols-[1.05fr_1fr]">
-              <div className="min-h-[300px] border-b border-white/10 lg:border-b-0 lg:border-r overflow-hidden">
+              <div className="min-h-[300px] border-b border-cyan-100 lg:border-b-0 lg:border-r overflow-hidden">
                 <img
                   src={activeService.image}
                   alt={activeService.title}
@@ -105,13 +105,13 @@ export default function About() {
                 />
               </div>
               <div className="p-6 sm:p-8">
-                <span className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                <span className="inline-flex rounded-full border border-cyan-300 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">
                   {activeService.tag}
                 </span>
-                <h3 className="mt-4 text-3xl font-bold">{activeService.title}</h3>
-                <p className="mt-3 text-white/75 text-lg leading-relaxed">{activeService.subtitle}</p>
+                <h3 className="mt-4 text-3xl font-bold text-slate-900">{activeService.title}</h3>
+                <p className="mt-3 text-slate-600 text-lg leading-relaxed">{activeService.subtitle}</p>
 
-                <div className="mt-6 space-y-4 text-white/75">
+                <div className="mt-6 space-y-4 text-slate-600">
                   {activeService.details.map((paragraph) => (
                     <p key={paragraph} className="leading-relaxed">
                       {paragraph}
@@ -123,7 +123,7 @@ export default function About() {
                   {activeService.points.map((point) => (
                     <div
                       key={point}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white/80"
+                      className="rounded-2xl border border-cyan-100 bg-white/85 px-4 py-3 text-slate-700 shadow-sm"
                     >
                       {point}
                     </div>
