@@ -18,7 +18,9 @@ import TutorProfile from "./pages/TutorProfile";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import About from "./pages/About";
+import AboutDetail from "./pages/AboutDetail";
 import Library from "./pages/Library";
+import LibraryDetail from "./pages/LibraryDetail";
 import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
 import LegacyJobRedirect from "./pages/LegacyJobRedirect";
@@ -140,7 +142,9 @@ function AppContent() {
                 {/* Public pages - no authentication required */}
                 <Route path="/" element={<Hero />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/about/:slug" element={<AboutDetail />} />
                 <Route path="/library" element={<Library />} />
+                <Route path="/library/:slug" element={<LibraryDetail />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/jobs/:jobId" element={<LegacyJobRedirect />} />
                 <Route path="/tutor/jobs/:jobId" element={<LegacyJobRedirect />} />
