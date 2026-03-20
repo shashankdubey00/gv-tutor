@@ -4,10 +4,8 @@ import photoGoodOne from "../assets/photogood1.jpeg";
 import photoGoodTwo from "../assets/photogood2.jpeg";
 import photoGoodThree from "../assets/photogood3.jpeg";
 import premiumGroupImg from "../assets/WhatsApp Image 2026-02-12 at 4.41.12 PM.jpeg";
-import branchPhotoOne from "../assets/WhatsApp Image 2026-02-12 at 4.40.16 PM.jpeg";
-import branchPhotoTwo from "../assets/WhatsApp Image 2026-02-12 at 4.40.32 PM.jpeg";
-import branchPhotoThree from "../assets/WhatsApp Image 2026-02-16 at 2.08.42 PM.jpeg";
-import individualPodsNewImg from "../assets/individual-pods-new.jpeg";
+import individualPodsImg from "../assets/individual pods.jpeg";
+import individualImg from "../assets/individual.jpeg";
 
 export const aboutShowcases = [
   {
@@ -170,7 +168,7 @@ export const libraryShowcases = [
           "A dedicated branch detail page makes GV Library feel like a growing network rather than a single static listing, which is a much stronger product signal."
       }
     ],
-    gallery: [quietZonesImg, branchPhotoOne, branchPhotoTwo],
+    gallery: [quietZonesImg, photoGoodOne, individualPodsImg],
     videoTitle: "Branch walkthrough",
     videoDescription:
       "Add a branch walkthrough video here to show seating layout, lighting, discipline, and the overall study atmosphere at JK Road.",
@@ -197,7 +195,7 @@ export const libraryShowcases = [
     title: "A second GV Library branch page ready for location-specific growth and media content.",
     subtitle:
       "This page gives your second branch a real digital identity, with space for its own visuals, messaging, and future video or branch-specific updates.",
-    image: individualPodsNewImg,
+    image: individualImg,
     accent: "from-amber-400 via-orange-500 to-fuchsia-500",
     summary:
       "Use this as the dedicated destination for your second location, so both library branches feel distinct while still belonging to one GV system.",
@@ -229,7 +227,7 @@ export const libraryShowcases = [
           "The system keeps the overall GV Library look aligned while still letting each branch present different strengths, atmosphere, or audience fit."
       }
     ],
-    gallery: [individualPodsNewImg, branchPhotoThree, collaborativeTablesImg],
+    gallery: [individualImg, photoGoodThree, collaborativeTablesImg],
     videoTitle: "Second branch intro video",
     videoDescription:
       "Use this section for a new-branch announcement, seating tour, or branch-specific promotion video once you are ready.",
