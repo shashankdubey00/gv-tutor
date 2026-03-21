@@ -33,17 +33,17 @@ export default function About() {
       </div>
 
       <div className="mx-auto max-w-7xl space-y-10 px-4 pb-20">
-        <section className="relative overflow-hidden rounded-[2rem] border border-rose-200/80 bg-gradient-to-br from-white via-sky-50/80 to-rose-50 px-6 py-12 shadow-[0_30px_80px_rgba(244,114,182,0.12)] sm:px-10 sm:py-14">
+        <section className="relative overflow-hidden rounded-[2rem] border border-amber-200/90 bg-gradient-to-br from-[#fff6fb] via-[#fff5c9] to-[#ffe9bf] px-6 py-12 shadow-[0_30px_80px_rgba(251,191,36,0.20)] sm:px-10 sm:py-14">
           <div className="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.6),transparent_70%)]" />
           <div className="relative z-10 max-w-4xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
+            <span className="inline-flex items-center gap-2 rounded-full border border-rose-300/70 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
               <Sparkles size={14} />
               About GoodwillEdu
             </span>
             <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
               Choose the right Goodwill experience through two modern, focused education journeys.
             </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-600">
+            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-700">
               Instead of a simple section, About now works like a product entry page. Each card opens into its own detail page with richer media, stronger storytelling, and room for future videos.
             </p>
           </div>
@@ -61,9 +61,9 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="rounded-[1.4rem] border border-rose-100/80 bg-white/85 px-5 py-5 shadow-[0_18px_40px_rgba(244,114,182,0.08)] backdrop-blur-sm"
+              className="rounded-[1.4rem] border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-lime-50 to-teal-50 px-5 py-5 shadow-[0_18px_40px_rgba(16,185,129,0.16)] backdrop-blur-sm"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-500">{item.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">{item.label}</p>
               <p className="mt-3 text-lg font-semibold text-slate-900">{item.value}</p>
             </motion.div>
           ))}
@@ -82,7 +82,7 @@ export default function About() {
             >
               <Link
                 to={`/about/${item.slug}`}
-                className="block overflow-hidden rounded-[2rem] border border-rose-100/80 bg-white/90 shadow-[0_24px_70px_rgba(244,114,182,0.10)] backdrop-blur-sm"
+                className="block overflow-hidden rounded-[2rem] border border-amber-200/70 bg-gradient-to-br from-[#fff7fb] via-[#fff8d9] to-[#ffedd5] shadow-[0_24px_70px_rgba(251,191,36,0.16)] backdrop-blur-sm"
               >
                 <div className="relative h-72 overflow-hidden">
                   <img
@@ -107,7 +107,7 @@ export default function About() {
                 </div>
 
                 <div className="grid gap-6 p-6 sm:p-7">
-                  <p className="text-base leading-relaxed text-slate-600">{item.summary}</p>
+                  <p className="text-base leading-relaxed text-slate-700">{item.summary}</p>
 
                   <div className="flex flex-wrap gap-2">
                     {item.previewPoints.map((point) => (
@@ -150,20 +150,21 @@ export default function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
-          className="relative overflow-hidden rounded-[2.25rem] border border-rose-200/80 bg-gradient-to-r from-[#fff7ef] via-[#fff9fd] to-[#eefbff] p-6 shadow-[0_30px_90px_rgba(244,114,182,0.14)] sm:p-10"
+          className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden border-y border-amber-200/85 bg-gradient-to-r from-[#fff6fb] via-[#fff3bf] to-[#ffe7c7] px-6 py-16 shadow-[0_30px_90px_rgba(251,191,36,0.20)] sm:px-10"
         >
           <div className="absolute -left-10 top-10 h-36 w-36 rounded-full bg-rose-200/30 blur-3xl" />
           <div className="absolute -right-12 bottom-0 h-44 w-44 rounded-full bg-sky-200/35 blur-3xl" />
 
-          <div className="relative grid items-center gap-8 lg:grid-cols-[320px,1fr]">
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <div className="relative mx-auto flex min-h-[100vh] w-full items-center justify-center">
+            <div className="grid w-full max-w-3xl items-center gap-8">
+            <div className="flex flex-col items-center text-center">
               <div className="relative">
                 <div className="absolute inset-0 scale-110 rounded-full bg-gradient-to-br from-rose-300 via-pink-200 to-sky-200 blur-2xl opacity-60" />
                 <div className="relative h-56 w-56 overflow-hidden rounded-full border-[8px] border-white/90 shadow-[0_20px_60px_rgba(244,114,182,0.22)]">
                   <img
                     src={founderImage}
                     alt="Amit Sahu, Founder of Goodwill Education"
-                    className="h-full w-full scale-[0.9] object-cover object-[center_22%]"
+                    className="h-full w-full object-cover object-[center_28%]"
                   />
                 </div>
               </div>
@@ -194,6 +195,7 @@ export default function About() {
                   </span>
                 ))}
               </div>
+            </div>
             </div>
           </div>
         </motion.section>
