@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
-import founderImage from "../assets/founder.jpeg";
+import founderImage from "../assets/founder1.jpeg";
 import { aboutShowcases } from "../data/showcaseContent";
 
 export default function About() {
