@@ -84,7 +84,7 @@ export default function About() {
                 to={`/about/${item.slug}`}
                 className="block overflow-hidden rounded-[2rem] border border-amber-200/70 bg-gradient-to-br from-[#fff7fb] via-[#fff8d9] to-[#ffedd5] shadow-[0_34px_88px_rgba(251,191,36,0.24),0_12px_30px_rgba(244,114,182,0.14)] backdrop-blur-sm"
               >
-                <div className="relative h-72 overflow-hidden">
+                <div className="relative h-[22.5rem] overflow-hidden sm:h-72">
                   <img
                     src={item.image}
                     alt={item.eyebrow}
@@ -92,17 +92,17 @@ export default function About() {
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${item.accent} opacity-75 mix-blend-multiply`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/10 to-transparent" />
-                  <div className="absolute left-6 right-6 top-6 flex items-center justify-between">
-                    <span className="rounded-full border border-white/30 bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
+                  <div className="absolute left-4 right-4 top-4 flex items-center justify-between sm:left-6 sm:right-6 sm:top-6">
+                    <span className="max-w-[78%] truncate rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:px-3 sm:text-xs sm:tracking-[0.22em]">
                       {item.tag}
                     </span>
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1">
-                      <Play size={18} />
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1 sm:h-11 sm:w-11">
+                      <Play size={16} />
                     </span>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <p className="text-sm font-semibold uppercase tracking-[0.26em] text-cyan-100">{item.eyebrow}</p>
-                    <h2 className="mt-3 max-w-xl text-3xl font-bold leading-tight">{item.title}</h2>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-6">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100 sm:text-sm sm:tracking-[0.26em]">{item.eyebrow}</p>
+                    <h2 className="mt-2 max-w-xl text-[2.05rem] font-bold leading-[1.08] sm:mt-3 sm:text-3xl sm:leading-tight">{item.title}</h2>
                   </div>
                 </div>
 
