@@ -6,7 +6,7 @@ import { libraryShowcases } from "../data/showcaseContent";
 
 export default function Library() {
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fefcf7_0%,#f7fbff_36%,#fff8fb_100%)] pt-28 text-slate-900">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#fffef8_0%,#f7fdff_28%,#fff4f8_64%,#fff9f1_100%)] pt-28 text-slate-900">
       <div className="pointer-events-none absolute inset-x-0 top-24 overflow-hidden">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
@@ -26,26 +26,26 @@ export default function Library() {
       </div>
 
       <div className="mx-auto max-w-7xl space-y-10 px-4 pb-20">
-        <section className="relative overflow-hidden rounded-[2rem] border border-cyan-200/80 bg-gradient-to-br from-white via-cyan-50/80 to-amber-50/70 px-6 py-12 shadow-[0_30px_80px_rgba(59,130,246,0.10)] sm:px-10 sm:py-14">
+        <section className="relative overflow-hidden rounded-[2rem] border border-rose-200/80 bg-gradient-to-br from-white via-sky-50/80 to-rose-50 px-6 py-12 shadow-[0_30px_80px_rgba(244,114,182,0.12)] sm:px-10 sm:py-14">
           <div className="relative z-10 max-w-4xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700">
+            <span className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-rose-600">
               <Building2 size={14} />
               GV Library Network
             </span>
             <h1 className="mt-5 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Present each GV Library branch like a modern destination, not a simple list.
+              Find the right GV Library space for exam prep, daily self-study, and focused co-working space.
             </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-600">
-              Each library card now works like a real branch entry point. Visitors can click through to a richer branch page with content, images, and video-ready sections.
+            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-rose-700">
+              GV branches are built for students and professionals who need discipline, comfort, and consistency. Compare each location by environment, purpose, and facilities, then choose the space that fits your routine and goals.
             </p>
           </div>
         </section>
 
         <section className="grid gap-4 sm:grid-cols-3">
           {[
-            { label: "Branches", value: "2 standalone library pages" },
-            { label: "Experience", value: "More premium branch storytelling" },
-            { label: "Ready for", value: "Photos, videos, and branch updates" }
+            { label: "Activity 24/7", value: "Open 24/7 for focused study and productive work sessions." },
+            { label: "Experience", value: "Silent study zones with structured productivity" },
+            { label: "Ready for", value: "Board prep, competitive exams, and remote work" }
           ].map((item, index) => (
             <motion.div
               key={item.label}
@@ -53,15 +53,15 @@ export default function Library() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="rounded-[1.4rem] border border-white/80 bg-white/80 px-5 py-5 shadow-[0_18px_40px_rgba(15,23,42,0.05)] backdrop-blur-sm"
+              className="rounded-[1.4rem] border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-lime-50 to-teal-50 px-5 py-5 shadow-[0_24px_55px_rgba(16,185,129,0.24),0_10px_24px_rgba(15,23,42,0.09)] backdrop-blur-sm"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">{item.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">{item.label}</p>
               <p className="mt-3 text-lg font-semibold text-slate-900">{item.value}</p>
             </motion.div>
           ))}
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-2">
+        <section className="grid gap-6 lg:grid-cols-3">
           {libraryShowcases.map((item, index) => (
             <motion.div
               key={item.slug}
@@ -70,11 +70,11 @@ export default function Library() {
               viewport={{ once: true }}
               transition={{ duration: 0.55, delay: index * 0.1 }}
               whileHover={{ y: -6 }}
-              className="group"
+              className="group h-full"
             >
               <Link
                 to={`/library/${item.slug}`}
-                className="block overflow-hidden rounded-[2rem] border border-cyan-200/80 bg-white/85 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur-sm"
+                className="flex h-full flex-col overflow-hidden rounded-[2rem] border border-rose-100/80 bg-white/90 shadow-[0_34px_88px_rgba(251,191,36,0.24),0_12px_30px_rgba(244,114,182,0.14)] backdrop-blur-sm"
               >
                 <div className="relative h-72 overflow-hidden">
                   <img
@@ -89,26 +89,25 @@ export default function Library() {
                       {item.tag}
                     </span>
                     <span className="rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                      Branch Page
+                      Click here for more info
                     </span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.26em] text-cyan-100">
+                    <p className="flex items-center gap-2 text-sm font-semibold tracking-wide text-rose-100">
                       <MapPin size={14} />
-                      {item.eyebrow}
+                      {item.address || item.eyebrow}
                     </p>
-                    <h2 className="mt-3 max-w-xl text-3xl font-bold leading-tight">{item.title}</h2>
                   </div>
                 </div>
 
-                <div className="grid gap-6 p-6 sm:p-7">
+                <div className="flex flex-1 flex-col gap-6 p-6 sm:p-7">
                   <p className="text-base leading-relaxed text-slate-600">{item.summary}</p>
 
                   <div className="flex flex-wrap gap-2">
                     {item.previewPoints.map((point) => (
                       <span
                         key={point}
-                        className="rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-xs font-medium text-slate-700"
+                        className="rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700"
                       >
                         {point}
                       </span>
@@ -119,18 +118,18 @@ export default function Library() {
                     {item.metrics.map((metric) => (
                       <div
                         key={metric.label}
-                        className="rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-4"
+                        className="min-w-0 rounded-2xl border border-rose-100/80 bg-gradient-to-br from-white to-rose-50/70 px-3 py-3"
                       >
-                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">{metric.label}</p>
-                        <p className="mt-2 text-base font-semibold text-slate-900">{metric.value}</p>
+                        <p className="break-words text-[10px] font-semibold uppercase tracking-[0.12em] text-rose-400 sm:text-xs sm:tracking-[0.22em]">{metric.label}</p>
+                        <p className="mt-1.5 break-words text-sm font-semibold leading-snug text-slate-900">{metric.value}</p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-slate-100 pt-2">
-                    <span className="text-sm font-medium text-slate-500">Open the branch experience</span>
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
-                      Explore branch
+                  <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-2">
+                    <span className="text-sm font-medium text-slate-500">Open the full details</span>
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-rose-600">
+                      Explore details
                       <ArrowRight size={16} />
                     </span>
                   </div>

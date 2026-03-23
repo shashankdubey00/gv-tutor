@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
 import founderImage from "../assets/founder2.png";
 import { aboutShowcases } from "../data/showcaseContent";
+import collaborativeTablesImg from "../assets/photogood.jpeg";
 
 export default function About() {
   const founderHighlights = [
@@ -11,6 +12,31 @@ export default function About() {
     "Student-first academic support",
     "Focused on quality education"
   ];
+  const aboutCards = [
+    ...aboutShowcases,
+    {
+      slug: "library-coworking",
+      eyebrow: "GV Library + Co-Working",
+      tag: "Study + Work Destination",
+      title: "A focused space for library study and productive co-working sessions.",
+      image: collaborativeTablesImg,
+      accent: "from-emerald-400 via-cyan-500 to-blue-500",
+      summary:
+        "Explore GV Library and Co-Working together for exam prep, self-study, remote work, and focused daily productivity.",
+      previewPoints: ["24/7 activity", "Silent study zones", "Work-ready setup"],
+      metrics: [
+        { label: "Includes", value: "Library + co-working" },
+        { label: "Best for", value: "Study + work" },
+        { label: "Access", value: "Open library" }
+      ],
+      href: "/library",
+      ctaText: "Explore library"
+    }
+  ];
+  const getThumbnailName = (slug, fallback) => {
+    if (slug === "library-coworking") return "GV Library & Co-Working";
+    return fallback;
+  };
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fffef8_0%,#f7fdff_28%,#fff4f8_64%,#fff9f1_100%)] pt-28 text-slate-900">
@@ -69,8 +95,8 @@ export default function About() {
           ))}
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-2">
-          {aboutShowcases.map((item, index) => (
+        <section className="grid gap-6 lg:grid-cols-3">
+          {aboutCards.map((item, index) => (
             <motion.div
               key={item.slug}
               initial={{ opacity: 0, y: 24 }}
@@ -81,7 +107,7 @@ export default function About() {
               className="group"
             >
               <Link
-                to={`/about/${item.slug}`}
+                to={item.href || `/about/${item.slug}`}
                 className="block overflow-hidden rounded-[2rem] border border-amber-200/70 bg-gradient-to-br from-[#fff7fb] via-[#fff8d9] to-[#ffedd5] shadow-[0_34px_88px_rgba(251,191,36,0.24),0_12px_30px_rgba(244,114,182,0.14)] backdrop-blur-sm"
               >
                 <div className="relative h-[22.5rem] overflow-hidden sm:h-72">
@@ -92,17 +118,19 @@ export default function About() {
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${item.accent} opacity-75 mix-blend-multiply`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/10 to-transparent" />
-                  <div className="absolute left-4 right-4 top-4 flex items-center justify-between sm:left-6 sm:right-6 sm:top-6">
-                    <span className="max-w-[78%] truncate rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-sm sm:px-3 sm:text-xs sm:tracking-[0.22em]">
-                      {item.tag}
-                    </span>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1 sm:h-11 sm:w-11">
-                      <Play size={16} />
+                  <div className="absolute left-4 right-4 top-4 flex justify-end sm:left-6 sm:right-6 sm:top-6">
+                    <span className="rounded-full border border-white/25 bg-white/15 px-3 py-1 text-[10px] font-medium text-white backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1 sm:text-xs">
+                      Click here for more info
                     </span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100 sm:text-sm sm:tracking-[0.26em]">{item.eyebrow}</p>
-                    <h2 className="mt-2 max-w-xl text-[2.05rem] font-bold leading-[1.08] sm:mt-3 sm:text-3xl sm:leading-tight">{item.title}</h2>
+                    <p className={`inline-flex rounded-2xl border border-white/30 bg-white/12 px-3 py-1.5 font-bold leading-tight text-white backdrop-blur-sm sm:text-[1.9rem] ${
+                      item.slug === "library-coworking"
+                        ? "text-[0.92rem] whitespace-nowrap sm:text-[1.25rem]"
+                        : "text-[0.9rem] sm:text-[1.15rem]"
+                    }`}>
+                      {getThumbnailName(item.slug, item.eyebrow)}
+                    </p>
                   </div>
                 </div>
 
@@ -135,7 +163,7 @@ export default function About() {
                   <div className="flex items-center justify-between border-t border-slate-100 pt-2">
                     <span className="text-sm font-medium text-slate-500">Open the full content page</span>
                     <span className="inline-flex items-center gap-2 text-sm font-semibold text-rose-600">
-                      Explore details
+                      {item.ctaText || "Explore details"}
                       <ArrowRight size={16} />
                     </span>
                   </div>

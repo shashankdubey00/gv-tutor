@@ -13,6 +13,11 @@ import individualImg from "../assets/individual.jpeg";
 import individualPodsNewImg from "../assets/individual-pods-new.jpeg";
 import individualTwoImg from "../assets/individual2.jpeg";
 import homeTutorVideo from "../assets/libraryfirstvideo1.mp4";
+import librarySecondSixImg from "../assets/librarysecond6.jpeg";
+import librarySecondOneImg from "../assets/librarysecond1.jpeg";
+import librarySecondFiveImg from "../assets/librarysecond5.jpeg";
+import librarySecondVideoOne from "../assets/librarysecondvideo1.mp4";
+import librarySecondVideoThree from "../assets/librarysecondvideo3.mp4";
 
 export const aboutShowcases = [
   {
@@ -31,7 +36,7 @@ export const aboutShowcases = [
     metrics: [
       { label: "Ideal for", value: "1:1 guidance" },
       { label: "Focus", value: "Concept clarity" },
-      { label: "Format", value: "Personalized plans" }
+      { label: "Format", value: "Individual plans" }
     ],
     heroPoints: [
       "Personal tutor matching based on class, subject, and area",
@@ -142,19 +147,20 @@ export const libraryShowcases = [
   {
     slug: "jk-road",
     eyebrow: "GV Library JK Road",
-    tag: "Active Branch",
-    title: "A calm, premium study branch for students who need long, focused self-study hours.",
+    address: "Sagar green state near sagar college, Aayodhya bypass, Bhopal",
+    tag: "Study Zone",
+    title: "A calm, premium study branch designed for long, distraction-free study sessions.",
     subtitle:
-      "This branch page can present the full library experience with images, seating mood, and branch-specific details in a polished, modern format.",
+      "JK Road branch supports students who need a disciplined environment for self-study, revisions, and exam-focused consistency.",
     image: quietZonesImg,
     accent: "from-cyan-400 via-sky-500 to-emerald-500",
     summary:
       "Built for disciplined learners who want a quiet, routine-friendly, distraction-free environment for reading, revision, and exam preparation.",
     previewPoints: ["Silent seating", "Focused environment", "Long study sessions"],
     metrics: [
-      { label: "Location", value: "JK Road" },
-      { label: "Best for", value: "Deep study" },
-      { label: "Atmosphere", value: "Quiet + steady" }
+      { label: "Timing", value: "Open 24/7" },
+      { label: "Best for", value: "Board + competitive prep" },
+      { label: "Habitat", value: "Silent study zone" }
     ],
     heroPoints: [
       "Suitable for students preparing for exams or long reading sessions",
@@ -165,17 +171,17 @@ export const libraryShowcases = [
       {
         heading: "Why this branch stands out",
         content:
-          "JK Road can be positioned as the branch for high-focus preparation. The page now gives you space to show environment quality, seating comfort, and the routine-based value students care about."
+          "JK Road is focused on silent productivity. Students choose this branch when they need uninterrupted study hours, dependable seating, and a serious preparation atmosphere."
       },
       {
         heading: "What visitors should feel",
         content:
-          "The design aims to make the branch feel premium and trustworthy, not just functional. That helps students imagine spending full study blocks here."
+          "The branch is built to feel clean, secure, and study-first. From entry to seating, the goal is to keep learners comfortable and mentally locked in."
       },
       {
         heading: "How this supports your brand",
         content:
-          "A dedicated branch detail page makes GV Library feel like a growing network rather than a single static listing, which is a much stronger product signal."
+          "A strong JK Road page shows GV Library as a quality-led study network, helping students and parents trust the experience before they even visit."
       }
     ],
     gallery: [quietZonesImg, photoGoodOne, individualPodsImg],
@@ -183,6 +189,7 @@ export const libraryShowcases = [
     videoDescription:
       "Add a branch walkthrough video here to show seating layout, lighting, discipline, and the overall study atmosphere at JK Road.",
     videoUrl: "",
+    videoFile: librarySecondVideoThree,
     featureCards: [
       {
         title: "Quiet Zones",
@@ -201,19 +208,20 @@ export const libraryShowcases = [
   {
     slug: "gv-library-second-branch",
     eyebrow: "GV Library Second Branch",
-    tag: "Branch Two",
-    title: "A second GV Library branch page ready for location-specific growth and media content.",
+    address: "Chhatrapati nagar, Narela jod, Bhopal",
+    tag: "Study Zone",
+    title: "A dedicated second branch with its own environment, identity, and student routine.",
     subtitle:
-      "This page gives your second branch a real digital identity, with space for its own visuals, messaging, and future video or branch-specific updates.",
-    image: individualImg,
+      "The second branch is designed for students who need the same GV discipline in a location that is closer and more convenient for their daily schedule.",
+    image: librarySecondSixImg,
     accent: "from-amber-400 via-orange-500 to-fuchsia-500",
     summary:
       "Use this as the dedicated destination for your second location, so both library branches feel distinct while still belonging to one GV system.",
     previewPoints: ["Separate identity", "Future-ready content", "Branch-specific story"],
     metrics: [
-      { label: "Location", value: "Second branch" },
-      { label: "Best for", value: "Local audience" },
-      { label: "Purpose", value: "Branch expansion" }
+      { label: "Timing", value: "Open 24/7" },
+      { label: "Best for", value: "Self-study + revisions" },
+      { label: "Habitat", value: "Calm and disciplined" }
     ],
     heroPoints: [
       "A separate branch page improves clarity when you have multiple study locations",
@@ -224,24 +232,25 @@ export const libraryShowcases = [
       {
         heading: "Why this should be a separate page",
         content:
-          "When branches share one simple section, they feel interchangeable. A dedicated page gives the second location its own brand presence and a stronger chance to convert local visitors."
+          "Students usually choose nearby study spaces. A dedicated branch page helps local students quickly understand timing, atmosphere, and branch fit without confusion."
       },
       {
         heading: "How this page will evolve",
         content:
-          "You can plug in real branch address details, seating visuals, opening information, and a walkthrough video later without redesigning anything."
+          "This branch page can include real seating visuals, study rules, daily occupancy patterns, and practical details that help students join faster."
       },
       {
         heading: "What stays consistent",
         content:
-          "The system keeps the overall GV Library look aligned while still letting each branch present different strengths, atmosphere, or audience fit."
+          "Even with branch-level differences, both GV locations maintain the same core values: discipline, comfort, and focused study continuity."
       }
     ],
-    gallery: [individualImg, photoGoodThree, collaborativeTablesImg],
+    gallery: [librarySecondOneImg, librarySecondFiveImg, librarySecondSixImg],
     videoTitle: "Second branch intro video",
     videoDescription:
       "Use this section for a new-branch announcement, seating tour, or branch-specific promotion video once you are ready.",
     videoUrl: "",
+    videoFile: librarySecondVideoOne,
     featureCards: [
       {
         title: "Branch Identity",
@@ -254,6 +263,66 @@ export const libraryShowcases = [
       {
         title: "Location Marketing",
         description: "Useful for local promotion when students search for a nearby study-friendly option."
+      }
+    ]
+  },
+  {
+    slug: "co-working-space",
+    eyebrow: "GV Co-Working Space",
+    address: "Sagar green state near sagar college, Aayodhya bypass, Bhopal",
+    tag: "Work Zone",
+    title: "A focused co-working setup for creators, freelancers, and serious learners.",
+    subtitle:
+      "This space blends calm productivity with professional comfort, ideal for remote work, project sessions, and long deep-focus blocks.",
+    image: collaborativeTablesImg,
+    accent: "from-emerald-400 via-cyan-500 to-blue-500",
+    summary:
+      "Built for people who need reliable Wi-Fi, productive seating, and a disciplined environment for work, meetings, and focused execution.",
+    previewPoints: ["Deep-focus desks", "Work-friendly setup", "Professional atmosphere"],
+    metrics: [
+      { label: "Timing", value: "Open 24/7" },
+      { label: "Best for", value: "Remote workers + students" },
+      { label: "Habitat", value: "Professional work zone" }
+    ],
+    heroPoints: [
+      "Suitable for freelancers, remote workers, and students with project deadlines",
+      "Supports independent work, planning sessions, and long concentration blocks",
+      "A practical environment for people who need consistent daily output"
+    ],
+    sections: [
+      {
+        heading: "Who should use this space",
+        content:
+          "This co-working setup is ideal for freelancers, online professionals, startup teams, and students preparing project deliverables in a stable environment."
+      },
+      {
+        heading: "How it improves productivity",
+        content:
+          "A distraction-light workspace, comfortable seating, and routine-friendly hours help users maintain focus and complete meaningful work every day."
+      },
+      {
+        heading: "Why it complements the GV ecosystem",
+        content:
+          "Alongside library services, the co-working space expands GV into a broader productivity destination for both academic and professional audiences."
+      }
+    ],
+    gallery: [collaborativeTablesImg, photoGoodTwo, photoGoodThree],
+    videoTitle: "Co-working space walkthrough",
+    videoDescription:
+      "A short walkthrough can highlight seating layout, work zones, and the overall environment for focused professional sessions.",
+    videoUrl: "",
+    featureCards: [
+      {
+        title: "Professional Setup",
+        description: "Designed for daily output with practical seating and work-friendly discipline."
+      },
+      {
+        title: "Focus-First Environment",
+        description: "Ideal for users who need consistency, low distraction, and deep concentration."
+      },
+      {
+        title: "Flexible Use Case",
+        description: "Works for remote work, assignments, planning sessions, and long execution blocks."
       }
     ]
   }

@@ -13,22 +13,22 @@ export default function LibraryDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fefcf7_0%,#f7fbff_38%,#fff8fb_100%)] pt-28 text-slate-900">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#fffef8_0%,#f7fdff_28%,#fff4f8_64%,#fff9f1_100%)] pt-28 text-slate-900">
       <div className="pointer-events-none absolute inset-x-0 top-24 overflow-hidden">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-[7%] top-10 h-44 w-44 rounded-full bg-cyan-200/35 blur-3xl"
+          className="absolute left-[7%] top-10 h-44 w-44 rounded-full bg-sky-200/45 blur-3xl"
         />
         <motion.div
           animate={{ x: [0, -22, 0], y: [0, 18, 0] }}
           transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-[8%] top-0 h-52 w-52 rounded-full bg-amber-200/35 blur-3xl"
+          className="absolute right-[8%] top-0 h-52 w-52 rounded-full bg-rose-200/40 blur-3xl"
         />
       </div>
 
       <div className="mx-auto max-w-7xl space-y-10 px-4 pb-20">
-        <section className="relative overflow-hidden rounded-[2.2rem] border border-cyan-200/80 bg-white/85 shadow-[0_30px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+        <section className="relative overflow-hidden rounded-[2.2rem] border border-amber-200/80 bg-gradient-to-br from-[#fff9ef] via-[#fff8d6] to-[#ffeef6] shadow-[0_36px_100px_rgba(251,191,36,0.20),0_14px_36px_rgba(244,114,182,0.12)] backdrop-blur-sm">
           <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="relative min-h-[360px] overflow-hidden">
               <img src={item.image} alt={item.eyebrow} className="h-full w-full object-cover" />
@@ -45,21 +45,21 @@ export default function LibraryDetail() {
               </div>
             </div>
 
-            <div className="p-6 sm:p-8 lg:p-10">
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">
+            <div className="bg-white/82 p-6 sm:p-8 lg:p-10">
+              <span className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-rose-700">
                 <MapPinned size={14} />
                 {item.eyebrow}
               </span>
               <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">{item.title}</h1>
-              <p className="mt-4 text-lg leading-relaxed text-slate-600">{item.subtitle}</p>
+              <p className="mt-4 text-lg leading-relaxed text-slate-700">{item.subtitle}</p>
 
               <div className="mt-8 grid gap-3">
                 {item.heroPoints.map((point) => (
                   <div
                     key={point}
-                    className="flex items-start gap-3 rounded-2xl border border-cyan-100 bg-cyan-50/60 px-4 py-4"
+                    className="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-gradient-to-r from-white to-amber-50/70 px-4 py-4 shadow-[0_10px_26px_rgba(251,191,36,0.12)]"
                   >
-                    <CheckCircle2 className="mt-0.5 text-cyan-700" size={18} />
+                    <CheckCircle2 className="mt-0.5 text-rose-600" size={18} />
                     <p className="text-slate-700">{point}</p>
                   </div>
                 ))}
@@ -69,11 +69,11 @@ export default function LibraryDetail() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[2rem] border border-cyan-200/80 bg-gradient-to-br from-white via-cyan-50/70 to-amber-50/60 p-6 shadow-[0_24px_80px_rgba(59,130,246,0.10)] sm:p-8">
+          <div className="rounded-[2rem] border border-rose-200/80 bg-gradient-to-br from-[#fffefb] via-[#ffeef8] to-[#fff5cf] p-6 shadow-[0_34px_100px_rgba(236,72,153,0.18),0_14px_35px_rgba(251,191,36,0.16)] sm:p-8">
             <h2 className="text-2xl font-bold">Branch Story Structure</h2>
             <div className="mt-6 space-y-6">
               {item.sections.map((section) => (
-                <div key={section.heading} className="rounded-[1.5rem] border border-white/70 bg-white/80 p-5 shadow-sm">
+                <div key={section.heading} className="rounded-[1.5rem] border border-rose-100/80 bg-white p-5 shadow-[0_14px_38px_rgba(236,72,153,0.10)]">
                   <h3 className="text-xl font-semibold text-slate-900">{section.heading}</h3>
                   <p className="mt-3 leading-relaxed text-slate-600">{section.content}</p>
                 </div>
@@ -82,11 +82,11 @@ export default function LibraryDetail() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-[2rem] border border-cyan-200/80 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+            <div className="rounded-[2rem] border border-emerald-200/80 bg-gradient-to-br from-white via-emerald-50/65 to-teal-50/65 p-6 shadow-[0_28px_85px_rgba(16,185,129,0.18)]">
               <h2 className="text-2xl font-bold">Branch Highlights</h2>
               <div className="mt-5 grid gap-4">
                 {item.featureCards.map((card) => (
-                  <div key={card.title} className="rounded-[1.4rem] border border-slate-200/80 bg-slate-50/80 p-5">
+                  <div key={card.title} className="rounded-[1.4rem] border border-emerald-100/80 bg-gradient-to-br from-white to-emerald-50/70 p-5 shadow-[0_10px_24px_rgba(16,185,129,0.11)]">
                     <h3 className="text-lg font-semibold text-slate-900">{card.title}</h3>
                     <p className="mt-2 leading-relaxed text-slate-600">{card.description}</p>
                   </div>
@@ -94,12 +94,12 @@ export default function LibraryDetail() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-cyan-200/80 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+            <div className="rounded-[2rem] border border-amber-200/80 bg-gradient-to-br from-white via-amber-50/70 to-orange-50/70 p-6 shadow-[0_30px_88px_rgba(251,191,36,0.19)]">
               <h2 className="text-2xl font-bold">Branch Metrics</h2>
               <div className="mt-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
                 {item.metrics.map((metric) => (
-                  <div key={metric.label} className="rounded-2xl border border-cyan-100 bg-cyan-50/70 px-4 py-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">{metric.label}</p>
+                  <div key={metric.label} className="rounded-2xl border border-amber-100 bg-gradient-to-r from-amber-50 to-rose-50 px-4 py-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-700">{metric.label}</p>
                     <p className="mt-2 text-lg font-semibold text-slate-900">{metric.value}</p>
                   </div>
                 ))}
@@ -108,7 +108,7 @@ export default function LibraryDetail() {
           </div>
         </section>
 
-        <section className="rounded-[2rem] border border-cyan-200/80 bg-white/85 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] sm:p-8">
+        <section className="rounded-[2rem] border border-cyan-200/80 bg-gradient-to-br from-white via-cyan-50/55 to-fuchsia-50/45 p-6 shadow-[0_30px_90px_rgba(14,165,233,0.13)] sm:p-8">
           <h2 className="text-2xl font-bold">Branch Gallery</h2>
           <p className="mt-2 text-slate-600">A richer visual layout for branch photos, atmosphere shots, and future updates.</p>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -116,7 +116,7 @@ export default function LibraryDetail() {
               <motion.div
                 key={`${item.slug}-${index}`}
                 whileHover={{ y: -4, scale: 1.01 }}
-                className="overflow-hidden rounded-[1.6rem] border border-cyan-100 bg-slate-50 shadow-sm"
+                className="overflow-hidden rounded-[1.6rem] border border-cyan-100 bg-slate-50 shadow-[0_14px_34px_rgba(14,165,233,0.13)]"
               >
                 <img src={image} alt={`${item.eyebrow} gallery ${index + 1}`} className="h-72 w-full object-cover" />
               </motion.div>
@@ -124,10 +124,10 @@ export default function LibraryDetail() {
           </div>
         </section>
 
-        <section className="rounded-[2rem] border border-cyan-200/80 bg-gradient-to-br from-white via-cyan-50/60 to-amber-50/60 p-6 shadow-[0_24px_70px_rgba(15,23,42,0.08)] sm:p-8">
+        <section className="rounded-[2rem] border border-violet-200/80 bg-gradient-to-br from-[#fffefc] via-[#f0fbff] to-[#fff0fb] p-6 shadow-[0_30px_92px_rgba(139,92,246,0.16),0_12px_30px_rgba(14,165,233,0.11)] sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700">
+              <span className="inline-flex items-center gap-2 rounded-full border border-violet-300 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-violet-700">
                 <PlayCircle size={14} />
                 Video Section
               </span>
@@ -145,15 +145,24 @@ export default function LibraryDetail() {
                   allowFullScreen
                 />
               </div>
+            ) : item.videoFile ? (
+              <div className="overflow-hidden rounded-[1.6rem] border border-white/80 bg-white shadow-sm">
+                <video
+                  src={item.videoFile}
+                  controls
+                  className="aspect-video w-full object-cover"
+                  playsInline
+                />
+              </div>
             ) : (
               <div className="flex aspect-video items-center justify-center rounded-[1.6rem] border border-dashed border-cyan-300 bg-white/70 p-8 text-center">
                 <div>
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cyan-100 text-cyan-700">
                     <PlayCircle size={28} />
                   </div>
-                  <h3 className="mt-4 text-xl font-semibold text-slate-900">Video placeholder ready</h3>
+                  <h3 className="mt-4 text-xl font-semibold text-slate-900">Branch video section</h3>
                   <p className="mt-2 max-w-md text-slate-600">
-                    Add a branch walkthrough, seating tour, student testimonial, or launch video here later without redesigning the page.
+                    This area is reserved for branch walkthroughs, seating tours, and student experience videos to help visitors understand the space before joining.
                   </p>
                 </div>
               </div>
