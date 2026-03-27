@@ -82,8 +82,6 @@ export default function Library() {
                     alt={item.eyebrow}
                     className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${item.accent} opacity-75 mix-blend-multiply`} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/10 to-transparent" />
                   <div className="absolute left-6 right-6 top-6 flex items-center justify-between">
                     <span className="rounded-full border border-white/30 bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-white backdrop-blur-sm">
                       {item.tag}

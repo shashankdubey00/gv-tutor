@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, MapPinned, PlayCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MapPinned, Phone, PlayCircle } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
 import { libraryShowcases } from "../data/showcaseContent";
@@ -30,10 +30,18 @@ export default function LibraryDetail() {
       <div className="mx-auto max-w-7xl space-y-10 px-4 pb-20">
         <section className="relative overflow-hidden rounded-[2.2rem] border border-amber-200/80 bg-gradient-to-br from-[#fff9ef] via-[#fff8d6] to-[#ffeef6] shadow-[0_36px_100px_rgba(251,191,36,0.20),0_14px_36px_rgba(244,114,182,0.12)] backdrop-blur-sm">
           <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="relative min-h-[360px] overflow-hidden">
-              <img src={item.image} alt={item.eyebrow} className="h-full w-full object-cover" />
-              <div className={`absolute inset-0 bg-gradient-to-tr ${item.accent} opacity-70 mix-blend-multiply`} />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/10 to-transparent" />
+            <div className="relative min-h-[400px] overflow-hidden">
+              <img
+                src={item.image}
+                alt={item.eyebrow}
+                className={`absolute inset-0 h-full w-full object-cover ${
+                  item.slug === "co-working-space"
+                    ? "object-[center_24%]"
+                    : item.slug === "gv-library2"
+                      ? "object-[center_8%]"
+                      : "object-center"
+                }`}
+              />
               <div className="absolute left-6 top-6">
                 <Link
                   to="/library"
@@ -68,7 +76,47 @@ export default function LibraryDetail() {
           </div>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="rounded-[2rem] border border-emerald-200/80 bg-gradient-to-r from-emerald-50 via-cyan-50 to-rose-50 p-6 shadow-[0_26px_80px_rgba(16,185,129,0.16)] sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">
+                <Phone size={14} />
+                Contact Library Team
+              </span>
+              <h2 className="mt-4 text-3xl font-bold text-slate-900">
+                Contact us for admission and seat guidance
+              </h2>
+              <p className="mt-3 max-w-2xl text-lg leading-relaxed text-slate-700">
+                Reach out for seat availability, fee details, branch timing, and the right location based on your routine. We will help you get started quickly at {item.address}.
+              </p>
+            </div>
+
+            <div className="grid w-full gap-3 sm:max-w-md">
+              <a
+                href="tel:+919691569239"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-3 font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:translate-y-[-1px]"
+              >
+                Call: +91 9691569239
+              </a>
+              <a
+                href="https://wa.me/919691569239"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-5 py-3 font-semibold text-white shadow-lg shadow-cyan-500/25 transition hover:translate-y-[-1px]"
+              >
+                WhatsApp Now
+              </a>
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-white/85 px-5 py-3 font-semibold text-emerald-700 transition hover:bg-white"
+              >
+                Open Contact Page for Admission
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div className="rounded-[2rem] border border-rose-200/80 bg-gradient-to-br from-[#fffefb] via-[#ffeef8] to-[#fff5cf] p-6 shadow-[0_34px_100px_rgba(236,72,153,0.18),0_14px_35px_rgba(251,191,36,0.16)] sm:p-8">
             <h2 className="text-2xl font-bold">Branch Story Structure</h2>
             <div className="mt-6 space-y-6">
@@ -78,6 +126,29 @@ export default function LibraryDetail() {
                   <p className="mt-3 leading-relaxed text-slate-600">{section.content}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-6 rounded-[1.5rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-rose-50 to-white p-5 shadow-[0_14px_34px_rgba(251,191,36,0.15)]">
+              <h3 className="text-xl font-semibold text-slate-900">Location Map</h3>
+              <p className="mt-3 leading-relaxed text-slate-600">
+                Find this branch quickly and open directions in Google Maps.
+              </p>
+              <div className="mt-4 overflow-hidden rounded-2xl border border-amber-100 bg-white">
+                <iframe
+                  title={`${item.eyebrow} map`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(item.address)}&output=embed`}
+                  className="h-60 w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <a
+                href={item.mapLink}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
+              >
+                Open exact location in Google Maps
+              </a>
             </div>
           </div>
 
@@ -118,7 +189,11 @@ export default function LibraryDetail() {
                 whileHover={{ y: -4, scale: 1.01 }}
                 className="overflow-hidden rounded-[1.6rem] border border-cyan-100 bg-slate-50 shadow-[0_14px_34px_rgba(14,165,233,0.13)]"
               >
-                <img src={image} alt={`${item.eyebrow} gallery ${index + 1}`} className="h-72 w-full object-cover" />
+                <img
+                  src={image}
+                  alt={`${item.eyebrow} gallery ${index + 1}`}
+                  className="h-72 w-full object-cover"
+                />
               </motion.div>
             ))}
           </div>
@@ -150,7 +225,7 @@ export default function LibraryDetail() {
                 <video
                   src={item.videoFile}
                   controls
-                  className="aspect-video w-full object-cover"
+                  className="aspect-video w-full bg-slate-100 object-contain"
                   playsInline
                 />
               </div>

@@ -35,8 +35,6 @@ export default function AboutDetail() {
                 <source media="(min-width: 1024px)" srcSet={item.imageDesktop || item.image} />
                 <img src={item.image} alt={item.eyebrow} className="h-full w-full object-cover object-center" />
               </picture>
-              <div className={`absolute inset-0 bg-gradient-to-tr ${item.accent} opacity-70 mix-blend-multiply`} />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/10 to-transparent" />
               <div className="absolute left-6 top-6">
                 <Link
                   to="/about"
@@ -117,7 +115,7 @@ export default function AboutDetail() {
           </section>
         ) : null}
 
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div className="rounded-[2rem] border border-rose-200/80 bg-gradient-to-br from-[#fffefb] via-[#ffeef8] to-[#fff5cf] p-6 shadow-[0_34px_100px_rgba(236,72,153,0.18),0_14px_35px_rgba(251,191,36,0.16)] sm:p-8">
             <h2 className="text-2xl font-bold">Detail Story Structure</h2>
             <div className="mt-6 space-y-6">
@@ -127,6 +125,22 @@ export default function AboutDetail() {
                   <p className="mt-3 leading-relaxed text-slate-600">{section.content}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-6 rounded-[1.5rem] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-rose-50 to-white p-5 shadow-[0_14px_34px_rgba(251,191,36,0.15)]">
+              <h3 className="text-xl font-semibold text-slate-900">What You Get Here</h3>
+              <p className="mt-3 leading-relaxed text-slate-600">
+                This section gives a quick decision summary so parents and students can understand the support model, study structure, and expected outcomes before contacting the team.
+              </p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {item.heroPoints.slice(0, 4).map((point) => (
+                  <div
+                    key={`summary-${point}`}
+                    className="rounded-xl border border-amber-100 bg-white/85 px-3 py-2 text-sm font-medium text-slate-700"
+                  >
+                    {point}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

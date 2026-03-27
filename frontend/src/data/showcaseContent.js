@@ -14,10 +14,14 @@ import individualPodsNewImg from "../assets/individual-pods-new.jpeg";
 import individualTwoImg from "../assets/individual2.jpeg";
 import homeTutorVideo from "../assets/libraryfirstvideo1.mp4";
 import librarySecondSixImg from "../assets/librarysecond6.jpeg";
-import librarySecondOneImg from "../assets/librarysecond1.jpeg";
 import librarySecondFiveImg from "../assets/librarysecond5.jpeg";
 import librarySecondVideoOne from "../assets/librarysecondvideo1.mp4";
 import librarySecondVideoThree from "../assets/librarysecondvideo3.mp4";
+import gvLibrary2PhotoImg from "../assets/gvlibrray2photo.jpeg";
+import gvLibrary2Video from "../assets/gvlibrary2video.mp4";
+import coWorkingOneImg from "../assets/co-working1.jpeg";
+import coWorkingTwoImg from "../assets/co-working2.jpeg";
+import coWorkingVideo from "../assets/co-workingvideo.mp4";
 
 export const aboutShowcases = [
   {
@@ -145,13 +149,14 @@ export const aboutShowcases = [
 
 export const libraryShowcases = [
   {
-    slug: "jk-road",
-    eyebrow: "GV Library JK Road",
+    slug: "gv-library1",
+    eyebrow: "GV Library - Sagar Green State",
     address: "Sagar green state near sagar college, Aayodhya bypass, Bhopal",
+    mapLink: "https://maps.app.goo.gl/5qDPZELVUPxXABYw7",
     tag: "Study Zone",
-    title: "A calm, premium study branch designed for long, distraction-free study sessions.",
+    title: "A calm, premium study zone at Sagar Green State for long, distraction-free sessions.",
     subtitle:
-      "JK Road branch supports students who need a disciplined environment for self-study, revisions, and exam-focused consistency.",
+      "This Sagar Green State location supports students who need a disciplined environment for self-study, revisions, and exam-focused consistency.",
     image: quietZonesImg,
     accent: "from-cyan-400 via-sky-500 to-emerald-500",
     summary:
@@ -171,7 +176,7 @@ export const libraryShowcases = [
       {
         heading: "Why this branch stands out",
         content:
-          "JK Road is focused on silent productivity. Students choose this branch when they need uninterrupted study hours, dependable seating, and a serious preparation atmosphere."
+          "The Sagar Green State branch is focused on silent productivity. Students choose this location when they need uninterrupted study hours, dependable seating, and a serious preparation atmosphere."
       },
       {
         heading: "What visitors should feel",
@@ -181,13 +186,13 @@ export const libraryShowcases = [
       {
         heading: "How this supports your brand",
         content:
-          "A strong JK Road page shows GV Library as a quality-led study network, helping students and parents trust the experience before they even visit."
+          "A strong Sagar Green State page shows GV Library as a quality-led study network, helping students and parents trust the experience before they even visit."
       }
     ],
     gallery: [quietZonesImg, photoGoodOne, individualPodsImg],
     videoTitle: "Branch walkthrough",
     videoDescription:
-      "Add a branch walkthrough video here to show seating layout, lighting, discipline, and the overall study atmosphere at JK Road.",
+      "This walkthrough shows seating layout, lighting, discipline, and the overall study atmosphere at the Sagar Green State branch.",
     videoUrl: "",
     videoFile: librarySecondVideoThree,
     featureCards: [
@@ -206,63 +211,64 @@ export const libraryShowcases = [
     ]
   },
   {
-    slug: "gv-library-second-branch",
-    eyebrow: "GV Library Second Branch",
+    slug: "gv-library2",
+    eyebrow: "GV Library - Chhatrapati Nagar, Narela Jod",
     address: "Chhatrapati nagar, Narela jod, Bhopal",
+    mapLink: "https://maps.app.goo.gl/zE3Ghw5QCZkEMwQi7",
     tag: "Study Zone",
-    title: "A dedicated second branch with its own environment, identity, and student routine.",
+    title: "A focused study branch at Chhatrapati Nagar, Narela Jod for daily preparation routines.",
     subtitle:
-      "The second branch is designed for students who need the same GV discipline in a location that is closer and more convenient for their daily schedule.",
-    image: librarySecondSixImg,
+      "This Chhatrapati Nagar, Narela Jod location is designed for students who need the same GV discipline in a branch that is convenient for their daily schedule.",
+    image: gvLibrary2PhotoImg,
     accent: "from-amber-400 via-orange-500 to-fuchsia-500",
     summary:
-      "Use this as the dedicated destination for your second location, so both library branches feel distinct while still belonging to one GV system.",
-    previewPoints: ["Separate identity", "Future-ready content", "Branch-specific story"],
+      "Built for students who want quiet self-study, stable routines, and a dependable learning environment closer to their local area.",
+    previewPoints: ["Quiet seating", "Daily consistency", "Exam-ready atmosphere"],
     metrics: [
       { label: "Timing", value: "Open 24/7" },
       { label: "Best for", value: "Self-study + revisions" },
       { label: "Habitat", value: "Calm and disciplined" }
     ],
     heroPoints: [
-      "A separate branch page improves clarity when you have multiple study locations",
-      "You can add local photos, timings, and branch-specific advantages here later",
-      "This keeps your library experience scalable as the network grows"
+      "Useful for school and college students who need a nearby place for focused study",
+      "Supports routine preparation with calm seating and low-distraction surroundings",
+      "Helps learners stay consistent for tests, boards, and competitive exam timelines"
     ],
     sections: [
       {
-        heading: "Why this should be a separate page",
+        heading: "What this location is best known for",
         content:
-          "Students usually choose nearby study spaces. A dedicated branch page helps local students quickly understand timing, atmosphere, and branch fit without confusion."
+          "The Chhatrapati Nagar, Narela Jod branch is known for steady study rhythm, practical seating comfort, and a disciplined atmosphere that supports long learning sessions."
       },
       {
-        heading: "How this page will evolve",
+        heading: "How students use this branch daily",
         content:
-          "This branch page can include real seating visuals, study rules, daily occupancy patterns, and practical details that help students join faster."
+          "Students use this space for chapter completion, revision blocks, mock-test review, and exam planning. The environment helps maintain concentration without unnecessary disturbance."
       },
       {
-        heading: "What stays consistent",
+        heading: "Why parents and students trust it",
         content:
-          "Even with branch-level differences, both GV locations maintain the same core values: discipline, comfort, and focused study continuity."
+          "Families trust this branch because of consistent study culture, safer academic discipline, and clear day-to-day support for serious preparation goals."
       }
     ],
-    gallery: [librarySecondOneImg, librarySecondFiveImg, librarySecondSixImg],
-    videoTitle: "Second branch intro video",
+    gallery: [gvLibrary2PhotoImg, librarySecondFiveImg, librarySecondSixImg],
+    videoTitle: "Chhatrapati Nagar branch tour",
     videoDescription:
-      "Use this section for a new-branch announcement, seating tour, or branch-specific promotion video once you are ready.",
+      "This walkthrough shows the real seating layout, study atmosphere, and daily routine flow at the Chhatrapati Nagar, Narela Jod branch.",
     videoUrl: "",
-    videoFile: librarySecondVideoOne,
+    videoFile: gvLibrary2Video,
     featureCards: [
       {
-        title: "Branch Identity",
-        description: "Lets users understand this location as its own destination instead of just an extra address."
+        title: "Consistent Study Routine",
+        description: "Supports students who follow fixed daily study hours and target-based preparation."
       },
       {
-        title: "Scalable Design",
-        description: "Structured so you can keep adding new media, testimonials, or offers without redesign work."
+        title: "Exam-Focused Setup",
+        description: "Useful for board prep, test revision, and chapter-wise completion in a quiet setting."
       },
       {
-        title: "Location Marketing",
-        description: "Useful for local promotion when students search for a nearby study-friendly option."
+        title: "Nearby Convenience",
+        description: "A practical option for learners around Chhatrapati Nagar and Narela Jod who need a reliable study destination."
       }
     ]
   },
@@ -270,47 +276,49 @@ export const libraryShowcases = [
     slug: "co-working-space",
     eyebrow: "GV Co-Working Space",
     address: "Sagar green state near sagar college, Aayodhya bypass, Bhopal",
+    mapLink: "https://maps.app.goo.gl/5qDPZELVUPxXABYw7",
     tag: "Work Zone",
-    title: "A focused co-working setup for creators, freelancers, and serious learners.",
+    title: "A professional co-working zone for remote work, projects, and focused execution.",
     subtitle:
-      "This space blends calm productivity with professional comfort, ideal for remote work, project sessions, and long deep-focus blocks.",
+      "This space is built for freelancers, working professionals, and serious students who need a disciplined setup with practical comfort for long productive sessions.",
     image: collaborativeTablesImg,
     accent: "from-emerald-400 via-cyan-500 to-blue-500",
     summary:
-      "Built for people who need reliable Wi-Fi, productive seating, and a disciplined environment for work, meetings, and focused execution.",
-    previewPoints: ["Deep-focus desks", "Work-friendly setup", "Professional atmosphere"],
+      "Built for people who need reliable Wi-Fi, practical seating, and a low-distraction environment for work calls, assignments, and deep-focus output.",
+    previewPoints: ["Reliable Wi-Fi", "Laptop-friendly desks", "Focus-ready environment"],
     metrics: [
       { label: "Timing", value: "Open 24/7" },
       { label: "Best for", value: "Remote workers + students" },
       { label: "Habitat", value: "Professional work zone" }
     ],
     heroPoints: [
-      "Suitable for freelancers, remote workers, and students with project deadlines",
-      "Supports independent work, planning sessions, and long concentration blocks",
-      "A practical environment for people who need consistent daily output"
+      "Suitable for freelancers, remote workers, and students with strict deadlines",
+      "Supports task planning, client calls, project execution, and long focus blocks",
+      "A practical daily workspace for people who need consistency and output"
     ],
     sections: [
       {
         heading: "Who should use this space",
         content:
-          "This co-working setup is ideal for freelancers, online professionals, startup teams, and students preparing project deliverables in a stable environment."
+          "This co-working setup is ideal for freelancers, online professionals, startup teams, and students preparing projects in a stable and productive environment."
       },
       {
         heading: "How it improves productivity",
         content:
-          "A distraction-light workspace, comfortable seating, and routine-friendly hours help users maintain focus and complete meaningful work every day."
+          "A low-distraction workspace, comfortable seating, and routine-friendly access hours help users maintain focus and complete meaningful work every day."
       },
       {
         heading: "Why it complements the GV ecosystem",
         content:
-          "Alongside library services, the co-working space expands GV into a broader productivity destination for both academic and professional audiences."
+          "Alongside library services, this co-working zone expands GV into a broader productivity destination for both academic and professional users."
       }
     ],
-    gallery: [collaborativeTablesImg, photoGoodTwo, photoGoodThree],
+    gallery: [collaborativeTablesImg, coWorkingOneImg, coWorkingTwoImg],
     videoTitle: "Co-working space walkthrough",
     videoDescription:
-      "A short walkthrough can highlight seating layout, work zones, and the overall environment for focused professional sessions.",
+      "This walkthrough highlights seating layout, work zones, and the overall environment for focused professional sessions.",
     videoUrl: "",
+    videoFile: coWorkingVideo,
     featureCards: [
       {
         title: "Professional Setup",

@@ -116,8 +116,6 @@ export default function About() {
                     alt={item.eyebrow}
                     className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${item.accent} opacity-75 mix-blend-multiply`} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/10 to-transparent" />
                   <div className="absolute left-4 right-4 top-4 flex justify-end sm:left-6 sm:right-6 sm:top-6">
                     <span className="rounded-full border border-white/25 bg-white/15 px-3 py-1 text-[10px] font-medium text-white backdrop-blur-sm transition-transform duration-300 group-hover:translate-x-1 sm:text-xs">
                       Click here for more info
