@@ -157,12 +157,6 @@ export const createOrUpdateTutorProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Create/update tutor profile error:", error);
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: error.message || "Validation error",
-      });
-    }
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -241,12 +235,6 @@ export const uploadTutorResume = async (req, res) => {
     });
   } catch (error) {
     console.error("Upload resume error:", error);
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        success: false,
-        message: error.message || "Validation error",
-      });
-    }
     return res.status(500).json({
       success: false,
       message: "Internal server error",

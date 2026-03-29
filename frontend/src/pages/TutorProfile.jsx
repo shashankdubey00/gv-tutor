@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { verifyAuth, logoutUser } from "../services/authService";
-import { createOrUpdateTutorProfile, getTutorProfile, uploadTutorResume } from "../services/tutorService";
+import { getTutorProfile, uploadTutorResume } from "../services/tutorService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { BACKEND_BASE_URL } from "../services/api";
 
@@ -276,39 +276,9 @@ export default function TutorProfile() {
                     }
                     try {
                       setResumeMessage("");
-                      let response;
                       const formData = new FormData();
                       formData.append("resume", resumeFile);
-
-                      try {
-                        response = await uploadTutorResume(formData);
-                      } catch (err) {
-                        const message = err?.message || "";
-                        const isNotFound =
-                          message.includes("404") ||
-                          message.toLowerCase().includes("not found");
-
-                        if (isNotFound && profile) {
-                          const fallback = new FormData();
-                          fallback.append("fullName", profile.fullName || "");
-                          fallback.append("phone", profile.phone || "");
-                          fallback.append("gender", profile.gender || "");
-                          fallback.append("address", profile.address || "");
-                          fallback.append("experience", String(profile.experience || ""));
-                          fallback.append("subjects", JSON.stringify(profile.subjects || []));
-                          fallback.append("classes", JSON.stringify(profile.classes || []));
-                          fallback.append("availableLocations", JSON.stringify(profile.availableLocations || []));
-                          fallback.append("preferredTiming", profile.preferredTiming || "");
-                          fallback.append("hourlyRate", String(profile.hourlyRate || ""));
-                          fallback.append("bio", profile.bio || "");
-                          fallback.append("achievements", profile.achievements || "");
-                          fallback.append("resume", resumeFile);
-                          response = await createOrUpdateTutorProfile(fallback);
-                        } else {
-                          throw err;
-                        }
-                      }
-
+                      const response = await uploadTutorResume(formData);
                       if (response?.profile) {
                         setProfile(response.profile);
                       }
