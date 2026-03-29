@@ -1,12 +1,28 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const RESUME_UPLOAD_DIR = path.join(__dirname, "..", "..", "uploads", "resumes");
+/**
+ * Cloud hosts often mount the repo read-only; only /tmp (os.tmpdir()) is reliably writable.
+ * Set RESUME_UPLOAD_DIR to an absolute path (e.g. Render disk mount) when you need persistence across deploys.
+ */
+function resolveResumeUploadDir() {
+  const explicit = process.env.RESUME_UPLOAD_DIR?.trim();
+  if (explicit) {
+    return path.resolve(explicit);
+  }
+  if (process.env.NODE_ENV === "production") {
+    return path.join(os.tmpdir(), "gv-tutor-resumes");
+  }
+  return path.join(__dirname, "..", "..", "uploads", "resumes");
+}
+
+export const RESUME_UPLOAD_DIR = resolveResumeUploadDir();
 
 const ALLOWED_EXT = new Set([".pdf", ".doc", ".docx"]);
 

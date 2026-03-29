@@ -28,10 +28,13 @@ function resumeUploadOnMultipart(req, res, next) {
   if (isMultipartRequest(req)) {
     return resumeUpload.single("resume")(req, res, (err) => {
       if (err) {
-        const message =
+        let message =
           err.code === "LIMIT_FILE_SIZE"
             ? "Resume must be 5MB or smaller"
             : err.message || "Invalid resume upload";
+        if (err.code === "EACCES" || err.code === "EROFS") {
+          message = "Server could not save the file. Set RESUME_UPLOAD_DIR to a writable path.";
+        }
         return res.status(400).json({ success: false, message });
       }
       next();
@@ -43,10 +46,13 @@ function resumeUploadOnMultipart(req, res, next) {
 function resumeUploadRequired(req, res, next) {
   return resumeUpload.single("resume")(req, res, (err) => {
     if (err) {
-      const message =
+      let message =
         err.code === "LIMIT_FILE_SIZE"
           ? "Resume must be 5MB or smaller"
           : err.message || "Invalid resume upload";
+      if (err.code === "EACCES" || err.code === "EROFS") {
+        message = "Server could not save the file. Set RESUME_UPLOAD_DIR to a writable path.";
+      }
       return res.status(400).json({ success: false, message });
     }
     next();

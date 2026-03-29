@@ -14,6 +14,9 @@ function clientErrorMessage(error) {
   if (error instanceof mongoose.Error.CastError) {
     return "Invalid data submitted";
   }
+  if (error?.name === "MongoServerError" && error?.code === 11000) {
+    return "A profile already exists for this account.";
+  }
   return null;
 }
 
@@ -245,6 +248,10 @@ export const createOrUpdateTutorProfile = async (req, res) => {
       await unlinkResumeIfExists(req.file.filename);
     }
     console.error("Create/update tutor profile error:", error);
+    const clientMsg = clientErrorMessage(error);
+    if (clientMsg) {
+      return res.status(400).json({ success: false, message: clientMsg });
+    }
     return res.status(500).json({
       success: false,
       message: "Internal server error",
