@@ -24,6 +24,7 @@ import LibraryDetail from "./pages/LibraryDetail";
 import Contact from "./pages/Contact";
 import LoadingSpinner from "./components/LoadingSpinner";
 import LegacyJobRedirect from "./pages/LegacyJobRedirect";
+import FloatingContactButtons from "./components/FloatingContactButtons";
 
 function AppContent() {
   const [searchParams] = useSearchParams();
@@ -68,15 +69,15 @@ function AppContent() {
     if (authParam === "success" && provider === "google") {
       setIsOAuthProcessing(true);
       console.log("🔵 OAuth processing - redirecting to correct page");
-      
+
       // Verify immediately
       verifyAuthWithRetry()
         .then((data) => {
           console.log("✅ Auth verified:", data.user.role);
-          
+
           if (data.success) {
             const user = data.user;
-            
+
             // Redirect based on role - navigate will handle the routing
             if (user.role === "tutor" && !user.isTutorProfileComplete) {
               console.log("➡️ Redirecting to complete-profile");
@@ -131,13 +132,14 @@ function AppContent() {
         {/* Admin routes without Navbar */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        
+
         {/* Routes with Navbar */}
         <Route
           path="/*"
           element={
             <>
               <Navbar />
+              <FloatingContactButtons />
               <Routes>
                 {/* Public pages - no authentication required */}
                 <Route path="/" element={<Hero />} />
@@ -148,7 +150,7 @@ function AppContent() {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/jobs/:jobId" element={<LegacyJobRedirect />} />
                 <Route path="/tutor/jobs/:jobId" element={<LegacyJobRedirect />} />
-                
+
                 {/* Auth pages */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
@@ -156,7 +158,7 @@ function AppContent() {
                 <Route path="/verify-otp" element={<VerifyOTP />} />
                 <Route path="/set-password" element={<SetPassword />} />
                 <Route path="/change-password" element={<ChangePassword />} />
-                
+
                 {/* Protected pages */}
                 <Route path="/find-tutor" element={<FindTutor />} />
                 <Route path="/complete-profile" element={<CompleteProfile />} />
