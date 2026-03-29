@@ -4,6 +4,7 @@ import {
   getTutorProfile,
 } from "../controllers/tutorProfileController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { resumeUpload } from "../middleware/resumeUpload.js";
 
 const router = express.Router();
 
@@ -11,8 +12,8 @@ const router = express.Router();
 router.use(protect);
 
 // Create or update tutor profile
-router.post("/", createOrUpdateTutorProfile);
-router.put("/", createOrUpdateTutorProfile);
+router.post("/", resumeUpload.single("resume"), createOrUpdateTutorProfile);
+router.put("/", resumeUpload.single("resume"), createOrUpdateTutorProfile);
 
 // Get tutor profile
 router.get("/", getTutorProfile);

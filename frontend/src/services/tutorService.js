@@ -23,9 +23,10 @@ export function getPostedTutorRequests() {
  * CREATE/UPDATE TUTOR PROFILE
  */
 export function createOrUpdateTutorProfile(formData) {
+  const isFormData = typeof FormData !== "undefined" && formData instanceof FormData;
   return apiRequest("/api/tutor-profile", {
     method: "POST",
-    body: JSON.stringify(formData),
+    body: isFormData ? formData : JSON.stringify(formData),
   });
 }
 
