@@ -97,10 +97,10 @@ export default function CompleteProfile() {
           }
         }
         
-        // Check if profile already exists
+        // Check if profile already exists (GET returns 200 with profile: null when new)
         try {
           const profileData = await getTutorProfile();
-          if (profileData.success && profileData.profile.isProfileComplete) {
+          if (profileData.success && profileData.profile?.isProfileComplete) {
             // Profile already complete, redirect to apply page - but NOT if user is editing
             if (!location.state?.allowEdit && !location.state?.from) {
               if (isMounted && shouldRedirect(location.pathname, "/apply-tutor")) {
@@ -133,10 +133,14 @@ export default function CompleteProfile() {
               bio: profile.bio || "",
               achievements: profile.achievements || "",
             });
+            const hasResume = Boolean(
+              profile.resumeStoredFileName || profile.resumeOriginalName
+            );
+            setHasResumeOnServer(hasResume);
+            setExistingResumeName(profile.resumeOriginalName || "");
           }
         } catch (err) {
-          // Profile doesn't exist yet, that's fine
-          console.log("Profile doesn't exist yet:", err.message);
+          console.log("Profile load skipped:", err.message);
         }
       } catch (err) {
         if (isMounted) {

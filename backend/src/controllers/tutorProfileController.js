@@ -1,8 +1,28 @@
 import fs from "fs";
 import path from "path";
+import mongoose from "mongoose";
 import TutorProfile from "../models/TutorProfile.js";
 import User from "../models/User.js";
 import { RESUME_UPLOAD_DIR } from "../config/resumeUpload.js";
+
+function clientErrorMessage(error) {
+  if (error instanceof mongoose.Error.ValidationError) {
+    return Object.values(error.errors)
+      .map((e) => e.message)
+      .join(", ");
+  }
+  if (error instanceof mongoose.Error.CastError) {
+    return "Invalid data submitted";
+  }
+  return null;
+}
+
+/** Legacy rows may omit isProfileComplete; trust User flags when the doc clearly exists. */
+function tutorEstablishedOnAccount(user, existingProfile) {
+  if (user.isTutorProfileComplete === true) return true;
+  if (user.role === "tutor" && existingProfile?.fullName) return true;
+  return false;
+}
 
 async function unlinkResumeIfExists(storedName) {
   if (!storedName) return;
@@ -154,12 +174,15 @@ export const createOrUpdateTutorProfile = async (req, res) => {
 
     const existing = await TutorProfile.findOne({ userId });
 
-    const isNewOrIncomplete =
-      !existing || !existing.isProfileComplete;
+    const docMarkedComplete = existing?.isProfileComplete === true;
+    const established = tutorEstablishedOnAccount(user, existing);
+
+    const needsFirstTimeResume =
+      !existing || (!docMarkedComplete && !established);
 
     const hadResume = Boolean(existing?.resumeStoredFileName);
 
-    if (isNewOrIncomplete && !hadResume && !req.file) {
+    if (needsFirstTimeResume && !hadResume && !req.file) {
       return res.status(400).json({
         success: false,
         message: "Please upload your resume (PDF, DOC, or DOCX).",
@@ -251,7 +274,9 @@ export const uploadTutorResumeOnly = async (req, res) => {
     }
 
     const profile = await TutorProfile.findOne({ userId });
-    if (!profile || !profile.isProfileComplete) {
+    const docOk = profile?.isProfileComplete === true;
+    const established = tutorEstablishedOnAccount(user, profile);
+    if (!profile || (!docOk && !established)) {
       await unlinkResumeIfExists(req.file.filename);
       return res.status(400).json({
         success: false,
@@ -278,6 +303,10 @@ export const uploadTutorResumeOnly = async (req, res) => {
       await unlinkResumeIfExists(req.file.filename);
     }
     console.error("Upload resume error:", error);
+    const clientMsg = clientErrorMessage(error);
+    if (clientMsg) {
+      return res.status(400).json({ success: false, message: clientMsg });
+    }
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -334,9 +363,9 @@ export const getTutorProfile = async (req, res) => {
     const profile = await TutorProfile.findOne({ userId });
 
     if (!profile) {
-      return res.status(404).json({
-        success: false,
-        message: "Profile not found",
+      return res.status(200).json({
+        success: true,
+        profile: null,
       });
     }
 

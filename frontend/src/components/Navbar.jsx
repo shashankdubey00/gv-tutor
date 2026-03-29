@@ -66,8 +66,10 @@ export default function Navbar() {
           if (authData.user.role === "tutor") {
             try {
               const profileData = await getTutorProfile();
-              if (profileData.success) {
+              if (profileData.success && profileData.profile) {
                 setProfile(profileData.profile);
+              } else {
+                setProfile(null);
               }
             } catch (err) {
               // Profile might not exist yet - silent fail

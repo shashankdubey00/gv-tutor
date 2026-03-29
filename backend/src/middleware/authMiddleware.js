@@ -1,5 +1,21 @@
 import jwt from "jsonwebtoken";
 
+/** Always store a hex string so Mongoose never gets a bad CastError from JWT payloads. */
+function normalizeUserId(raw) {
+  if (raw == null) return null;
+  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  if (typeof raw === "object") {
+    if (typeof raw.$oid === "string") return raw.$oid;
+    if (typeof raw.toHexString === "function") return raw.toHexString();
+  }
+  try {
+    const s = String(raw);
+    return s && s !== "[object Object]" ? s : null;
+  } catch {
+    return null;
+  }
+}
+
 export const protect = (req, res, next) => {
   let token = req.cookies?.token;
 
@@ -17,7 +33,14 @@ export const protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { userId, role }
+    const userId = normalizeUserId(decoded.userId ?? decoded.id);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+    req.user = { ...decoded, userId };
     return next();
   } catch (err) {
     if (process.env.NODE_ENV !== "production") {

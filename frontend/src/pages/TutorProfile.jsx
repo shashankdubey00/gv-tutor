@@ -24,12 +24,14 @@ export default function TutorProfile() {
         }
         setUser(authData.user);
 
-        // Load tutor profile
+        // Load tutor profile (API returns profile: null until completed)
         const profileData = await getTutorProfile();
-        if (profileData.success) {
+        if (profileData.success && profileData.profile) {
           setProfile(profileData.profile);
         } else {
           setError("Profile not found. Please complete your profile first.");
+          navigate("/complete-profile");
+          return;
         }
       } catch (err) {
         console.error("Error loading profile:", err);
