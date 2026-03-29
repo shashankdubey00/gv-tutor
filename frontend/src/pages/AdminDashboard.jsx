@@ -1,7 +1,16 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { verifyAuth, logoutUser } from "../services/authService";
-import { apiRequest } from "../services/api";
+import { apiRequest, fetchAuthenticatedBlob } from "../services/api";
+
+function getTutorDashboardUserId(entry) {
+  if (!entry) return null;
+  const uid = entry.userId;
+  if (uid && typeof uid === "object" && uid._id) return String(uid._id);
+  if (typeof uid === "string") return uid;
+  if (entry._id) return String(entry._id);
+  return null;
+}
 import { getContactMessages, updateMessageStatus, deleteContactMessage } from "../services/contactService";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useToast } from "../components/Toast";
@@ -244,6 +253,29 @@ export default function AdminDashboard() {
         </a>
       </svg>
     `;
+  }
+
+  async function downloadAdminTutorResume() {
+    const userId = getTutorDashboardUserId(selectedTutorProfile);
+    if (!userId) {
+      error("Could not resolve tutor for this profile");
+      return;
+    }
+    const name = selectedTutorProfile.profile?.resumeOriginalName || "resume.pdf";
+    try {
+      const blob = await fetchAuthenticatedBlob(`/api/admin/tutors/${userId}/resume`);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      success("Resume downloaded");
+    } catch (err) {
+      error(err.message || "Could not download resume");
+    }
   }
 
   async function downloadPoster() {
@@ -1758,6 +1790,31 @@ export default function AdminDashboard() {
                     <p className="text-gray-700 leading-relaxed">{selectedTutorProfile.profile.achievements}</p>
                   </div>
                 )}
+
+                {/* Resume */}
+                <div>
+                  <h4 className="text-xl font-semibold text-gray-800 mb-3">Resume</h4>
+                  {selectedTutorProfile.profile.resumeOriginalName ||
+                  selectedTutorProfile.profile.resumeStoredFileName ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-gray-900 font-medium break-all">
+                        {selectedTutorProfile.profile.resumeOriginalName || "Uploaded resume"}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          downloadAdminTutorResume();
+                        }}
+                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-green-500 hover:from-cyan-600 hover:to-green-600 text-white text-sm font-semibold shadow-md shrink-0"
+                      >
+                        Download resume
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-gray-600 text-sm">No resume uploaded yet.</p>
+                  )}
+                </div>
 
                 {/* Applied Posts */}
                 {selectedTutorProfile.appliedPosts && selectedTutorProfile.appliedPosts.length > 0 && (

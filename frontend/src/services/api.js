@@ -181,3 +181,115 @@ export async function apiRequest(endpoint, options = {}) {
     throw error;
   }
 }
+
+/**
+ * Authenticated request with multipart body (do not set Content-Type; browser sets boundary).
+ */
+export async function apiFormDataRequest(endpoint, formData, method = "POST") {
+  const timeoutDuration = 300000;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+  const methodUpper = String(method).toUpperCase();
+  const isStateChanging = isStateChangingMethod(methodUpper);
+
+  const buildHeaders = () => {
+    const headers = {};
+    const storedToken = sessionStorage.getItem("auth_token") || localStorage.getItem("auth_token");
+    if (storedToken) {
+      headers.Authorization = `Bearer ${storedToken}`;
+    }
+    return headers;
+  };
+
+  const attachCsrf = async (headers) => {
+    if (isStateChanging) {
+      const csrfToken = await getCsrfToken();
+      if (csrfToken) {
+        headers["x-csrf-token"] = csrfToken;
+      }
+    }
+    return headers;
+  };
+
+  try {
+    let headers = await attachCsrf(buildHeaders());
+
+    const runFetch = (h) =>
+      fetch(`${BACKEND_BASE_URL}${endpoint}`, {
+        method: methodUpper,
+        credentials: "include",
+        headers: h,
+        body: formData,
+        signal: controller.signal,
+      });
+
+    let response = await runFetch(headers);
+    let data = await parseJsonSafely(response);
+
+    if (
+      response.status === 403 &&
+      isStateChanging &&
+      (data?.message?.toLowerCase().includes("csrf") ||
+        data?.message?.toLowerCase().includes("security token"))
+    ) {
+      const refreshedToken = await getCsrfToken(true);
+      if (refreshedToken) {
+        headers = await attachCsrf(buildHeaders());
+        headers["x-csrf-token"] = refreshedToken;
+        response = await runFetch(headers);
+        data = await parseJsonSafely(response);
+      }
+    }
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Something went wrong");
+    }
+
+    return data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      throw new Error("Request timed out. Please check your connection and try again.");
+    }
+    throw error;
+  }
+}
+
+/**
+ * Authenticated GET returning a Blob (e.g. file download).
+ */
+export async function fetchAuthenticatedBlob(endpoint) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 120000);
+  const headers = {};
+  const storedToken = sessionStorage.getItem("auth_token") || localStorage.getItem("auth_token");
+  if (storedToken) {
+    headers.Authorization = `Bearer ${storedToken}`;
+  }
+
+  try {
+    const response = await fetch(`${BACKEND_BASE_URL}${endpoint}`, {
+      method: "GET",
+      credentials: "include",
+      headers,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const data = await parseJsonSafely(response);
+      throw new Error(data?.message || "Download failed");
+    }
+
+    return response.blob();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === "AbortError") {
+      throw new Error("Download timed out.");
+    }
+    throw error;
+  }
+}

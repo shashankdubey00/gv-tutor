@@ -2,19 +2,67 @@ import express from "express";
 import {
   createOrUpdateTutorProfile,
   getTutorProfile,
+  uploadTutorResumeOnly,
+  downloadOwnTutorResume,
 } from "../controllers/tutorProfileController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { createResumeMulter } from "../config/resumeUpload.js";
 
 const router = express.Router();
+const resumeUpload = createResumeMulter();
+
+function isMultipartRequest(req) {
+  const ct = String(req.headers["content-type"] || "").toLowerCase();
+  if (ct.includes("multipart/form-data")) return true;
+  if (typeof req.is === "function") {
+    try {
+      return req.is("multipart/form-data");
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
+function resumeUploadOnMultipart(req, res, next) {
+  if (isMultipartRequest(req)) {
+    return resumeUpload.single("resume")(req, res, (err) => {
+      if (err) {
+        const message =
+          err.code === "LIMIT_FILE_SIZE"
+            ? "Resume must be 5MB or smaller"
+            : err.message || "Invalid resume upload";
+        return res.status(400).json({ success: false, message });
+      }
+      next();
+    });
+  }
+  return next();
+}
+
+function resumeUploadRequired(req, res, next) {
+  return resumeUpload.single("resume")(req, res, (err) => {
+    if (err) {
+      const message =
+        err.code === "LIMIT_FILE_SIZE"
+          ? "Resume must be 5MB or smaller"
+          : err.message || "Invalid resume upload";
+      return res.status(400).json({ success: false, message });
+    }
+    next();
+  });
+}
 
 // All routes require authentication
 router.use(protect);
 
-// Create or update tutor profile
-router.post("/", createOrUpdateTutorProfile);
-router.put("/", createOrUpdateTutorProfile);
+router.post("/resume", resumeUploadRequired, uploadTutorResumeOnly);
 
-// Get tutor profile
+router.get("/resume", downloadOwnTutorResume);
+
+router.post("/", resumeUploadOnMultipart, createOrUpdateTutorProfile);
+router.put("/", resumeUploadOnMultipart, createOrUpdateTutorProfile);
+
 router.get("/", getTutorProfile);
 
 export default router;

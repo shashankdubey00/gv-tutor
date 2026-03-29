@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { verifyAuth, logoutUser } from "../services/authService";
 import { getTutorProfile } from "../services/tutorService";
+import { fetchAuthenticatedBlob } from "../services/api";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function TutorProfile() {
@@ -10,6 +11,7 @@ export default function TutorProfile() {
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [resumeDownloading, setResumeDownloading] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -60,6 +62,27 @@ export default function TutorProfile() {
         </div>
       </div>
     );
+  }
+
+  async function handleDownloadResume() {
+    if (!profile?.resumeStoredFileName && !profile?.resumeOriginalName) return;
+    setResumeDownloading(true);
+    try {
+      const blob = await fetchAuthenticatedBlob("/api/tutor-profile/resume");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = profile.resumeOriginalName || "resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Could not download resume");
+    } finally {
+      setResumeDownloading(false);
+    }
   }
 
   const getInitials = (name) => {
@@ -234,6 +257,36 @@ export default function TutorProfile() {
               <p className="text-white/90 leading-relaxed">{profile.achievements}</p>
             </div>
           )}
+
+          {/* Resume */}
+          <div className="mt-6 pt-6 border-t border-cyan-500/30">
+            <p className="text-white/70 text-sm mb-2">Resume</p>
+            {profile?.resumeOriginalName || profile?.resumeStoredFileName ? (
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-white font-medium">{profile.resumeOriginalName || "Uploaded resume"}</p>
+                <button
+                  type="button"
+                  onClick={handleDownloadResume}
+                  disabled={resumeDownloading}
+                  className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white text-sm font-semibold transition"
+                >
+                  {resumeDownloading ? "Downloading…" : "Download"}
+                </button>
+              </div>
+            ) : (
+              <p className="text-white/50 text-sm">
+                No resume on file. Add one from{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/edit-profile")}
+                  className="text-cyan-400 hover:text-cyan-300 underline"
+                >
+                  Edit profile
+                </button>
+                .
+              </p>
+            )}
+          </div>
 
           {/* Action Buttons */}
           <div className="mt-8 pt-6 border-t border-cyan-500/30 flex gap-4 flex-wrap">

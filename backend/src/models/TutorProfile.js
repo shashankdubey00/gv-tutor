@@ -77,7 +77,23 @@ const tutorProfileSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    
+
+    resumeStoredFileName: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    resumeOriginalName: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    resumeMimeType: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     // Profile Status
     isProfileComplete: {
       type: Boolean,

@@ -27,3 +27,6 @@ Thumbs.db
 dist/
 build/
 
+# Uploaded tutor resumes (local / ephemeral disk)
+uploads/
+

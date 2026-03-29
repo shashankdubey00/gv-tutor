@@ -1,8 +1,11 @@
+import fs from "fs";
+import path from "path";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import TutorRequest from "../models/TutorRequest.js";
 import TutorProfile from "../models/TutorProfile.js";
+import { RESUME_UPLOAD_DIR } from "../config/resumeUpload.js";
 import { notificationService } from '../../notifications/index.js';
 import { getTokenCookieOptions } from "../utils/cookieOptions.js";
 
@@ -424,6 +427,50 @@ export const postTutorRequest = async (req, res) => {
     });
   } catch (error) {
     console.error("Post request error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ---------------- DOWNLOAD TUTOR RESUME (ADMIN) ---------------- */
+export const downloadTutorResumeAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User id required",
+      });
+    }
+
+    const profile = await TutorProfile.findOne({ userId });
+    if (!profile?.resumeStoredFileName) {
+      return res.status(404).json({
+        success: false,
+        message: "No resume on file for this tutor",
+      });
+    }
+
+    const abs = path.join(RESUME_UPLOAD_DIR, profile.resumeStoredFileName);
+    if (!fs.existsSync(abs)) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume file not found on server",
+      });
+    }
+
+    const downloadName = profile.resumeOriginalName || "resume.pdf";
+    res.setHeader("Content-Type", profile.resumeMimeType || "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`
+    );
+
+    return fs.createReadStream(abs).pipe(res);
+  } catch (error) {
+    console.error("Admin download resume error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

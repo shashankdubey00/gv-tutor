@@ -9,6 +9,7 @@ import {
   updateTutorRequest,
   postTutorRequest,
   deleteTutorRequest,
+  downloadTutorResumeAdmin,
 } from "../controllers/adminController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { rateLimiter } from "../middleware/rateLimiter.js";
@@ -48,6 +49,7 @@ router.use(async (req, res, next) => {
 router.get("/parent-applications", getAllParentApplications);
 router.get("/tutor-applications", getAllTutorApplications);
 router.get("/tutor-members", getAllTutorMembers);
+router.get("/tutors/:userId/resume", downloadTutorResumeAdmin);
 router.put("/tutor-requests/:requestId/status", updateTutorRequestStatus);
 router.put("/tutor-requests/:requestId/visibility", updateFieldVisibility);
 router.put("/tutor-requests/:requestId", updateTutorRequest);

@@ -29,6 +29,9 @@ export default function EditTutorProfile() {
     bio: "",
     achievements: "",
   });
+  const [resumeFile, setResumeFile] = useState(null);
+  const [hasResumeOnServer, setHasResumeOnServer] = useState(false);
+  const [existingResumeName, setExistingResumeName] = useState("");
 
   // Load existing profile data
   useEffect(() => {
@@ -62,6 +65,10 @@ export default function EditTutorProfile() {
             bio: profile.bio || "",
             achievements: profile.achievements || "",
           });
+          setHasResumeOnServer(Boolean(
+            profile.resumeStoredFileName || profile.resumeOriginalName
+          ));
+          setExistingResumeName(profile.resumeOriginalName || "");
         } else {
           setError("Profile not found. Please create a profile first.");
         }
@@ -413,6 +420,28 @@ export default function EditTutorProfile() {
                 rows="3"
                 className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 mb-4"
               />
+            </div>
+
+            {/* Resume */}
+            <div className="border-b border-cyan-500/30 pb-4">
+              <h3 className="text-xl font-semibold mb-4">Resume</h3>
+              <p className="text-white/70 text-sm mb-3">
+                PDF, DOC, or DOCX (max 5 MB). Upload a new file to replace your current resume.
+              </p>
+              {hasResumeOnServer && existingResumeName && !resumeFile && (
+                <p className="text-cyan-300/90 text-sm mb-3">
+                  Current file: {existingResumeName}
+                </p>
+              )}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white file:font-medium hover:file:bg-cyan-500"
+              />
+              {resumeFile && (
+                <p className="text-green-300/90 text-sm mt-2">Selected: {resumeFile.name}</p>
+              )}
             </div>
 
             {/* Action Buttons */}

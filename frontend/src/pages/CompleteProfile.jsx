@@ -28,6 +28,9 @@ export default function CompleteProfile() {
     bio: "",
     achievements: "",
   });
+  const [resumeFile, setResumeFile] = useState(null);
+  const [hasResumeOnServer, setHasResumeOnServer] = useState(false);
+  const [existingResumeName, setExistingResumeName] = useState("");
 
   const location = useLocation();
   const [isRedirectingState, setIsRedirectingState] = useState(false);
@@ -248,12 +251,21 @@ export default function CompleteProfile() {
       return;
     }
 
+    if (!resumeFile && !hasResumeOnServer) {
+      setError("Please upload your resume (PDF, DOC, or DOCX, max 5MB).");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await createOrUpdateTutorProfile({
-        ...formData,
-        experience: parseInt(formData.experience),
-        hourlyRate: parseFloat(formData.hourlyRate),
-      });
+      await createOrUpdateTutorProfile(
+        {
+          ...formData,
+          experience: parseInt(formData.experience, 10),
+          hourlyRate: parseFloat(formData.hourlyRate),
+        },
+        resumeFile || undefined
+      );
       
       console.log("✅ Tutor profile created successfully! Redirecting to apply-tutor page...");
       
@@ -531,6 +543,28 @@ export default function CompleteProfile() {
                 rows="3"
                   className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               />
+            </div>
+
+            {/* Resume */}
+            <div className="border-b border-cyan-500/30 pb-4">
+              <h3 className="text-xl font-semibold mb-4">Resume {!hasResumeOnServer ? <span className="text-red-400">*</span> : null}</h3>
+              <p className="text-white/70 text-sm mb-3">
+                Upload PDF, DOC, or DOCX (max 5 MB). New tutors must include a resume to finish their profile.
+              </p>
+              {hasResumeOnServer && existingResumeName && !resumeFile && (
+                <p className="text-cyan-300/90 text-sm mb-3">
+                  Current file: {existingResumeName}
+                </p>
+              )}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-cyan-500/30 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white file:font-medium hover:file:bg-cyan-500"
+              />
+              {resumeFile && (
+                <p className="text-green-300/90 text-sm mt-2">Selected: {resumeFile.name}</p>
+              )}
             </div>
 
             <button
