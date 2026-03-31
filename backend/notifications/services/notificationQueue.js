@@ -16,6 +16,7 @@ const noopClient = {
 
 const createDisabledQueue = (reason = "Redis queue disabled") => ({
   isEnabled: false,
+  disabledReason: reason,
   client: noopClient,
   async add() {
     throw new Error(reason);
@@ -63,6 +64,41 @@ if (redisConfigured) {
     });
 
     queue.isEnabled = true;
+    queue.disabledReason = null;
+
+    const isRedisHardLimit = (err) =>
+      /max requests limit exceeded/i.test(String(err?.message || err || ""));
+
+    const disableQueueInstance = async (reason) => {
+      if (!queue.isEnabled) return;
+      queue.isEnabled = false;
+      queue.disabledReason = reason;
+      queue.client = noopClient;
+      queue.add = async () => {
+        throw new Error(reason);
+      };
+      queue.getWaitingCount = async () => 0;
+      queue.getActiveCount = async () => 0;
+      queue.getFailedCount = async () => 0;
+      queue.getDelayedCount = async () => 0;
+
+      try {
+        await queue.close();
+      } catch (closeError) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn("Failed to close Redis queue cleanly:", closeError.message);
+        }
+      }
+    };
+
+    const handleQueueError = async (err, source = "queue") => {
+      const message = String(err?.message || err || "Unknown Redis error");
+      console.error(`Email queue ${source} error, falling back to direct email mode:`, message);
+
+      if (isRedisHardLimit(err)) {
+        await disableQueueInstance("Redis request limit exceeded");
+      }
+    };
 
     // Process one job at a time.
     queue.process(1, async (job) => {
@@ -126,8 +162,16 @@ if (redisConfigured) {
 
     // Critical: prevent queue connection errors from crashing the Node process.
     queue.on("error", (err) => {
-      console.error("Email queue error, falling back to direct email mode:", err.message);
+      void handleQueueError(err, "queue");
     });
+
+    // Also listen to underlying Redis client errors to avoid unhandled "error" events.
+    const redisClients = [queue.client, queue.eclient, queue.bclient].filter(Boolean);
+    for (const client of redisClients) {
+      client.on("error", (err) => {
+        void handleQueueError(err, "redis");
+      });
+    }
 
     emailQueue = queue;
   } catch (error) {
