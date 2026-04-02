@@ -20,6 +20,7 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isHomePage = location.pathname === "/";
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Close dropdown when clicking outside
@@ -106,10 +107,13 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 border-b transition-all duration-300 ${isScrolled
-          ? "bg-slate-950/35 backdrop-blur-xl border-white/10"
-          : "bg-slate-900/90 backdrop-blur-md border-slate-700/40"
-        }`}
+      className={`fixed top-0 left-0 z-50 w-full border-b transition-all duration-300 ${
+        isHomePage && !isScrolled
+          ? "border-transparent bg-transparent"
+          : isScrolled
+            ? "border-white/10 bg-slate-950/35 backdrop-blur-xl"
+            : "border-slate-700/40 bg-slate-900/90 backdrop-blur-md"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center relative">
 

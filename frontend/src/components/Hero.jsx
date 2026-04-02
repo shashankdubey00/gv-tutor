@@ -217,7 +217,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_120%_80%_at_50%_-20%,rgba(96,165,250,0.22),transparent_55%),radial-gradient(ellipse_90%_50%_at_100%_50%,rgba(167,139,250,0.08),transparent_45%)] bg-slate-800 text-white font-sans antialiased selection:bg-blue-500/30">
+    <div className="relative min-h-screen overflow-hidden bg-slate-900 text-white font-sans antialiased selection:bg-blue-500/20">
       <style>{`
         @keyframes heroBorderShift {
           0% { background-position: 0% 50%; }
@@ -232,13 +232,29 @@ const Hero = () => {
           0%, 100% { transform: translate(0, 0) scale(1); }
           50% { transform: translate(8px, -12px) scale(1.02); }
         }
+        @keyframes blobFloat1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(40px, -30px) scale(1.08); }
+          66% { transform: translate(-20px, 20px) scale(0.96); }
+        }
+        @keyframes blobFloat2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-35px, 40px) scale(1.12); }
+        }
+        @keyframes blobFloat3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          40% { transform: translate(25px, 35px) scale(1.05); }
+          80% { transform: translate(-15px, -25px) scale(0.95); }
+        }
       `}</style>
 
       {/* Classic centered hero */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-10 pt-24 sm:px-6 sm:pb-12 sm:pt-28 lg:pt-32">
-        <div className="absolute top-0 -left-20 h-96 w-96 rounded-full bg-blue-500/25 blur-[120px]" />
-        <div className="absolute bottom-0 -right-20 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
-        <div className="pointer-events-none absolute inset-0 bg-grid-faint opacity-[0.35]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#030712_0%,#0b1f63_45%,#76b8ff_82%,#ffffff_100%)]" />
+        <div className="pointer-events-none absolute -top-24 left-[8%] h-[420px] w-[420px] rounded-full bg-blue-500/25 blur-[130px]" style={{ animation: "blobFloat1 16s ease-in-out infinite" }} />
+        <div className="pointer-events-none absolute top-[30%] -right-[8%] h-[380px] w-[380px] rounded-full bg-indigo-400/25 blur-[120px]" style={{ animation: "blobFloat2 20s ease-in-out infinite" }} />
+        <div className="pointer-events-none absolute bottom-[4%] left-[18%] h-[320px] w-[320px] rounded-full bg-sky-200/45 blur-[100px]" style={{ animation: "blobFloat3 22s ease-in-out infinite" }} />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_35%,rgba(59,130,246,0.22),transparent_65%)]" />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -246,19 +262,19 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
           className="z-10 w-full max-w-6xl text-center"
         >
-          <h1 className="mx-auto mb-6 max-w-6xl bg-gradient-to-b from-white to-slate-300 bg-clip-text pb-3 text-[clamp(2.9rem,6vw,5.6rem)] font-extrabold leading-[1.04] tracking-[-0.04em] text-transparent">
+          <h1 className="mx-auto mb-6 max-w-6xl bg-gradient-to-b from-white to-blue-100 bg-clip-text pb-3 text-[clamp(2.9rem,6vw,5.6rem)] font-extrabold leading-[1.04] tracking-[-0.04em] text-transparent drop-shadow-[0_2px_12px_rgba(2,6,23,0.7)]">
             <span className="block sm:hidden">
-              Connect with the <span className="text-blue-400">best tutors</span> in your area
+              Connect with the <span className="bg-gradient-to-r from-cyan-200 to-indigo-100 bg-clip-text text-transparent">best tutors</span> in your area
             </span>
             <span className="hidden sm:block lg:hidden">
-              Connecting students with <span className="text-blue-400">top home tutors</span> near you
+              Connecting students with <span className="bg-gradient-to-r from-cyan-200 to-indigo-100 bg-clip-text text-transparent">top home tutors</span> near you
             </span>
             <span className="hidden lg:block">
               Connecting students with the <br />
-              <span className="text-blue-400">best home tutors</span> in your area
+              <span className="bg-gradient-to-r from-cyan-200 to-indigo-100 bg-clip-text text-transparent">best home tutors</span> in your area
             </span>
           </h1>
-          <p className="mx-auto mb-10 max-w-3xl px-2 text-base text-slate-300 sm:mb-12 sm:text-lg lg:text-xl">
+          <p className="mx-auto mb-10 max-w-3xl px-2 text-base text-slate-100 sm:mb-12 sm:text-lg lg:text-xl drop-shadow-[0_1px_8px_rgba(2,6,23,0.6)]">
             Choose a trusted tutor for your learning needs or start earning as a home tutor today.
           </p>
 
@@ -273,12 +289,12 @@ const Hero = () => {
                 animation: "heroBorderShift 7s linear infinite",
               }}
             >
-              <div className="rounded-[calc(1.6rem-1.5px)] bg-[rgba(15,23,42,0.88)] p-6 backdrop-blur-xl sm:p-8">
-                <h3 className="mb-4 text-xl font-bold sm:text-2xl">Find the right tutor</h3>
+              <div className="rounded-[calc(1.6rem-1.5px)] bg-slate-950/55 p-6 backdrop-blur-xl sm:p-8">
+                <h3 className="mb-4 text-xl font-bold text-white sm:text-2xl">Find the right tutor</h3>
                 <button
                   type="button"
                   onClick={() => navigate("/find-tutor")}
-                  className="w-full rounded-xl bg-blue-600 py-4 font-semibold shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-500"
+                  className="w-full rounded-xl bg-blue-600 py-4 font-semibold text-white shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-500"
                 >
                   Find Tutor
                 </button>
@@ -294,14 +310,14 @@ const Hero = () => {
                 animation: "heroBorderShift 7s linear infinite reverse",
               }}
             >
-              <div className="rounded-[calc(1.6rem-1.5px)] bg-[rgba(15,23,42,0.88)] p-6 backdrop-blur-xl sm:p-8">
-                <h3 className="mb-4 text-xl font-bold sm:text-2xl">Become a home tutor</h3>
+              <div className="rounded-[calc(1.6rem-1.5px)] bg-slate-950/55 p-6 backdrop-blur-xl sm:p-8">
+                <h3 className="mb-4 text-xl font-bold text-white sm:text-2xl">Become a home tutor</h3>
                 <button
                   type="button"
                   onClick={async () => {
                     await handleApplyAsTutor(navigate);
                   }}
-                  className="w-full rounded-xl bg-pink-600 py-4 font-semibold shadow-lg shadow-pink-600/25 transition-all hover:bg-pink-500"
+                  className="w-full rounded-xl bg-pink-600 py-4 font-semibold text-white shadow-lg shadow-pink-600/25 transition-all hover:bg-pink-500"
                 >
                   Apply as Tutor
                 </button>
@@ -312,25 +328,25 @@ const Hero = () => {
       </section>
 
       {/* Library teaser — below hero */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-slate-800/50 to-slate-900/80 px-4 py-10 sm:px-6 sm:py-12">
+      <section className="-mt-px bg-gradient-to-b from-white via-[#d8e9ff] to-[#9ebce8] px-4 py-10 sm:px-6 sm:py-12">
         <div className="relative mx-auto max-w-4xl">
           <div
-            className="absolute -inset-px rounded-3xl bg-gradient-to-r from-teal-500/20 via-emerald-500/15 to-cyan-500/20 blur-xl"
+            className="absolute -inset-px rounded-3xl bg-gradient-to-r from-teal-400/15 via-emerald-400/10 to-cyan-400/15 blur-xl"
             style={{ animation: "floatSlow 10s ease-in-out infinite" }}
           />
-          <div className="relative overflow-hidden rounded-3xl border border-teal-400/25 bg-slate-800/60 p-6 shadow-xl backdrop-blur-md sm:p-8">
-            <div className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-200 sm:justify-start">
+          <div className="relative overflow-hidden rounded-3xl bg-slate-900/28 p-6 shadow-xl backdrop-blur-md sm:p-8">
+            <div className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-teal-700 sm:justify-start">
               <Sparkles className="h-4 w-4" />
               Study library
             </div>
-            <h2 className="text-center text-2xl font-bold text-white sm:text-left sm:text-3xl">Become a library member</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-slate-300 sm:mx-0 sm:text-left">
+            <h2 className="text-center text-2xl font-bold text-slate-900 sm:text-left sm:text-3xl">Become a library member</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-slate-800 sm:mx-0 sm:text-left">
               A quiet, well-lit study space in Bhopal. Open 7 days. Monthly memberships available.
             </p>
             <ul className="mx-auto mt-6 max-w-xl space-y-2.5 sm:mx-0">
               {libraryBullets.map((line) => (
-                <li key={line} className="flex items-start gap-3 text-sm text-slate-200">
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.5)]" />
+                <li key={line} className="flex items-start gap-3 text-sm text-slate-800">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.4)]" />
                   {line}
                 </li>
               ))}
@@ -350,13 +366,13 @@ const Hero = () => {
       </section>
 
       {/* —— MISSION —— */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-slate-800/95 via-[#1a2844] to-slate-900 py-20 sm:py-24 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#9ebce8] via-[#7aa0d8] to-[#5f84c5] py-20 sm:py-24 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <motion.div {...fadeIn} className="mb-14 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Our Goodwill Ready &amp; Mission
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-slate-300 sm:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-slate-100 sm:text-lg">
               Quiet spaces for focused reading and personalized tutoring that connects the brightest minds.
             </p>
           </motion.div>
@@ -381,7 +397,7 @@ const Hero = () => {
                       animation: "heroBorderShift 6s ease-in-out infinite",
                     }}
                   >
-                    <div className="h-full w-full rounded-[1.9rem] bg-[#1a2744] p-2">
+                    <div className="h-full w-full rounded-[1.9rem] bg-slate-900/40 p-2">
                       <img
                         src={item.img}
                         alt={item.title}
@@ -390,7 +406,7 @@ const Hero = () => {
                     </div>
                   </div>
                 </div>
-                <h4 className="text-2xl font-bold tracking-tight sm:text-3xl">{item.title}</h4>
+                <h4 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">{item.title}</h4>
               </motion.div>
             ))}
           </div>
@@ -398,25 +414,25 @@ const Hero = () => {
       </section>
 
       {/* —— PREMIUM HOME TUITION —— */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-blue-500/[0.12] via-slate-900/50 to-slate-900 py-12 sm:py-16">
+      <section className="bg-gradient-to-b from-[#5f84c5] via-[#466da8] to-[#35598e] py-12 sm:py-16">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 md:grid-cols-2 md:gap-12">
           <motion.div {...fadeIn}>
             <h2 className="text-3xl font-bold italic tracking-tight text-white sm:text-4xl">Premium home tuition</h2>
-            <p className="mt-6 text-lg leading-relaxed text-slate-300">
+            <p className="mt-6 text-lg leading-relaxed text-slate-100">
               We bridge the gap between quality education and accessibility. Every student gets the attention they deserve — at home, on your schedule.
             </p>
             <div className="mt-8 space-y-4">
               {["Verified subject experts", "Flexible schedules", "Regular progress tracking"].map((text) => (
-                <div key={text} className="flex items-center gap-3 text-slate-200">
-                  <CheckCircle className="h-5 w-5 shrink-0 text-blue-500" />
+                <div key={text} className="flex items-center gap-3 text-slate-100">
+                  <CheckCircle className="h-5 w-5 shrink-0 text-blue-300" />
                   <span>{text}</span>
                 </div>
               ))}
             </div>
           </motion.div>
           <motion.div {...fadeIn} className="relative">
-            <div className="absolute inset-0 rounded-[2rem] bg-blue-500/15 blur-3xl" />
-            <div className="relative z-10 mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl border border-white/15 shadow-2xl shadow-blue-500/5">
+            <div className="absolute inset-0 rounded-[2rem] bg-blue-400/10 blur-3xl" />
+            <div className="relative z-10 mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl shadow-blue-500/10">
               <motion.img
                 key={sliderImages[activeSlide].src}
                 src={sliderImages[activeSlide].src}
@@ -433,14 +449,14 @@ const Hero = () => {
       </section>
 
       {/* —— AMENITIES / FEATURES —— */}
-      <section className="border-t border-white/10 bg-slate-900/40 py-20 sm:py-24 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#35598e] via-[#2c4e83] to-[#264679] py-20 sm:py-24 px-4 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <motion.div {...fadeIn} className="mb-12 text-center">
-            <span className="inline-flex rounded-full border border-cyan-400/35 bg-cyan-500/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100">
+            <span className="inline-flex rounded-full border border-cyan-300/45 bg-cyan-100/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100">
               Spaces
             </span>
             <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl">Built for deep focus</h2>
-            <p className="mx-auto mt-3 max-w-lg text-slate-300">Everything you need for productive study sessions.</p>
+            <p className="mx-auto mt-3 max-w-lg text-slate-200">Everything you need for productive study sessions.</p>
           </motion.div>
           <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
             {amenityFeatures.map((f) => (
@@ -448,19 +464,18 @@ const Hero = () => {
                 key={f.title}
                 {...fadeIn}
                 whileHover={{ y: -2 }}
-                className={`rounded-2xl border bg-slate-800/55 p-6 transition-colors ${
-                  f.highlight
-                    ? "border-cyan-400/55 shadow-[0_0_0_1px_rgba(34,211,238,0.2)] shadow-cyan-500/15"
-                    : "border-white/12 hover:border-white/20"
-                }`}
+                className={`rounded-2xl bg-slate-900/35 p-6 transition-colors backdrop-blur-sm shadow-sm ${f.highlight
+                  ? "border-cyan-300/60 shadow-[0_0_0_1px_rgba(6,182,212,0.15)] shadow-cyan-400/10"
+                  : "border-transparent"
+                  }`}
               >
                 <div className="flex gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-slate-700/80">
-                    <f.icon className="h-6 w-6 text-cyan-300" strokeWidth={1.75} />
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-cyan-200/60 bg-cyan-50">
+                    <f.icon className="h-6 w-6 text-cyan-200" strokeWidth={1.75} />
                   </div>
                   <div>
                     <h3 className="font-semibold text-white">{f.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-300">{f.body}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-200">{f.body}</p>
                   </div>
                 </div>
               </motion.div>
@@ -470,19 +485,19 @@ const Hero = () => {
       </section>
 
       {/* —— SUBJECTS —— */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-slate-900 to-[#151f35] py-10 sm:py-14 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#264679] via-[#203f70] to-[#1f3a66] py-10 sm:py-14 px-4 sm:px-6">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div {...fadeIn}>
-            <span className="inline-flex rounded-full border border-blue-400/40 bg-blue-500/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100">
+            <span className="inline-flex rounded-full border border-blue-300/45 bg-blue-100/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100">
               Subjects
             </span>
-            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="mt-5 text-3xl font-bold tracking-tight text-white sm:text-4xl">
               We cover{" "}
-              <span className="bg-gradient-to-r from-blue-300 to-violet-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
                 every subject
               </span>
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-slate-300">
+            <p className="mx-auto mt-4 max-w-xl text-slate-200">
               From school basics to competitive exam prep — find support for what matters to you.
             </p>
           </motion.div>
@@ -493,7 +508,7 @@ const Hero = () => {
             {subjectChips.map((s) => (
               <span
                 key={s}
-                className="rounded-full border border-slate-600/50 bg-slate-800/90 px-4 py-2 text-sm font-medium text-slate-100 shadow-sm transition hover:border-blue-400/40 hover:bg-slate-700/90"
+                className="rounded-full bg-slate-900/40 px-4 py-2 text-sm font-medium text-slate-100 shadow-sm transition hover:bg-slate-900/55"
               >
                 {s}
               </span>
@@ -503,17 +518,17 @@ const Hero = () => {
       </section>
 
       {/* —— WHY GOODWILLEDU —— */}
-      <section className="border-t border-white/10 bg-slate-900/60 py-10 sm:py-14 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#1f3a66] via-[#1c345c] to-[#192f53] py-10 sm:py-14 px-4 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <motion.div {...fadeIn} className="mb-8 text-center sm:mb-10">
-            <span className="inline-flex rounded-full border border-violet-400/40 bg-violet-500/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-100">
+            <span className="inline-flex rounded-full border border-violet-300/45 bg-violet-100/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-100">
               Why GoodwillEdu
             </span>
-            <h2 className="mt-4 text-2xl font-bold sm:text-3xl">
+            <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl">
               The{" "}
               <span className="text-violet-200">trusted platform</span> for home tutoring
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-300">
+            <p className="mx-auto mt-3 max-w-2xl text-slate-200">
               Every tutor is carefully verified. Every student matters. Proudly local to Bhopal.
             </p>
           </motion.div>
@@ -521,21 +536,21 @@ const Hero = () => {
             {whyItems.map((w) => {
               const Icon = w.icon;
               return (
-              <motion.div
-                key={w.title}
-                {...fadeIn}
-                className="rounded-2xl border border-white/12 bg-slate-800/50 p-4 sm:p-5"
-              >
-                <div className="flex gap-3 sm:gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-700/80">
-                    <Icon className="h-5 w-5 text-violet-300" strokeWidth={1.75} aria-hidden />
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-white">{w.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-300">{w.body}</p>
+                <motion.div
+                  key={w.title}
+                  {...fadeIn}
+                  className="rounded-2xl bg-slate-900/35 p-4 shadow-sm backdrop-blur-sm sm:p-5"
+                >
+                  <div className="flex gap-3 sm:gap-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-violet-200/60 bg-violet-50">
+                      <Icon className="h-5 w-5 text-violet-200" strokeWidth={1.75} aria-hidden />
+                    </span>
+                    <div>
+                      <h3 className="font-semibold text-white">{w.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-200">{w.body}</p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
               );
             })}
           </div>
@@ -543,13 +558,13 @@ const Hero = () => {
       </section>
 
       {/* —— TESTIMONIALS —— */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-[#151f35] to-slate-900/90 py-10 sm:py-14 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#192f53] via-[#162a4c] to-[#152646] py-10 sm:py-14 px-4 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <motion.div {...fadeIn} className="mb-8 text-center sm:mb-10">
-            <h2 className="text-2xl font-bold sm:text-3xl">
+            <h2 className="text-2xl font-bold text-white sm:text-3xl">
               What <span className="text-violet-200">our community</span> says
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-slate-300">
+            <p className="mx-auto mt-3 max-w-lg text-slate-200">
               Real words from students, parents, and tutors in Bhopal.
             </p>
           </motion.div>
@@ -558,14 +573,14 @@ const Hero = () => {
               <motion.div
                 key={t.name}
                 {...fadeIn}
-                className="flex flex-col rounded-2xl border border-white/12 bg-slate-800/55 p-6 shadow-lg shadow-slate-950/20"
+                className="flex flex-col rounded-2xl bg-slate-900/35 p-6 shadow-lg shadow-slate-950/20 backdrop-blur-sm"
               >
                 <div className="mb-4 flex gap-0.5">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="flex-1 text-sm leading-relaxed text-slate-300">&ldquo;{t.quote}&rdquo;</p>
+                <p className="flex-1 text-sm leading-relaxed text-slate-100">&ldquo;{t.quote}&rdquo;</p>
                 <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${t.color} text-sm font-bold text-white`}
@@ -574,7 +589,7 @@ const Hero = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">{t.name}</p>
-                    <p className="text-xs text-slate-400">{t.role}</p>
+                    <p className="text-xs text-slate-300">{t.role}</p>
                   </div>
                 </div>
               </motion.div>
@@ -584,21 +599,21 @@ const Hero = () => {
       </section>
 
       {/* —— GET IN TOUCH (no map) —— */}
-      <section className="border-t border-white/10 bg-slate-900/50 py-12 sm:py-16 px-4 sm:px-6">
+      <section className="bg-gradient-to-b from-[#152646] via-[#13223e] to-[#101d36] py-12 sm:py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <div className="overflow-hidden rounded-[1.75rem] border border-white/15 bg-slate-800/40 shadow-2xl shadow-blue-900/20 backdrop-blur-sm">
+          <div className="overflow-hidden rounded-[1.75rem] bg-slate-900/35 shadow-2xl shadow-slate-950/20 backdrop-blur-sm">
             <div className="grid gap-0 lg:grid-cols-2">
-              <div className="border-b border-white/12 p-6 sm:p-8 lg:border-b-0 lg:border-r lg:border-white/12">
-                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Get in touch</h2>
-                <p className="mt-2 text-sm text-slate-300">We&apos;ll respond as soon as we can.</p>
+              <div className="border-b border-white/10 p-6 sm:p-8 lg:border-b-0 lg:border-r lg:border-white/10">
+                <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Get in touch</h2>
+                <p className="mt-2 text-sm text-slate-200">We&apos;ll respond as soon as we can.</p>
 
                 {success && (
-                  <div className="mt-6 rounded-xl border border-green-500/40 bg-green-500/10 p-4 text-sm text-green-200">
+                  <div className="mt-6 rounded-xl border border-green-300/60 bg-green-50 p-4 text-sm text-green-700">
                     Your message has been sent. We&apos;ll get back to you soon.
                   </div>
                 )}
                 {error && (
-                  <div className="mt-6 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+                  <div className="mt-6 rounded-xl border border-red-300/60 bg-red-50 p-4 text-sm text-red-700">
                     {error}
                   </div>
                 )}
@@ -611,7 +626,7 @@ const Hero = () => {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                     disabled={loading}
-                    className="w-full rounded-xl border border-white/15 bg-white/[0.07] p-4 text-white placeholder:text-slate-400 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
+                    className="w-full rounded-xl border border-white/15 bg-slate-900/35 p-4 text-white placeholder:text-slate-300 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
                   />
                   <input
                     type="email"
@@ -620,7 +635,7 @@ const Hero = () => {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                     disabled={loading}
-                    className="w-full rounded-xl border border-white/15 bg-white/[0.07] p-4 text-white placeholder:text-slate-400 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
+                    className="w-full rounded-xl border border-white/15 bg-slate-900/35 p-4 text-white placeholder:text-slate-300 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
                   />
                   <textarea
                     placeholder="Your message *"
@@ -629,7 +644,7 @@ const Hero = () => {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                     disabled={loading}
-                    className="w-full resize-none rounded-xl border border-white/15 bg-white/[0.07] p-4 text-white placeholder:text-slate-400 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
+                    className="w-full resize-none rounded-xl border border-white/15 bg-slate-900/35 p-4 text-white placeholder:text-slate-300 outline-none transition focus:ring-2 focus:ring-blue-400/45 disabled:opacity-50"
                   />
                   <button
                     type="submit"
@@ -648,31 +663,30 @@ const Hero = () => {
                 </form>
               </div>
 
-              <div className="relative flex flex-col justify-center bg-gradient-to-br from-slate-800/95 to-slate-900/95 p-8 sm:p-10">
-                <div className="pointer-events-none absolute inset-0 bg-grid-faint opacity-35" />
+              <div className="relative flex flex-col justify-center bg-gradient-to-br from-slate-900/35 to-slate-900/15 p-8 sm:p-10">
                 <div className="relative">
                   <h3 className="text-lg font-semibold text-white">Visit &amp; contact</h3>
-                  <p className="mt-1 text-sm text-slate-300">Goodwill Group of Education — Bhopal</p>
-                  <ul className="mt-8 space-y-5 text-sm text-slate-200">
+                  <p className="mt-1 text-sm text-slate-200">Goodwill Group of Education — Bhopal</p>
+                  <ul className="mt-8 space-y-5 text-sm text-slate-100">
                     <li className="flex gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-400">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-200/20 text-blue-200">
                         <MapPin className="h-4 w-4" />
                       </span>
                       <span>Neerja Nagar, Durgesh Vihar JK Road, Bhopal, Madhya Pradesh</span>
                     </li>
                     <li className="flex gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-400">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-200/20 text-blue-200">
                         <Phone className="h-4 w-4" />
                       </span>
-                      <a href="tel:+919691569239" className="hover:text-white">
+                      <a href="tel:+919691569239" className="hover:text-blue-200">
                         +91 9691569239
                       </a>
                     </li>
                     <li className="flex gap-3">
-                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 text-blue-400">
+                      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-200/20 text-blue-200">
                         <Mail className="h-4 w-4" />
                       </span>
-                      <a href="mailto:goodwill2404@gmail.com" className="break-all hover:text-white">
+                      <a href="mailto:goodwill2404@gmail.com" className="break-all hover:text-blue-200">
                         goodwill2404@gmail.com
                       </a>
                     </li>
